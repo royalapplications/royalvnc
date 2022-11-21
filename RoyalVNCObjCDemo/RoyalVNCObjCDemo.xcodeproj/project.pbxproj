@@ -1,0 +1,467 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E742BD0A29018431007D23D5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD0929018431007D23D5 /* AppDelegate.m */; };
+		E742BD1129018432007D23D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD1029018432007D23D5 /* main.m */; };
+		E742BD1A29018467007D23D5 /* RoyalVNCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E742BD1929018467007D23D5 /* RoyalVNCKit.framework */; };
+		E742BD1B29018467007D23D5 /* RoyalVNCKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E742BD1929018467007D23D5 /* RoyalVNCKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E742BD26290187A1007D23D5 /* CredentialWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E742BD25290187A1007D23D5 /* CredentialWindow.xib */; };
+		E742BD29290187D4007D23D5 /* CredentialWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD28290187D4007D23D5 /* CredentialWindowController.m */; };
+		E742BD2B290191D7007D23D5 /* ConfigurationWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E742BD2A290191D7007D23D5 /* ConfigurationWindow.xib */; };
+		E742BD2E290191EB007D23D5 /* ConfigurationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD2D290191EB007D23D5 /* ConfigurationWindowController.m */; };
+		E742BD322901942B007D23D5 /* ConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD312901942B007D23D5 /* ConfigurationViewController.m */; };
+		E77D15B4290C175D000FDDC4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77D15B3290C175D000FDDC4 /* Assets.xcassets */; };
+		E79EBE282902B5460013A7E4 /* ConfigurationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE272902B5460013A7E4 /* ConfigurationView.xib */; };
+		E79EBE2D2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E79EBE2C2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m */; };
+		E79EBE2E2902B8760013A7E4 /* EncodingsConfigurationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE1F2902B4C10013A7E4 /* EncodingsConfigurationView.xib */; };
+		E79EBE302902C36D0013A7E4 /* ConnectionView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE2F2902C36D0013A7E4 /* ConnectionView.xib */; };
+		E79EBE322902C3750013A7E4 /* ConnectionWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE312902C3750013A7E4 /* ConnectionWindow.xib */; };
+		E79EBE352902C38C0013A7E4 /* ConnectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E79EBE342902C38C0013A7E4 /* ConnectionViewController.m */; };
+		E79EBE382902C3AD0013A7E4 /* ConnectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E79EBE372902C3AD0013A7E4 /* ConnectionWindowController.m */; };
+		E7B4E3D3290BD1BC00FB35E4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7B4E3D1290BD1BC00FB35E4 /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E742BD1C29018467007D23D5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E742BD1B29018467007D23D5 /* RoyalVNCKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		E742BD0529018431007D23D5 /* RoyalVNCObjCDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoyalVNCObjCDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E742BD0829018431007D23D5 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		E742BD0929018431007D23D5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		E742BD1029018432007D23D5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		E742BD1229018432007D23D5 /* RoyalVNCObjCDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RoyalVNCObjCDemo.entitlements; sourceTree = "<group>"; };
+		E742BD1929018467007D23D5 /* RoyalVNCKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RoyalVNCKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		E742BD25290187A1007D23D5 /* CredentialWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CredentialWindow.xib; path = ../../../RoyalVNCDemo/Source/Credential/CredentialWindow.xib; sourceTree = "<group>"; };
+		E742BD27290187D4007D23D5 /* CredentialWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialWindowController.h; sourceTree = "<group>"; };
+		E742BD28290187D4007D23D5 /* CredentialWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CredentialWindowController.m; sourceTree = "<group>"; };
+		E742BD2A290191D7007D23D5 /* ConfigurationWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ConfigurationWindow.xib; path = ../../../RoyalVNCDemo/Source/Configuration/ConfigurationWindow.xib; sourceTree = "<group>"; };
+		E742BD2C290191EB007D23D5 /* ConfigurationWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigurationWindowController.h; sourceTree = "<group>"; };
+		E742BD2D290191EB007D23D5 /* ConfigurationWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigurationWindowController.m; sourceTree = "<group>"; };
+		E742BD302901942B007D23D5 /* ConfigurationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigurationViewController.h; sourceTree = "<group>"; };
+		E742BD312901942B007D23D5 /* ConfigurationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConfigurationViewController.m; sourceTree = "<group>"; };
+		E77D15B3290C175D000FDDC4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../RoyalVNCDemo/Source/Assets.xcassets; sourceTree = "<group>"; };
+		E79EBE1F2902B4C10013A7E4 /* EncodingsConfigurationView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = EncodingsConfigurationView.xib; path = ../../../RoyalVNCDemo/Source/Configuration/EncodingsConfigurationView.xib; sourceTree = "<group>"; };
+		E79EBE272902B5460013A7E4 /* ConfigurationView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ConfigurationView.xib; path = ../../../RoyalVNCDemo/Source/Configuration/ConfigurationView.xib; sourceTree = "<group>"; };
+		E79EBE2B2902B5CC0013A7E4 /* EncodingsConfigurationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EncodingsConfigurationViewController.h; sourceTree = "<group>"; };
+		E79EBE2C2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EncodingsConfigurationViewController.m; sourceTree = "<group>"; };
+		E79EBE2F2902C36D0013A7E4 /* ConnectionView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ConnectionView.xib; path = ../../../RoyalVNCDemo/Source/Connection/ConnectionView.xib; sourceTree = "<group>"; };
+		E79EBE312902C3750013A7E4 /* ConnectionWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = ConnectionWindow.xib; path = ../../../RoyalVNCDemo/Source/Connection/ConnectionWindow.xib; sourceTree = "<group>"; };
+		E79EBE332902C38C0013A7E4 /* ConnectionViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionViewController.h; sourceTree = "<group>"; };
+		E79EBE342902C38C0013A7E4 /* ConnectionViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConnectionViewController.m; sourceTree = "<group>"; };
+		E79EBE362902C3AD0013A7E4 /* ConnectionWindowController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionWindowController.h; sourceTree = "<group>"; };
+		E79EBE372902C3AD0013A7E4 /* ConnectionWindowController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ConnectionWindowController.m; sourceTree = "<group>"; };
+		E79EBE392902C3CD0013A7E4 /* ConnectionWindowControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionWindowControllerDelegate.h; sourceTree = "<group>"; };
+		E79EBE3A2902C3E20013A7E4 /* ConnectionViewControllerDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConnectionViewControllerDelegate.h; sourceTree = "<group>"; };
+		E7AE880B29150EBC001BAE18 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		E7AE880E29151183001BAE18 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		E7B4E3D2290BD1BC00FB35E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = ../../RoyalVNCDemo/Source/Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E742BD0229018431007D23D5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E742BD1A29018467007D23D5 /* RoyalVNCKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E742BCFC29018431007D23D5 = {
+			isa = PBXGroup;
+			children = (
+				E742BD0729018431007D23D5 /* Source */,
+				E742BD0629018431007D23D5 /* Products */,
+				E742BD1829018467007D23D5 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		E742BD0629018431007D23D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E742BD0529018431007D23D5 /* RoyalVNCObjCDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E742BD0729018431007D23D5 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				E742BD2429018789007D23D5 /* Connection */,
+				E742BD2329018785007D23D5 /* Credential */,
+				E742BD222901877F007D23D5 /* Configuration */,
+				E742BD0829018431007D23D5 /* AppDelegate.h */,
+				E742BD0929018431007D23D5 /* AppDelegate.m */,
+				E7B4E3D1290BD1BC00FB35E4 /* MainMenu.xib */,
+				E742BD1029018432007D23D5 /* main.m */,
+				E77D15B3290C175D000FDDC4 /* Assets.xcassets */,
+				E742BD1229018432007D23D5 /* RoyalVNCObjCDemo.entitlements */,
+				E7AE880B29150EBC001BAE18 /* Debug.xcconfig */,
+				E7AE880E29151183001BAE18 /* Release.xcconfig */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		E742BD1829018467007D23D5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E742BD1929018467007D23D5 /* RoyalVNCKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E742BD222901877F007D23D5 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				E742BD2C290191EB007D23D5 /* ConfigurationWindowController.h */,
+				E742BD2D290191EB007D23D5 /* ConfigurationWindowController.m */,
+				E742BD2A290191D7007D23D5 /* ConfigurationWindow.xib */,
+				E742BD302901942B007D23D5 /* ConfigurationViewController.h */,
+				E742BD312901942B007D23D5 /* ConfigurationViewController.m */,
+				E79EBE272902B5460013A7E4 /* ConfigurationView.xib */,
+				E79EBE2B2902B5CC0013A7E4 /* EncodingsConfigurationViewController.h */,
+				E79EBE2C2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m */,
+				E79EBE1F2902B4C10013A7E4 /* EncodingsConfigurationView.xib */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		E742BD2329018785007D23D5 /* Credential */ = {
+			isa = PBXGroup;
+			children = (
+				E742BD27290187D4007D23D5 /* CredentialWindowController.h */,
+				E742BD28290187D4007D23D5 /* CredentialWindowController.m */,
+				E742BD25290187A1007D23D5 /* CredentialWindow.xib */,
+			);
+			path = Credential;
+			sourceTree = "<group>";
+		};
+		E742BD2429018789007D23D5 /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				E79EBE362902C3AD0013A7E4 /* ConnectionWindowController.h */,
+				E79EBE372902C3AD0013A7E4 /* ConnectionWindowController.m */,
+				E79EBE392902C3CD0013A7E4 /* ConnectionWindowControllerDelegate.h */,
+				E79EBE312902C3750013A7E4 /* ConnectionWindow.xib */,
+				E79EBE332902C38C0013A7E4 /* ConnectionViewController.h */,
+				E79EBE342902C38C0013A7E4 /* ConnectionViewController.m */,
+				E79EBE3A2902C3E20013A7E4 /* ConnectionViewControllerDelegate.h */,
+				E79EBE2F2902C36D0013A7E4 /* ConnectionView.xib */,
+			);
+			path = Connection;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E742BD0429018431007D23D5 /* RoyalVNCObjCDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E742BD1529018432007D23D5 /* Build configuration list for PBXNativeTarget "RoyalVNCObjCDemo" */;
+			buildPhases = (
+				E742BD0129018431007D23D5 /* Sources */,
+				E742BD0229018431007D23D5 /* Frameworks */,
+				E742BD0329018431007D23D5 /* Resources */,
+				E742BD1C29018467007D23D5 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RoyalVNCObjCDemo;
+			productName = RoyalVNCObjCDemo;
+			productReference = E742BD0529018431007D23D5 /* RoyalVNCObjCDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E742BCFD29018431007D23D5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1410;
+				TargetAttributes = {
+					E742BD0429018431007D23D5 = {
+						CreatedOnToolsVersion = 14.0.1;
+					};
+				};
+			};
+			buildConfigurationList = E742BD0029018431007D23D5 /* Build configuration list for PBXProject "RoyalVNCObjCDemo" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E742BCFC29018431007D23D5;
+			productRefGroup = E742BD0629018431007D23D5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E742BD0429018431007D23D5 /* RoyalVNCObjCDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E742BD0329018431007D23D5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E742BD2B290191D7007D23D5 /* ConfigurationWindow.xib in Resources */,
+				E79EBE282902B5460013A7E4 /* ConfigurationView.xib in Resources */,
+				E79EBE302902C36D0013A7E4 /* ConnectionView.xib in Resources */,
+				E79EBE2E2902B8760013A7E4 /* EncodingsConfigurationView.xib in Resources */,
+				E79EBE322902C3750013A7E4 /* ConnectionWindow.xib in Resources */,
+				E742BD26290187A1007D23D5 /* CredentialWindow.xib in Resources */,
+				E77D15B4290C175D000FDDC4 /* Assets.xcassets in Resources */,
+				E7B4E3D3290BD1BC00FB35E4 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E742BD0129018431007D23D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E79EBE2D2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m in Sources */,
+				E79EBE352902C38C0013A7E4 /* ConnectionViewController.m in Sources */,
+				E742BD2E290191EB007D23D5 /* ConfigurationWindowController.m in Sources */,
+				E79EBE382902C3AD0013A7E4 /* ConnectionWindowController.m in Sources */,
+				E742BD29290187D4007D23D5 /* CredentialWindowController.m in Sources */,
+				E742BD1129018432007D23D5 /* main.m in Sources */,
+				E742BD0A29018431007D23D5 /* AppDelegate.m in Sources */,
+				E742BD322901942B007D23D5 /* ConfigurationViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		E7B4E3D1290BD1BC00FB35E4 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E7B4E3D2290BD1BC00FB35E4 /* Base */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		E742BD1329018432007D23D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E7AE880B29150EBC001BAE18 /* Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Source/RoyalVNCObjCDemo.entitlements;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		E742BD1429018432007D23D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E7AE880E29151183001BAE18 /* Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_ENTITLEMENTS = Source/RoyalVNCObjCDemo.entitlements;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		E742BD1629018432007D23D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E7AE880B29150EBC001BAE18 /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "RoyalVNC Demo ObjC";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2022 Royal Apps GmbH";
+				INFOPLIST_KEY_NSMainNibFile = MainMenu;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.royalapps.RoyalVNCObjCDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		E742BD1729018432007D23D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E7AE880E29151183001BAE18 /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "RoyalVNC Demo ObjC";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "© 2022 Royal Apps GmbH";
+				INFOPLIST_KEY_NSMainNibFile = MainMenu;
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.royalapps.RoyalVNCObjCDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E742BD0029018431007D23D5 /* Build configuration list for PBXProject "RoyalVNCObjCDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E742BD1329018432007D23D5 /* Debug */,
+				E742BD1429018432007D23D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E742BD1529018432007D23D5 /* Build configuration list for PBXNativeTarget "RoyalVNCObjCDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E742BD1629018432007D23D5 /* Debug */,
+				E742BD1729018432007D23D5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E742BCFD29018431007D23D5 /* Project object */;
+}

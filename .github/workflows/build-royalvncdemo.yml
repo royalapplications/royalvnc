@@ -1,0 +1,24 @@
+name: Build RoyalVNC Demo
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Get Xcode Version
+        run: xcodebuild -version
+
+      - name: Build
+        env:
+          scheme: RoyalVNCDemo
+        run: xcodebuild clean build analyze -scheme "$scheme" | xcpretty && exit ${PIPESTATUS[0]}

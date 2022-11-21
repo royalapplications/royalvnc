@@ -1,0 +1,25 @@
+name: Build RoyalVNC iOS Demo
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Get Xcode Version
+        run: xcodebuild -version
+
+      - name: Build
+        env:
+          scheme: RoyalVNCiOSDemo
+          destination: platform=iOS Simulator,id=4ADA52A8-5AEF-4182-9322-660C57EA91BE
+        run: xcodebuild clean build analyze -scheme "$scheme" -destination "$destination" | xcpretty && exit ${PIPESTATUS[0]}

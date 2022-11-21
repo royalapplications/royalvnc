@@ -1,0 +1,293 @@
+import Foundation
+import Network
+
+@objc(VNCConnection)
+public class VNCConnection: NSObject {
+	// MARK: - Public Properties
+	@objc
+	public let settings: Settings
+	
+	@objc
+	public weak var delegate: VNCConnectionDelegate?
+	
+	@objc
+	public var framebuffer: VNCFramebuffer?
+	
+	@objc
+	public internal(set) var connectionState = ConnectionState.disconnected
+	
+	@objc
+	public let logger: VNCLogger
+	
+	// MARK: - Private Properties
+	private let queue = DispatchQueue(label: "com.royalapps.royalvnc.connectionqueue",
+									  attributes: .concurrent)
+	
+	private let sharedZStream: ZlibStream
+	
+	// MARK: - Internal Properties
+    let taskPriority = TaskPriority.high
+    
+	var receiveTask: Task<(), Error>?
+	var sendTask: Task<(), Error>?
+	
+	let maxSupportedProtocolVersion = VNCProtocol.ProtocolVersion(majorVersion: 3,
+																  minorVersion: 8)
+	
+	let state = State()
+	let systemSound = VNCSystemSound()
+	
+	let clipboard: VNCClipboard
+	let clipboardMonitor: VNCClipboardMonitor
+	
+	var clientToServerMessageQueue = Queue<VNCSendableMessage>()
+	
+	lazy var connection: NWConnection = {
+		let tcpOptions = NWProtocolTCP.Options()
+		tcpOptions.connectionTimeout = 15
+		
+		let connectionParameters = NWParameters(tls: nil,
+												tcp: tcpOptions)
+		connectionParameters.expiredDNSBehavior = .allow
+		connectionParameters.serviceClass = .interactiveVideo
+		
+		let connection = NWConnection(host: .init(settings.hostname),
+									  port: .init(rawValue: settings.port)!,
+									  using: connectionParameters)
+		
+		connection.stateUpdateHandler = connectionStateDidChange
+		
+		return connection
+	}()
+	
+	lazy var encodings: Encodings = {
+		let rawEncoding = VNCProtocol.RawEncoding()
+		let hextileEncoding = VNCProtocol.HextileEncoding(rawEncoding: rawEncoding)
+		
+		let compressionLevelEncodingType = VNCPseudoEncodingType.compressionLevel6.rawValue
+		let compressionLevelEncoding = VNCProtocol.CompressionLevelEncoding(encodingType: compressionLevelEncodingType)
+		
+		let encs: Encodings = [
+			// Frame Encodings
+			VNCFrameEncodingType.copyRect.rawValue: VNCProtocol.CopyRectEncoding(),
+			VNCFrameEncodingType.zlib.rawValue: VNCProtocol.ZlibEncoding(zStream: sharedZStream),
+			VNCFrameEncodingType.zrle.rawValue: VNCProtocol.ZRLEEncoding(zStream: sharedZStream),
+			VNCFrameEncodingType.hextile.rawValue: hextileEncoding,
+			VNCFrameEncodingType.coRRE.rawValue: VNCProtocol.RREEncoding(),
+			VNCFrameEncodingType.rre.rawValue: VNCProtocol.RREEncoding(),
+			VNCFrameEncodingType.raw.rawValue: rawEncoding,
+			
+			// Pseudo Encodings
+			VNCPseudoEncodingType.lastRect.rawValue: VNCProtocol.LastRectEncoding(),
+			VNCPseudoEncodingType.continuousUpdates.rawValue: VNCProtocol.ContinuousUpdatesEncoding(),
+			VNCPseudoEncodingType.extendedDesktopSize.rawValue: VNCProtocol.ExtendedDesktopSizeEncoding(),
+			VNCPseudoEncodingType.desktopSize.rawValue: VNCProtocol.DesktopSizeEncoding(),
+			VNCPseudoEncodingType.desktopName.rawValue: VNCProtocol.DesktopNameEncoding(),
+			VNCPseudoEncodingType.cursor.rawValue: VNCProtocol.CursorEncoding(),
+			compressionLevelEncodingType: compressionLevelEncoding
+		]
+		
+		// Sanity Check
+		do {
+			let encodingTypes = encs.values.map({ $0.encodingType })
+			
+			try encodingTypes.validate()
+		} catch {
+            // If the sanity check fails here, it's a programming error
+			fatalError((error as NSError).debugDescription)
+		}
+		
+		return encs
+	}()
+	
+	func orderedEncodingTypes() throws -> [VNCEncodingType] {
+		// Frame Encodings (Required)
+		var encs: [VNCEncodingType] = [
+			VNCFrameEncodingType.copyRect.rawValue
+		]
+		
+		// Frame Encodings (Customizable)
+		var customizedFrameEncodings = settings.frameEncodings.map({ $0.rawValue })
+		
+		// TODO: Remove once we support ZRLE for non-24-bit pixel formats
+		if let pixelFormat = state.pixelFormat,
+		   customizedFrameEncodings.contains(VNCFrameEncodingType.zrle.rawValue),
+		   !VNCProtocol.ZRLEEncoding.supportsPixelFormat(pixelFormat) {
+			customizedFrameEncodings.removeAll(where: { $0 == VNCFrameEncodingType.zrle.rawValue })
+		}
+		
+		encs.append(contentsOf: customizedFrameEncodings)
+		
+		// Frame Encodings (Required)
+		encs.append(VNCFrameEncodingType.raw.rawValue)
+		
+		// Pseudo Encodings
+		encs.append(contentsOf: [
+			VNCPseudoEncodingType.lastRect.rawValue,
+			VNCPseudoEncodingType.continuousUpdates.rawValue,
+			VNCPseudoEncodingType.extendedDesktopSize.rawValue,
+			VNCPseudoEncodingType.desktopSize.rawValue,
+			VNCPseudoEncodingType.desktopName.rawValue,
+			VNCPseudoEncodingType.cursor.rawValue,
+			// TODO: Implement
+//			VNCPseudoEncodingType.extendedClipboard.rawValue,
+			VNCPseudoEncodingType.compressionLevel6.rawValue
+		])
+		
+		let uniqueEncs = encs.uniqued()
+		
+		// Sanity Check
+        // If the sanity check fails here, it could be a programming error, but it could also be an error by the SDK user if he/she specified encodings with invalid values in settings. So we bubble the error up but don't crash.
+		try uniqueEncs.validate()
+		
+		return uniqueEncs
+	}
+	
+	// MARK: - Public Initializers
+	@objc
+	public init(settings: Settings,
+				logger: VNCLogger) {
+		self.settings = settings
+		
+		logger.isDebugLoggingEnabled = settings.isDebugLoggingEnabled
+		
+		self.logger = logger
+		
+		self.sharedZStream = .init()
+		
+		let clipboard = VNCClipboard()
+		
+		let clipboardMonitor = VNCClipboardMonitor(clipboard: clipboard,
+												   monitoringInterval: 0.5,
+												   tolerance: 0.15)
+		
+		self.clipboard = clipboard
+		
+		self.clipboardMonitor = clipboardMonitor
+		
+		super.init()
+		
+		self.clipboardMonitor.delegate = self
+	}
+	
+	@objc
+	public convenience init(settings: Settings) {
+		let logger = OSLogLogger()
+		
+		self.init(settings: settings,
+				  logger: logger)
+	}
+	
+	deinit {
+		let _self = self
+		
+		_self.clipboardMonitor.delegate = nil
+		
+		stopMonitoringClipboard()
+	}
+}
+
+// MARK: - Internal Connection State API
+extension VNCConnection {
+	func beginConnecting() {
+		updateConnectionState(.connecting)
+		
+		connection.start(queue: queue)
+	}
+	
+	func beginDisconnecting(error: Error? = nil) {
+		guard !state.disconnectRequested else { return }
+		
+		state.disconnectRequested = true
+		updateConnectionState(.disconnecting)
+		
+		connection.stateUpdateHandler = nil
+		connection.cancel()
+		
+		if let error = error {
+			updateConnectionState(.disconnected(error: error))
+		} else {
+			updateConnectionState(.disconnected)
+		}
+	}
+	
+	func handleBreakingError(_ error: Error) {
+		beginDisconnecting(error: error)
+	}
+	
+	func updateConnectionState(_ newConnectionState: ConnectionState) {
+		self.connectionState = newConnectionState
+		
+		switch newConnectionState.status {
+			case .connecting:
+				break
+				
+			case .connected:
+				startMonitoringClipboard()
+				
+			case .disconnecting:
+				stopMonitoringClipboard()
+				
+			case .disconnected:
+				stopMonitoringClipboard()
+		}
+		
+		notifyDelegateAboutConnectionStateChange(newConnectionState)
+	}
+}
+
+// MARK: - Connection State Change Handling
+private extension VNCConnection {
+	func connectionStateDidChange(_ newState: NWConnection.State) {
+		switch newState {
+			case .setup:
+				logger.logDebug("Connection State - Setup")
+				
+			case .preparing:
+				logger.logDebug("Connection State - Preparing")
+				
+			case .ready:
+				logger.logDebug("Connection State - Ready")
+				
+				connectionDidBecomeReady()
+				
+			case .waiting(let error):
+				logger.logDebug("Connection State - Waiting with error: \(error)")
+				
+				connectionDidFail(error: .connection(.failed(error)))
+				
+			case .failed(let error):
+				logger.logDebug("Connection State - Failed with error: \(error)")
+				
+				connectionDidFail(error: .connection(.failed(error)))
+			
+			case .cancelled:
+				logger.logDebug("Connection State - Cancelled")
+				
+				connectionDidFail(error: .connection(.cancelled))
+				
+			@unknown default:
+				logger.logDebug("Connection State - Unknown (\(newState))")
+		}
+	}
+	
+	func connectionDidBecomeReady() {
+		Task {
+			do {
+				try await handshake()
+				try await sendFramebufferUpdateRequest()
+			} catch {
+				handleBreakingError(error)
+			}
+			
+			updateConnectionState(.connected)
+			
+			startReceiveLoop()
+			startSendLoop()
+		}
+	}
+	
+	func connectionDidFail(error: VNCError) {
+		handleBreakingError(error)
+	}
+}

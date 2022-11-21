@@ -1,0 +1,102 @@
+import Foundation
+import CoreGraphics
+
+@objc(VNCCursor)
+public class VNCCursor: NSObject {
+	@objc
+	public static let empty = VNCCursor()
+	
+	@objc
+	public let isEmpty: Bool
+	
+	@objc
+	public let imageData: Data
+	
+	public let size: VNCSize
+	public let hotspot: VNCPoint
+	
+	@objc
+	public let bitsPerComponent: Int
+	
+	@objc
+	public let bitsPerPixel: Int
+	
+	@objc
+	public let bytesPerPixel: Int
+	
+	@objc
+	public let bytesPerRow: Int
+	
+	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+	
+	override init() {
+		self.isEmpty = true
+		
+		self.imageData = .init()
+		
+		self.size = .zero
+		self.hotspot = .zero
+		
+		self.bitsPerComponent = 0
+		self.bitsPerPixel = 0
+		self.bytesPerPixel = 0
+		self.bytesPerRow = 0
+	}
+	
+	init(imageData: Data,
+		 size: VNCSize,
+		 hotspot: VNCPoint,
+		 bitsPerComponent: Int,
+		 bitsPerPixel: Int,
+		 bytesPerPixel: Int) {
+		self.isEmpty = false
+		
+		self.imageData = imageData
+		self.size = size
+		self.hotspot = hotspot
+		
+		self.bitsPerComponent = bitsPerComponent
+		self.bitsPerPixel = bitsPerPixel
+		self.bytesPerPixel = bytesPerPixel
+		self.bytesPerRow = Int(size.width) * bytesPerPixel
+	}
+}
+
+public extension VNCCursor {
+	@objc
+	var cgSize: CGSize {
+		size.cgSize
+	}
+	
+	@objc
+	var cgHotspot: CGPoint {
+		hotspot.cgPoint
+	}
+	
+	@objc
+	var cgImage: CGImage? {
+		guard !imageData.isEmpty else {
+			return nil
+		}
+		
+		guard let dataProvider = CGDataProvider(data: imageData as CFData) else {
+			return nil
+		}
+		
+		let bitmapInfo: CGBitmapInfo = .init(rawValue: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.last.rawValue)
+		
+		let image = CGImage(width: .init(size.width),
+							height: .init(size.height),
+							bitsPerComponent: bitsPerComponent,
+							bitsPerPixel: bitsPerPixel,
+							bytesPerRow: bytesPerRow,
+							space: Self.rgbColorSpace,
+							bitmapInfo: bitmapInfo,
+							provider: dataProvider,
+							decode: nil,
+							shouldInterpolate: false,
+							intent: .defaultIntent)
+		
+		return image
+	}
+}

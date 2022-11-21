@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ConnectionViewController" customModule="RoyalVNCDemo" customModuleProvider="target">
+            <connections>
+                <outlet property="framebufferScrollView" destination="E8O-pD-SBf" id="wOs-vH-lxH"/>
+                <outlet property="progressIndicator" destination="crZ-YF-tc1" id="iHx-QR-wpa"/>
+                <outlet property="textFieldStatus" destination="7uK-E6-Grz" id="pUX-DN-H8m"/>
+                <outlet property="view" destination="c22-O7-iKe" id="9Vy-Yv-IE1"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="400"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <progressIndicator hidden="YES" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="crZ-YF-tc1">
+                    <rect key="frame" x="284" y="184" width="32" height="32"/>
+                </progressIndicator>
+                <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7uK-E6-Grz">
+                    <rect key="frame" x="279" y="160" width="43" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" title="Status" usesSingleLineMode="YES" id="afW-Ch-n2g">
+                        <font key="font" usesAppearanceFont="YES"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E8O-pD-SBf" customClass="VNCScrollView" customModule="RoyalVNCKit">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="400"/>
+                    <clipView key="contentView" drawsBackground="NO" id="9o7-rc-xcW" customClass="VNCCenteringClipView" customModule="RoyalVNCKit">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="400"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view id="Kpz-6J-MbC">
+                                <rect key="frame" x="0.0" y="0.0" width="585" height="385"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            </view>
+                        </subviews>
+                    </clipView>
+                    <scroller key="horizontalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="30s-qu-Pm6">
+                        <rect key="frame" x="0.0" y="384" width="600" height="16"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="cLe-Pe-nhN">
+                        <rect key="frame" x="584" y="0.0" width="16" height="400"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                </scrollView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="crZ-YF-tc1" firstAttribute="centerY" secondItem="c22-O7-iKe" secondAttribute="centerY" id="8qR-AL-cUh"/>
+                <constraint firstItem="7uK-E6-Grz" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="HMM-fg-mke"/>
+                <constraint firstItem="E8O-pD-SBf" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="NId-00-73d"/>
+                <constraint firstAttribute="trailing" secondItem="E8O-pD-SBf" secondAttribute="trailing" id="REs-On-VkU"/>
+                <constraint firstItem="7uK-E6-Grz" firstAttribute="top" secondItem="crZ-YF-tc1" secondAttribute="bottom" constant="8" symbolic="YES" id="RM9-KC-fhn"/>
+                <constraint firstItem="E8O-pD-SBf" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="WLi-nC-sST"/>
+                <constraint firstAttribute="bottom" secondItem="E8O-pD-SBf" secondAttribute="bottom" id="dZk-nw-zXg"/>
+                <constraint firstItem="crZ-YF-tc1" firstAttribute="centerX" secondItem="c22-O7-iKe" secondAttribute="centerX" id="e0U-0P-UR6"/>
+            </constraints>
+            <point key="canvasLocation" x="93" y="7.5"/>
+        </customView>
+    </objects>
+</document>

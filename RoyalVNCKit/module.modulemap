@@ -1,0 +1,10 @@
+framework module RoyalVNCKit {
+    umbrella header "RoyalVNCKit.h"
+
+	private header "tommath.h"
+	private header "bignumshim.h"
+	private header "d3des.h"
+	
+    export *
+    module * { export * }
+}
