@@ -333,8 +333,11 @@ extension ConfigurationViewController: VNCConnectionDelegate {
 			
 			viewController.authenticationType = authenticationType
 			
-			viewController.previousUsername = settings.cachedUsername
-			viewController.previousPassword = settings.cachedPassword
+			let cachedUsername = settings.cachedUsername
+			let cachedPassword = settings.cachedPassword
+			
+			viewController.previousUsername = cachedUsername
+			viewController.previousPassword = cachedPassword
 			
 			viewController.modalPresentationStyle = .overCurrentContext
 			viewController.modalTransitionStyle = .crossDissolve
@@ -346,10 +349,17 @@ extension ConfigurationViewController: VNCConnectionDelegate {
 				
 				if let credential = credential {
 					if let userPassCred = credential as? VNCUsernamePasswordCredential {
-						settings.cachedUsername = userPassCred.username
-						settings.cachedPassword = userPassCred.password
+						if userPassCred.username != cachedUsername {
+							settings.cachedUsername = userPassCred.username
+						}
+						
+						if userPassCred.password != cachedPassword {
+							settings.cachedPassword = userPassCred.password
+						}
 					} else if let passCred = credential as? VNCPasswordCredential {
-						settings.cachedPassword = passCred.password
+						if passCred.password != cachedPassword {
+							settings.cachedPassword = passCred.password
+						}
 					}
 				}
 				

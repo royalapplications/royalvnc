@@ -210,9 +210,12 @@ private extension ConnectionViewController {
 		
 		let settings = connection.settings
 		
+		let cachedUsername = settings.cachedUsername
+		let cachedPassword = settings.cachedPassword
+		
 		let windowController = CredentialWindowController(authenticationType: authenticationType,
-														  previousUsername: settings.cachedUsername,
-														  previousPassword: settings.cachedPassword)
+														  previousUsername: cachedUsername,
+														  previousPassword: cachedPassword)
 		
 		credentialWindowController = windowController
 		
@@ -221,10 +224,17 @@ private extension ConnectionViewController {
 			
 			if let credential = credential {
 				if let userPassCred = credential as? VNCUsernamePasswordCredential {
-					settings.cachedUsername = userPassCred.username
-					settings.cachedPassword = userPassCred.password
+					if userPassCred.username != cachedUsername {
+						settings.cachedUsername = userPassCred.username
+					}
+					
+					if userPassCred.password != cachedPassword {
+						settings.cachedPassword = userPassCred.password
+					}
 				} else if let passCred = credential as? VNCPasswordCredential {
-					settings.cachedPassword = passCred.password
+					if passCred.password != cachedPassword {
+						settings.cachedPassword = passCred.password
+					}
 				}
 			}
 			

@@ -207,9 +207,12 @@
 	
 	VNCConnectionSettings* settings = self.connection.settings;
 	
+	NSString* cachedUsername = settings.cachedUsername;
+	NSString* cachedPassword = settings.cachedPassword;
+	
 	CredentialWindowController* windowController = [[CredentialWindowController alloc] initWithAuthenticationType:authenticationType
-																								 previousUsername:settings.cachedUsername
-																								 previousPassword:settings.cachedPassword];
+																								 previousUsername:cachedUsername
+																								 previousPassword:cachedPassword];
 	
 	self.credentialWindowController = windowController;
 	
@@ -221,10 +224,21 @@
 		
 		if (credential) {
 			if ([(NSObject*)credential isKindOfClass:VNCUsernamePasswordCredential.class]) {
-				settings.cachedUsername = ((VNCUsernamePasswordCredential*)credential).username;
-				settings.cachedPassword = ((VNCUsernamePasswordCredential*)credential).password;
+				VNCUsernamePasswordCredential* userPassCred = (VNCUsernamePasswordCredential*)credential;
+				
+				if (![userPassCred.username isEqualToString:cachedUsername]) {
+					settings.cachedUsername = userPassCred.username;
+				}
+				
+				if (![userPassCred.password isEqualToString:cachedPassword]) {
+					settings.cachedPassword = userPassCred.password;
+				}
 			} else if ([(NSObject*)credential isKindOfClass:VNCPasswordCredential.class]) {
-				settings.cachedPassword = ((VNCPasswordCredential*)credential).password;
+				VNCPasswordCredential* passCred = (VNCPasswordCredential*)credential;
+				
+				if (![passCred.password isEqualToString:cachedPassword]) {
+					settings.cachedPassword = passCred.password;
+				}
 			}
 		}
 		
