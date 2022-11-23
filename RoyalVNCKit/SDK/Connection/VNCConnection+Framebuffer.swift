@@ -33,23 +33,25 @@ extension VNCConnection {
 							 pixelFormat: VNCProtocol.PixelFormat) {
 		state.incrementalUpdatesEnabled = false
 		
-		let framebuffer: VNCFramebuffer
+		let newFramebuffer: VNCFramebuffer
 		
 		do {
-			framebuffer = try VNCFramebuffer(logger: logger,
-												 size: size,
-												 screens: screens,
-												 pixelFormat: pixelFormat)
+            newFramebuffer = try VNCFramebuffer(logger: logger,
+                                                size: size,
+                                                screens: screens,
+                                                pixelFormat: pixelFormat)
 		} catch {
 			handleBreakingError(error)
 			
 			return
 		}
+        
+        self.framebuffer?.delegate = nil
 		
-		framebuffer.delegate = self
+		newFramebuffer.delegate = self
 		
-		self.framebuffer = framebuffer
+		self.framebuffer = newFramebuffer
 		
-		notifyDelegateAboutFramebufferResize(framebuffer)
+		notifyDelegateAboutFramebufferResize(newFramebuffer)
 	}
 }

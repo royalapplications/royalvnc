@@ -294,18 +294,18 @@ private extension VNCConnection {
 		let framebufferSize = VNCSize(width: serverInit.framebufferWidth,
 									  height: serverInit.framebufferHeight)
 		
-		let framebuffer = try VNCFramebuffer(logger: logger,
-											 size: framebufferSize,
-											 screens: [ ],
-											 pixelFormat: clientPixelFormat)
+        let newFramebuffer = try VNCFramebuffer(logger: logger,
+                                                size: framebufferSize,
+                                                screens: [ ],
+                                                pixelFormat: clientPixelFormat)
 		
-		framebuffer.delegate = self
+		newFramebuffer.delegate = self
 		
-		self.framebuffer = framebuffer
+		self.framebuffer = newFramebuffer
 		
 		clientToServerMessageQueue.clear()
 		
-		notifyDelegateAboutFramebufferCreation(framebuffer)
+		notifyDelegateAboutFramebufferCreation(newFramebuffer)
 	}
 	
 	func sendSetPixelFormat(_ pixelFormat: VNCProtocol.PixelFormat) async throws {
