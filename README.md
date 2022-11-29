@@ -1,6 +1,6 @@
 [![Build RoyalVNCDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncdemo.yml) [![Build RoyalVNCObjCDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncobjcdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncobjcdemo.yml) [![Build RoyalVNCiOSDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvnciosdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvnciosdemo.yml)
 
-<img src="https://github.com/royalapplications/royalvnc/blob/main/Design/AppIconMac%20Rendered/AppIconMacOS_128.png?raw=true" align="right" width="64" height="64" />
+<img src="https://github.com/royalapplications/royalvnc/blob/main/Design/AppIconMac_Rendered/AppIconMacOS_128.png?raw=true" align="right" width="64" height="64" />
 
 # RoyalVNC
 
