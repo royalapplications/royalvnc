@@ -1,10 +1,7 @@
 [![Build RoyalVNCDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncdemo.yml) [![Build RoyalVNCObjCDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncobjcdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncobjcdemo.yml) [![Build RoyalVNCiOSDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvnciosdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvnciosdemo.yml)
 
-<img src="https://github.com/royalapplications/royalvnc/blob/main/Design/AppIconMac_Rendered/AppIconMacOS_128.png?raw=true" align="right" width="64" height="64" />
+![RoyalVNC](Design/Banner_Rendered/Banner.png)
 
-# RoyalVNC
-
-## Description
 RoyalVNC is a modern, high performance implementation of the [VNC/RFB protocol](https://github.com/rfbproto/rfbproto/blob/master/rfbproto.rst) written in Swift.
 The SDK (RoyalVNCKit) is compatible with Swift and Objective-C on macOS, iOS and iPadOS.
 It has no external dependencies but includes some free (public domain) third party code from the libtommath and D3DES libraries (see [Credits](#Credits)).
@@ -19,7 +16,7 @@ It has no external dependencies but includes some free (public domain) third par
 
 ### Encodings
 - Zlib
-- ZRLE (**TODO**: Currently only supports 24-bit color depth)
+- ZRLE
 - Hextile
 - CoRRE
 - RRE
@@ -32,7 +29,7 @@ It has no external dependencies but includes some free (public domain) third par
 - Cursor
 - DesktopSize
 - ExtendedDesktopSize
-- ContinuousUpdates (**TODO**: untested, I don't know a server that supports it)
+- ContinuousUpdates
 
 ### Misc. Features
 - Support for 8-bit, 16-bit and 24/32-bit color depths with high-performance framebuffer implementations.
