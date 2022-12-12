@@ -37,7 +37,7 @@ opt_in_rules:
 
 file_length: 800
 line_length: 280
-function_body_length: 80
+function_body_length: 82
 function_parameter_count: 8
 cyclomatic_complexity: 16
 

@@ -1,4 +1,4 @@
-// swiftlint:disable identifier_name yoda_condition
+// swiftlint:disable identifier_name
 
 import Foundation
 
