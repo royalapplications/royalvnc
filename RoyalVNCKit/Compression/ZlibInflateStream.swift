@@ -35,9 +35,12 @@ class ZlibInflateStream {
 		streamPtr.pointee.zfree = nil
 		
 		var version = ZLIB_VERSION
-		
-		let status = zlib.inflateInit_(streamPtr, &version, .init(MemoryLayout<z_stream>.size))
-		
+        var status = Z_VERSION_ERROR
+        
+        withUnsafeMutablePointer(to: &version) { versionPtr in
+            status = zlib.inflateInit_(streamPtr, versionPtr, .init(MemoryLayout<z_stream>.size))
+        }
+        
 		guard ZlibError.isSuccess(status) else {
 			throw Self.error(streamPtr: streamPtr,
 							 status: status)
