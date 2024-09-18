@@ -67,3 +67,5 @@ extension VNCRegion: CustomStringConvertible {
 		return "\(location); \(size)"
 	}
 }
+
+// swiftlint:enable identifier_name

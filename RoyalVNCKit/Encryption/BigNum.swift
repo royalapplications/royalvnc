@@ -97,3 +97,5 @@ extension BigNum {
 		return data
 	}
 }
+
+// swiftlint:enable identifier_name

@@ -4,6 +4,7 @@ import Carbon
 
 /// Virtual keycodes (from Carbon)
 public struct CGKeyCodes {
+    // swiftlint:disable:next unneeded_synthesized_initializer
 	@available(*, unavailable)
 	init() { }
 	

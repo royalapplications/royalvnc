@@ -1,3 +1,5 @@
+// swiftlint:disable nesting
+
 import Foundation
 
 extension VNCProtocol {
@@ -213,3 +215,5 @@ extension VNCProtocol.ServerCutText {
 		}
 	}
 }
+
+// swiftlint:enable nesting

@@ -429,6 +429,7 @@ extension VNCCAFramebufferView {
 	}
 	
 	func handlePerformKeyEquivalent(with event: NSEvent) -> Bool {
+        // swiftlint:disable:next control_statement
 		guard (settings.inputMode == .forwardKeyboardShortcutsEvenIfInUseLocally || settings.inputMode == .forwardAllKeyboardShortcutsAndHotKeys),
 			  let window = window,
 			  (window.firstResponder == window || window.firstResponder == self) else {

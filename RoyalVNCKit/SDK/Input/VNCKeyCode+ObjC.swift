@@ -1,10 +1,9 @@
-// swiftlint:disable type_name
-
 // This is hacky, but I currently don't have a better idea on how to handle this for ObjC
 
 import Foundation
 
 @objc(VNCKeyCode)
+// swiftlint:disable:next type_name
 public class _ObjC_VNCKeyCode: NSObject {
 	// Must be kept in Sync with VNCKeyCode!
 	

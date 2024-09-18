@@ -92,3 +92,5 @@ extension VNCProtocol.UltraVNCMSLogonIIAuthentication.DiffieHellmanKeyAgreement 
 		}
 	}
 }
+
+// swiftlint:enable identifier_name

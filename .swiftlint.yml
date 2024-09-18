@@ -30,22 +30,18 @@ opt_in_rules:
   - toggle_bool
   - unneeded_parentheses_in_closure_argument
   - unowned_variable_capture
-  - unused_declaration
-  - unused_import
   - weak_delegate
   - yoda_condition
+
+analyzer_rules:
+  - unused_declaration
+  - unused_import
 
 file_length: 800
 line_length: 280
 function_body_length: 82
 function_parameter_count: 8
 cyclomatic_complexity: 16
-
-nesting:
-  type_level:
-    warning: 2
-  statement_level:
-    warning: 10
 
 identifier_name:
   min_length: 2

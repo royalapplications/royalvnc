@@ -2,6 +2,7 @@ import Foundation
 
 extension VNCProtocol {
 	struct SecurityResult {
+        // swiftlint:disable:next nesting
 		enum Result: UInt32 {
 			case ok = 0
 			case failed = 1

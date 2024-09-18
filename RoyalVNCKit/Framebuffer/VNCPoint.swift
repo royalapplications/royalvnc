@@ -46,3 +46,5 @@ extension VNCPoint: CustomStringConvertible {
 		return "x: \(x), y: \(y)"
 	}
 }
+
+// swiftlint:enable identifier_name

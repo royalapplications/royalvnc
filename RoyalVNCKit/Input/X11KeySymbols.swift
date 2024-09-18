@@ -2355,3 +2355,5 @@ struct X11KeySymbols {
 	static let XK_Sinh_luu2          = UInt32(0x1000df3)  /* U+0DF3 SINHALA DIGA GAYANUKITTA */
 	static let XK_Sinh_kunddaliya    = UInt32(0x1000df4)  /* U+0DF4 SINHALA KUNDDALIYA */
 }
+
+// swiftlint:enable file_length type_body_length

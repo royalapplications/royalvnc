@@ -58,3 +58,5 @@ extension VNCProtocol.ExtendedDesktopSizeEncoding {
 						   screens: screens)
 	}
 }
+
+// swiftlint:enable line_length

@@ -1,6 +1,4 @@
 #if os(macOS)
-// swiftlint:disable function_body_length
-
 import Foundation
 import AppKit
 
@@ -26,6 +24,7 @@ struct KeyboardModifiers {
 		]
 	}
 	
+    // swiftlint:disable:next function_body_length
 	init(currentFlags: NSEvent.ModifierFlags,
 		 lastFlags: NSEvent.ModifierFlags) {
 		var leftShiftWentDown = false

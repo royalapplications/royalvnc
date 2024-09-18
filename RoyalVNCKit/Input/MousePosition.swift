@@ -8,3 +8,5 @@ extension VNCProtocol {
 		let y: UInt16
 	}
 }
+
+// swiftlint:enable identifier_name
