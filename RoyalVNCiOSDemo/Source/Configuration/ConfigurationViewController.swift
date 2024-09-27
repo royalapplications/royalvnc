@@ -1,5 +1,3 @@
-// swiftlint:disable unused_setter_value
-
 import Foundation
 import UIKit
 
@@ -109,6 +107,7 @@ private extension ConfigurationViewController {
 			// TODO
 			.forwardAllKeyboardShortcutsAndHotKeys
 		}
+        // swiftlint:disable:next unused_setter_value
 		set {
 			// TODO
 		}
@@ -124,6 +123,7 @@ private extension ConfigurationViewController {
 			// TODO
 			.depth24Bit
 		}
+        // swiftlint:disable:next unused_setter_value
 		set {
 			// TODO
 		}
@@ -134,6 +134,7 @@ private extension ConfigurationViewController {
 			// TODO
 			.default
 		}
+        // swiftlint:disable:next unused_setter_value
 		set {
 			// TODO
 		}
