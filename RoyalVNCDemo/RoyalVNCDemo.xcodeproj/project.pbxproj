@@ -12,8 +12,7 @@
 		E761FEA728C23AEF005EFA94 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E761FEA628C23AEF005EFA94 /* AppDelegate.swift */; };
 		E761FEA928C23AF0005EFA94 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E761FEA828C23AF0005EFA94 /* Assets.xcassets */; };
 		E761FEAC28C23AF0005EFA94 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E761FEAA28C23AF0005EFA94 /* MainMenu.xib */; };
-		E761FEB528C23B04005EFA94 /* RoyalVNCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E761FEB428C23B04005EFA94 /* RoyalVNCKit.framework */; };
-		E761FEB628C23B04005EFA94 /* RoyalVNCKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E761FEB428C23B04005EFA94 /* RoyalVNCKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E79381F32CA72C6A005060BC /* RoyalVNCKit in Frameworks */ = {isa = PBXBuildFile; productRef = E79381F22CA72C6A005060BC /* RoyalVNCKit */; };
 		E79EBE292902B5810013A7E4 /* ConfigurationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE262902B5270013A7E4 /* ConfigurationView.xib */; };
 		E79EBE2A2902B5840013A7E4 /* EncodingsConfigurationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE202902B4D40013A7E4 /* EncodingsConfigurationView.xib */; };
 		E7B3135A28E5C07200C40684 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B3135928E5C07100C40684 /* ConfigurationViewController.swift */; };
@@ -27,20 +26,6 @@
 		E7B94D3128D20DAD00AC827B /* CredentialWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7B94D3028D20DAD00AC827B /* CredentialWindow.xib */; };
 		E7E8BCC228F6BB1F00417728 /* EncodingsConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7E8BCC128F6BB1F00417728 /* EncodingsConfigurationViewController.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		E761FEB728C23B04005EFA94 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				E761FEB628C23B04005EFA94 /* RoyalVNCKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E742BD1E29018500007D23D5 /* ConfigurationWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ConfigurationWindow.xib; sourceTree = "<group>"; };
@@ -72,7 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E761FEB528C23B04005EFA94 /* RoyalVNCKit.framework in Frameworks */,
+				E79381F32CA72C6A005060BC /* RoyalVNCKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,7 +151,6 @@
 				E761FEA028C23AEF005EFA94 /* Frameworks */,
 				E7B3134C28E5882200C40684 /* Swiftlint */,
 				E761FEA128C23AEF005EFA94 /* Resources */,
-				E761FEB728C23B04005EFA94 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -185,7 +169,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1340;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					E761FEA228C23AEF005EFA94 = {
 						CreatedOnToolsVersion = 13.4.1;
@@ -478,6 +462,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E79381F22CA72C6A005060BC /* RoyalVNCKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RoyalVNCKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E761FE9B28C23AEF005EFA94 /* Project object */;
 }

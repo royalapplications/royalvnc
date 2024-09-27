@@ -2,7 +2,7 @@
 #define bignumshim_h
 
 #import <stdlib.h>
-#import <RoyalVNCKit/tommath.h>
+#import "tommath.h"
 
 typedef mp_int BIGNUM;
 

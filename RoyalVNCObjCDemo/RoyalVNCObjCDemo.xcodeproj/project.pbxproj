@@ -9,14 +9,13 @@
 /* Begin PBXBuildFile section */
 		E742BD0A29018431007D23D5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD0929018431007D23D5 /* AppDelegate.m */; };
 		E742BD1129018432007D23D5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD1029018432007D23D5 /* main.m */; };
-		E742BD1A29018467007D23D5 /* RoyalVNCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E742BD1929018467007D23D5 /* RoyalVNCKit.framework */; };
-		E742BD1B29018467007D23D5 /* RoyalVNCKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E742BD1929018467007D23D5 /* RoyalVNCKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E742BD26290187A1007D23D5 /* CredentialWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E742BD25290187A1007D23D5 /* CredentialWindow.xib */; };
 		E742BD29290187D4007D23D5 /* CredentialWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD28290187D4007D23D5 /* CredentialWindowController.m */; };
 		E742BD2B290191D7007D23D5 /* ConfigurationWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = E742BD2A290191D7007D23D5 /* ConfigurationWindow.xib */; };
 		E742BD2E290191EB007D23D5 /* ConfigurationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD2D290191EB007D23D5 /* ConfigurationWindowController.m */; };
 		E742BD322901942B007D23D5 /* ConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E742BD312901942B007D23D5 /* ConfigurationViewController.m */; };
 		E77D15B4290C175D000FDDC4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E77D15B3290C175D000FDDC4 /* Assets.xcassets */; };
+		E79381F52CA72CBF005060BC /* RoyalVNCKit in Frameworks */ = {isa = PBXBuildFile; productRef = E79381F42CA72CBF005060BC /* RoyalVNCKit */; };
 		E79EBE282902B5460013A7E4 /* ConfigurationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE272902B5460013A7E4 /* ConfigurationView.xib */; };
 		E79EBE2D2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E79EBE2C2902B5CC0013A7E4 /* EncodingsConfigurationViewController.m */; };
 		E79EBE2E2902B8760013A7E4 /* EncodingsConfigurationView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E79EBE1F2902B4C10013A7E4 /* EncodingsConfigurationView.xib */; };
@@ -26,20 +25,6 @@
 		E79EBE382902C3AD0013A7E4 /* ConnectionWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = E79EBE372902C3AD0013A7E4 /* ConnectionWindowController.m */; };
 		E7B4E3D3290BD1BC00FB35E4 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7B4E3D1290BD1BC00FB35E4 /* MainMenu.xib */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		E742BD1C29018467007D23D5 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				E742BD1B29018467007D23D5 /* RoyalVNCKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E742BD0529018431007D23D5 /* RoyalVNCObjCDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoyalVNCObjCDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,7 +64,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E742BD1A29018467007D23D5 /* RoyalVNCKit.framework in Frameworks */,
+				E79381F52CA72CBF005060BC /* RoyalVNCKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,7 +165,6 @@
 				E742BD0129018431007D23D5 /* Sources */,
 				E742BD0229018431007D23D5 /* Frameworks */,
 				E742BD0329018431007D23D5 /* Resources */,
-				E742BD1C29018467007D23D5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -198,7 +182,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					E742BD0429018431007D23D5 = {
 						CreatedOnToolsVersion = 14.0.1;
@@ -462,6 +446,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E79381F42CA72CBF005060BC /* RoyalVNCKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RoyalVNCKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E742BCFD29018431007D23D5 /* Project object */;
 }

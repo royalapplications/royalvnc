@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E79381F72CA72CE8005060BC /* RoyalVNCKit in Frameworks */ = {isa = PBXBuildFile; productRef = E79381F62CA72CE8005060BC /* RoyalVNCKit */; };
 		E7B707AF28E32003005FE717 /* CredentialViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B707AE28E32003005FE717 /* CredentialViewController.swift */; };
 		E7B707B128E323E1005FE717 /* UIStoryboard+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B707B028E323E1005FE717 /* UIStoryboard+Extensions.swift */; };
 		E7B707B928E3310B005FE717 /* CAFramebufferViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B707B828E3310B005FE717 /* CAFramebufferViewController.swift */; };
@@ -18,23 +19,7 @@
 		E7ED9E9528DDD0C500F1BF80 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7ED9E9328DDD0C500F1BF80 /* Main.storyboard */; };
 		E7ED9E9728DDD0C600F1BF80 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E7ED9E9628DDD0C600F1BF80 /* Assets.xcassets */; };
 		E7ED9E9A28DDD0C600F1BF80 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7ED9E9828DDD0C600F1BF80 /* LaunchScreen.storyboard */; };
-		E7ED9EA328DDD0E000F1BF80 /* RoyalVNCKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E7ED9EA228DDD0E000F1BF80 /* RoyalVNCKit.framework */; };
-		E7ED9EA428DDD0E000F1BF80 /* RoyalVNCKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E7ED9EA228DDD0E000F1BF80 /* RoyalVNCKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		E7ED9EA528DDD0E000F1BF80 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				E7ED9EA428DDD0E000F1BF80 /* RoyalVNCKit.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E7AE880C29150F27001BAE18 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -60,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7ED9EA328DDD0E000F1BF80 /* RoyalVNCKit.framework in Frameworks */,
+				E79381F72CA72CE8005060BC /* RoyalVNCKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +141,6 @@
 				E7ED9E8728DDD0C500F1BF80 /* Frameworks */,
 				E7B3134B28E5871F00C40684 /* Swiftlint */,
 				E7ED9E8828DDD0C500F1BF80 /* Resources */,
-				E7ED9EA528DDD0E000F1BF80 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -175,7 +159,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1400;
+				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					E7ED9E8928DDD0C500F1BF80 = {
 						CreatedOnToolsVersion = 14.0;
@@ -481,6 +465,13 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E79381F62CA72CE8005060BC /* RoyalVNCKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RoyalVNCKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E7ED9E8228DDD0C500F1BF80 /* Project object */;
 }

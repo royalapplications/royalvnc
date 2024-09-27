@@ -1,5 +1,7 @@
 import Foundation
 
+@_implementationOnly import d3des
+
 extension VNCProtocol.UltraVNCMSLogonIIAuthentication {
 	struct Authentication {
         let encryptedCredential: Data

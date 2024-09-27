@@ -1,5 +1,7 @@
 import Foundation
 
+@_implementationOnly import d3des
+
 struct VNCDESEncryption {
 	static func encrypt(data: Data,
 						key: String) -> Data? {
