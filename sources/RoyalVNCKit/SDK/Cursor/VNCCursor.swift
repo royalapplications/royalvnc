@@ -4,7 +4,7 @@ import CoreGraphics
 #if canImport(ObjectiveC)
 @objc(VNCCursor)
 #endif
-public class VNCCursor: NSObject {
+public class VNCCursor: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
     @objc
 #endif

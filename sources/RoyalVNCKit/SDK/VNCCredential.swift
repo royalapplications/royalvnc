@@ -8,7 +8,7 @@ public protocol VNCCredential: AnyObject { }
 #if canImport(ObjectiveC)
 @objc(VNCPasswordCredential)
 #endif
-public class VNCPasswordCredential: NSObject, VNCCredential {
+public class VNCPasswordCredential: NSObjectOrAnyObject, VNCCredential {
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -25,7 +25,7 @@ public class VNCPasswordCredential: NSObject, VNCCredential {
 #if canImport(ObjectiveC)
 @objc(VNCUsernamePasswordCredential)
 #endif
-public class VNCUsernamePasswordCredential: NSObject, VNCCredential {
+public class VNCUsernamePasswordCredential: NSObjectOrAnyObject, VNCCredential {
 #if canImport(ObjectiveC)
     @objc
 #endif

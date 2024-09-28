@@ -4,7 +4,7 @@ public extension VNCConnection {
 #if canImport(ObjectiveC)
 	@objc(VNCConnectionSettings)
 #endif
-	class Settings: NSObject {
+	class Settings: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
 		@objc
 #endif

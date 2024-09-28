@@ -9,7 +9,7 @@ import AppKit
 #if canImport(ObjectiveC)
 @objc(VNCFramebuffer)
 #endif
-public class VNCFramebuffer: NSObject {
+public class VNCFramebuffer: NSObjectOrAnyObject {
 	// MARK: - Public Properties
 	public let size: VNCSize
 	

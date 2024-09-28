@@ -3,57 +3,37 @@ import Foundation
 import AppKit
 import Carbon
 
-#if canImport(ObjectiveC)
 @objc(VNCCAFramebufferView)
-#endif
 public class VNCCAFramebufferView: NSView, VNCFramebufferView {
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public private(set) weak var connection: VNCConnection?
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public let settings: VNCConnection.Settings
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public var accumulatedScrollDeltaX: CGFloat = 0
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public var accumulatedScrollDeltaY: CGFloat = 0
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	private(set) weak var framebuffer: VNCFramebuffer?
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	private(set) public var framebufferSize: CGSize
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	private(set) public var scrollStep: CGFloat = 12
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public var currentCursor: NSCursor {
 		didSet {
 			resetCursorRects()
 		}
 	}
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public var scaleRatio: CGFloat {
 		let containerBounds = bounds
 		let fbSize = framebufferSize
@@ -82,9 +62,7 @@ public class VNCCAFramebufferView: NSView, VNCFramebufferView {
 		return ratio
 	}
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public var contentRect: CGRect {
 		let containerBounds = bounds
 		let scale = scaleRatio
@@ -103,9 +81,7 @@ public class VNCCAFramebufferView: NSView, VNCFramebufferView {
 		return rect
 	}
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public var lastModifierFlags: NSEvent.ModifierFlags = [ ]
 	
 	public override var canBecomeKeyView: Bool { true }
@@ -115,9 +91,7 @@ public class VNCCAFramebufferView: NSView, VNCFramebufferView {
 	private var trackingArea: NSTrackingArea?
 	private var previousHotKeyMode: UnsafeMutableRawPointer?
     
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public init(frame frameRect: CGRect,
 				framebuffer: VNCFramebuffer,
 				connection: VNCConnection) {

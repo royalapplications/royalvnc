@@ -7,7 +7,7 @@ import Network
 #if canImport(ObjectiveC)
 @objc(VNCConnection)
 #endif
-public class VNCConnection: NSObject {
+public class VNCConnection: NSObjectOrAnyObject {
 	// MARK: - Public Properties
 #if canImport(ObjectiveC)
 	@objc

@@ -10,11 +10,11 @@ public extension VNCConnection {
 		case connected
 		case disconnecting
 	}
-	
+    
 #if canImport(ObjectiveC)
 	@objc(VNCConnectionState)
 #endif
-	class ConnectionState: NSObject {
+	class ConnectionState: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
 		@objc
 #endif

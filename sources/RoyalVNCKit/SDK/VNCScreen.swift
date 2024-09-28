@@ -4,7 +4,7 @@ import CoreGraphics
 #if canImport(ObjectiveC)
 @objc(VNCScreen)
 #endif
-public class VNCScreen: NSObject {
+public class VNCScreen: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
     @objc
 #endif
