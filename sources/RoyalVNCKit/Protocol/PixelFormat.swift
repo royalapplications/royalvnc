@@ -139,10 +139,10 @@ extension VNCProtocol.PixelFormat {
 	}
 	
 	var bytesPerPixel: UInt16 {
-		return .init(bitsPerPixel / 8)
+		.init(bitsPerPixel / 8)
 	}
     
     func bytesPerRow(width: Int) -> Int {
-        return width * Int(bytesPerPixel)
+        width * Int(bytesPerPixel)
     }
 }

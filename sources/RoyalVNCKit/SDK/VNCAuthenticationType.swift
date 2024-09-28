@@ -11,22 +11,22 @@ public extension VNCAuthenticationType {
 	var requiresUsername: Bool {
 		switch self {
 			case .vnc:
-				return false
+				false
 			case .appleRemoteDesktop:
-				return true
+				true
 			case .ultraVNCMSLogonII:
-				return true
+				true
 		}
 	}
 	
 	var requiresPassword: Bool {
 		switch self {
 			case .vnc:
-				return true
+				true
 			case .appleRemoteDesktop:
-				return true
+				true
 			case .ultraVNCMSLogonII:
-				return true
+				true
 		}
 	}
 }

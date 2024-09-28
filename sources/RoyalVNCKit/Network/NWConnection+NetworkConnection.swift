@@ -195,7 +195,7 @@ extension NWConnection: NetworkConnectionReading {
 					return
 				}
 				
-				guard let content = content else {
+				guard let content else {
 					continuation.resume(throwing: VNCError.protocol(.noData))
 					
 					return

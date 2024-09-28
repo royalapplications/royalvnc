@@ -26,19 +26,19 @@ extension VNCFrameEncodingType: CustomStringConvertible {
 	public var description: String {
 		switch self {
 			case .raw:
-				return "Raw"
+				"Raw"
 			case .copyRect:
-				return "Copy Rectangle"
+				"Copy Rectangle"
 			case .rre:
-				return "RRE"
+				"RRE"
 			case .coRRE:
-				return "CoRRE"
+				"CoRRE"
 			case .hextile:
-				return "Hextile"
+				"Hextile"
 			case .zlib:
-				return "Zlib"
+				"Zlib"
 			case .zrle:
-				return "ZRLE"
+				"ZRLE"
 		}
 	}
 }
@@ -106,19 +106,19 @@ extension VNCFrameEncodingType {
 	static func fromObjCFrameEncodingType(_ objCFrameEncodingType: _ObjC_VNCFrameEncodingType) -> Self {
 		switch objCFrameEncodingType {
 			case .raw:
-				return .raw
+				.raw
 			case .copyRect:
-				return .copyRect
+				.copyRect
 			case .rre:
-				return .rre
+				.rre
 			case .coRRE:
-				return .coRRE
+				.coRRE
 			case .hextile:
-				return .hextile
+				.hextile
 			case .zlib:
-				return .zlib
+				.zlib
 			case .zrle:
-				return .zrle
+				.zrle
 		}
 	}
 }

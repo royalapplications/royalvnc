@@ -111,7 +111,7 @@ extension VNCProtocol.HextileEncoding {
 														  width: .init(subrectWidth),
 														  height: .init(subrectHeight))
 							
-							if var subrectPixelData = subrectPixelData {
+							if var subrectPixelData {
 								framebuffer.fill(region: subrectRegion,
 												 withPixel: &subrectPixelData)
 							}

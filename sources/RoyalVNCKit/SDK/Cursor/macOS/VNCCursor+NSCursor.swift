@@ -8,11 +8,11 @@ public extension VNCCursor {
 			return Self.emptyNSCursor
 		}
 		
-		guard let image = self.nsImage else {
+		guard let nsImage else {
 			return Self.emptyNSCursor
 		}
 		
-		let cursor = NSCursor(image: image,
+		let cursor = NSCursor(image: nsImage,
 							  hotSpot: hotspot.cgPoint)
 		
 		return cursor
@@ -27,7 +27,7 @@ private extension VNCCursor {
 	}
 	
 	var nsImage: NSImage? {
-		guard let cgImage = cgImage else { return nil }
+		guard let cgImage else { return nil }
 
 		let nsImage = NSImage(cgImage: cgImage, size: size.cgSize)
 		

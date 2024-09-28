@@ -30,39 +30,39 @@ extension VNCPseudoEncodingType: CustomStringConvertible {
 	public var description: String {
 		switch self {
 			case .lastRect:
-				return "Last Rectangle"
+				"Last Rectangle"
 			case .cursor:
-				return "Cursor"
+				"Cursor"
 			case .desktopName:
-				return "Desktop Name"
+				"Desktop Name"
 			case .continuousUpdates:
-				return "Continuous Updates"
+				"Continuous Updates"
 			case .desktopSize:
-				return "Desktop Size"
+				"Desktop Size"
 			case .extendedDesktopSize:
-				return "Extended Desktop Size"
+				"Extended Desktop Size"
 			case .compressionLevel1:
-				return "Compression Level 1"
+				"Compression Level 1"
 			case .compressionLevel2:
-				return "Compression Level 2"
+				"Compression Level 2"
 			case .compressionLevel3:
-				return "Compression Level 3"
+				"Compression Level 3"
 			case .compressionLevel4:
-				return "Compression Level 4"
+				"Compression Level 4"
 			case .compressionLevel5:
-				return "Compression Level 5"
+				"Compression Level 5"
 			case .compressionLevel6:
-				return "Compression Level 6"
+				"Compression Level 6"
 			case .compressionLevel7:
-				return "Compression Level 7"
+				"Compression Level 7"
 			case .compressionLevel8:
-				return "Compression Level 8"
+				"Compression Level 8"
 			case .compressionLevel9:
-				return "Compression Level 9"
+				"Compression Level 9"
 			case .compressionLevel10:
-				return "Compression Level 10"
+				"Compression Level 10"
 			case .extendedClipboard:
-				return "Extended Clipboard"
+				"Extended Clipboard"
 		}
 	}
 }
