@@ -175,21 +175,21 @@ public extension VNCFramebuffer {
 		return finalImage
 	}
 	
-	#if os(macOS)
-	@objc
-	var nsImage: NSImage? {
-		guard let ciImage = ciImage else {
-			return nil
-		}
-		
-		let rep = NSCIImageRep(ciImage: ciImage)
-		
-		let finalImage = NSImage(size: rep.size)
-		finalImage.addRepresentation(rep)
-		
-		return finalImage
-	}
-	#endif
+#if os(macOS)
+    @objc
+    var nsImage: NSImage? {
+        guard let ciImage = ciImage else {
+            return nil
+        }
+        
+        let rep = NSCIImageRep(ciImage: ciImage)
+        
+        let finalImage = NSImage(size: rep.size)
+        finalImage.addRepresentation(rep)
+        
+        return finalImage
+    }
+#endif
 }
 
 // MARK: - Internal API
@@ -473,13 +473,13 @@ private extension VNCFramebuffer {
 		let sourceBytesPerPixel = sourceProperties.bytesPerPixel
 		let destinationBytesPerPixel = destinationProperties.bytesPerPixel
 		
-		#if DEBUG
-		guard pixelData.count == sourceBytesPerPixel else {
-			return
-		}
-		#endif
-		
-		let fixedAlpha = UInt8(destinationProperties.alphaMax)
+#if DEBUG
+        guard pixelData.count == sourceBytesPerPixel else {
+            return
+        }
+#endif
+        
+        let fixedAlpha = UInt8(destinationProperties.alphaMax)
 		
 		let frameBufferWidth = width
 		
