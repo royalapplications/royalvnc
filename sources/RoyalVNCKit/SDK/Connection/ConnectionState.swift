@@ -1,7 +1,9 @@
 import Foundation
 
 public extension VNCConnection {
+#if canImport(ObjectiveC)
 	@objc(VNCConnectionStatus)
+#endif
 	enum Status: Int {
 		case disconnected
 		case connecting
@@ -9,12 +11,18 @@ public extension VNCConnection {
 		case disconnecting
 	}
 	
+#if canImport(ObjectiveC)
 	@objc(VNCConnectionState)
+#endif
 	class ConnectionState: NSObject {
+#if canImport(ObjectiveC)
 		@objc
+#endif
 		public let status: Status
 		
+#if canImport(ObjectiveC)
 		@objc
+#endif
 		public let error: Error?
 		
 		static let disconnected: ConnectionState = .init(status: .disconnected,

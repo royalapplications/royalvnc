@@ -1,17 +1,23 @@
 import Foundation
 
 public extension VNCConnection.Settings {
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	func saveToUserDefaults() {
 		Self.standardUserDefaultsStorage.save(settings: self)
 	}
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	static func fromUserDefaults() -> VNCConnection.Settings {
 		standardUserDefaultsStorage.load()
 	}
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	var cachedUsername: String {
 		get {
 			Self.credentialsKeychain.username(forHostname: hostname,
@@ -24,7 +30,9 @@ public extension VNCConnection.Settings {
 		}
 	}
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	var cachedPassword: String {
 		get {
 			Self.credentialsKeychain.password(forHostname: hostname,

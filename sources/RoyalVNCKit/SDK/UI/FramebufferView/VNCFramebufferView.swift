@@ -1,37 +1,59 @@
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc(VNCFramebufferView)
+#endif
 public protocol VNCFramebufferView: AnyObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var framebufferSize: CGSize { get }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var connection: VNCConnection? { get }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var settings: VNCConnection.Settings { get }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var scaleRatio: CGFloat { get }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var contentRect: CGRect { get }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var scrollStep: CGFloat { get }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var accumulatedScrollDeltaX: CGFloat { get set }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var accumulatedScrollDeltaY: CGFloat { get set }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func connection(_ connection: VNCConnection,
 					framebuffer: VNCFramebuffer,
 					didUpdateRegion updatedRegion: CGRect)
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func connection(_ connection: VNCConnection,
 					didUpdateCursor cursor: VNCCursor)
 }

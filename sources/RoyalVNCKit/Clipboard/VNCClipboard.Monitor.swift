@@ -70,7 +70,9 @@ extension VNCClipboardMonitor {
 }
 
 private extension VNCClipboardMonitor {
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	func timerDidFire(_ timer: Timer) {
 		guard let delegate,
 			  timer == self.timer else {

@@ -1,20 +1,32 @@
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc(VNCLogger)
+#endif
 public protocol VNCLogger: AnyObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var isDebugLoggingEnabled: Bool { get set }
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func logDebug(_ message: String)
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func logInfo(_ message: String)
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func logWarning(_ message: String)
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func logError(_ message: String)
 }
 

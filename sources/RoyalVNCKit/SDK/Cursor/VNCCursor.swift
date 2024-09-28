@@ -1,30 +1,46 @@
 import Foundation
 import CoreGraphics
 
+#if canImport(ObjectiveC)
 @objc(VNCCursor)
+#endif
 public class VNCCursor: NSObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static let empty = VNCCursor()
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let isEmpty: Bool
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let imageData: Data
 	
 	public let size: VNCSize
 	public let hotspot: VNCPoint
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let bitsPerComponent: Int
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let bitsPerPixel: Int
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let bytesPerPixel: Int
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let bytesPerRow: Int
 	
 	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
@@ -63,17 +79,23 @@ public class VNCCursor: NSObject {
 }
 
 public extension VNCCursor {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var cgSize: CGSize {
 		size.cgSize
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var cgHotspot: CGPoint {
 		hotspot.cgPoint
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var cgImage: CGImage? {
 		guard !imageData.isEmpty else {
 			return nil

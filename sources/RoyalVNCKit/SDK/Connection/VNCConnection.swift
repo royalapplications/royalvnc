@@ -1,22 +1,34 @@
 import Foundation
 import Network
 
+#if canImport(ObjectiveC)
 @objc(VNCConnection)
+#endif
 public class VNCConnection: NSObject {
 	// MARK: - Public Properties
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public let settings: Settings
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public weak var delegate: VNCConnectionDelegate?
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public var framebuffer: VNCFramebuffer?
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public internal(set) var connectionState = ConnectionState.disconnected
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public let logger: VNCLogger
 	
 	// MARK: - Private Properties
@@ -144,7 +156,9 @@ public class VNCConnection: NSObject {
 	}
 	
 	// MARK: - Public Initializers
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public init(settings: Settings,
 				logger: VNCLogger) {
 		self.settings = settings
@@ -170,7 +184,9 @@ public class VNCConnection: NSObject {
 		self.clipboardMonitor.delegate = self
 	}
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public convenience init(settings: Settings) {
 		let logger = OSLogLogger()
 		

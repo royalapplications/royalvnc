@@ -1,9 +1,13 @@
 import Foundation
 import CoreGraphics
 
+#if canImport(ObjectiveC)
 @objc(VNCScreen)
+#endif
 public class VNCScreen: NSObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public let id: UInt32
 	
 	public let frame: VNCRegion
@@ -16,7 +20,9 @@ public class VNCScreen: NSObject {
 }
 
 public extension VNCScreen {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	var cgFrame: CGRect {
 		frame.cgRect
 	}

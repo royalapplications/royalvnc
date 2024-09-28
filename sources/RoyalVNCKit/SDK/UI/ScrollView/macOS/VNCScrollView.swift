@@ -2,7 +2,9 @@
 import Foundation
 import AppKit
 
+#if canImport(ObjectiveC)
 @objc(VNCScrollView)
+#endif
 public class VNCScrollView: NSScrollView {
 	public override func scrollWheel(with event: NSEvent) {
 		nextResponder?

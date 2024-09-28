@@ -3,19 +3,25 @@ import Network
 
 // MARK: - Connect/Disconnect
 public extension VNCConnection {
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	func connect() {
 		beginConnecting()
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func disconnect() {
 		beginDisconnecting()
 	}
 }
 
 public extension VNCConnection {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func updateColorDepth(_ colorDepth: Settings.ColorDepth) {
 		guard let framebuffer = framebuffer else { return }
 		
@@ -35,55 +41,73 @@ public extension VNCConnection {
 
 // MARK: - Mouse Input
 public extension VNCConnection {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseMove(_ mousePosition: CGPoint) {
 		enqueueMouseEvent(buttons: [ ],
 						  nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseDown(_ mousePosition: CGPoint) {
 		enqueueMouseEvent(buttons: [ .button1 ],
 						  nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func rightMouseDown(_ mousePosition: CGPoint) {
 		enqueueMouseEvent(buttons: [ .button3 ],
 						  nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func middleMouseDown(_ mousePosition: CGPoint) {
 		enqueueMouseEvent(buttons: [ .button2 ],
 						  nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseUp(_ mousePosition: CGPoint) {
 		enqueueMouseEvent(buttons: [ ],
 						  nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseWheelUp(_ mousePosition: CGPoint) {
 		enqueueMousePressEvent(buttons: [ .button4 ],
 							   nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseWheelDown(_ mousePosition: CGPoint) {
 		enqueueMousePressEvent(buttons: [ .button5 ],
 							   nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseWheelLeft(_ mousePosition: CGPoint) {
 		enqueueMousePressEvent(buttons: [ .button6 ],
 							   nonNormalizedPosition: mousePosition)
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	func mouseWheelRight(_ mousePosition: CGPoint) {
 		enqueueMousePressEvent(buttons: [ .button7 ],
 							   nonNormalizedPosition: mousePosition)
@@ -97,7 +121,9 @@ public extension VNCConnection {
 						isDown: true)
 	}
 	
+#if canImport(ObjectiveC)
 	@objc(keyDown:)
+#endif
 	func _objc_keyDown(_ key: UInt32) {
 		keyDown(.init(key))
 	}
@@ -106,8 +132,10 @@ public extension VNCConnection {
 		enqueueKeyEvent(key: key,
 						isDown: false)
 	}
-	
+
+#if canImport(ObjectiveC)
 	@objc(keyUp:)
+#endif
 	func _objc_keyUp(_ key: UInt32) {
 		keyUp(.init(key))
 	}

@@ -1,6 +1,8 @@
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc(VNCFrameEncodingType)
+#endif
 // swiftlint:disable:next type_name
 public enum _ObjC_VNCFrameEncodingType: Int64 {
 	case raw = 0
@@ -53,15 +55,21 @@ public extension VNCFrameEncodingType {
 	]
 }
 
+#if canImport(ObjectiveC)
 @objc(VNCFrameEncodingTypeUtils)
+#endif
 // swiftlint:disable:next type_name
 public class _ObjC_VNCFrameEncodingTypeUtils: NSObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static var defaultFrameEncodings: [Int64] {
 		VNCFrameEncodingType.defaultFrameEncodings.map({ $0.rawValue.rawValue })
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func descriptionForFrameEncoding(_ frameEncoding: _ObjC_VNCFrameEncodingType) -> String {
 		let enc = VNCFrameEncodingType.fromObjCFrameEncodingType(frameEncoding)
 		let desc = enc.description

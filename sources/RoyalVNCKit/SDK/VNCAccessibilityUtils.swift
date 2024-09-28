@@ -3,22 +3,30 @@ import Foundation
 import AppKit
 import ApplicationServices
 
+#if canImport(ObjectiveC)
 @objc(VNCAccessibilityUtils)
+#endif
 public class VNCAccessibilityUtils: NSObject {
 	private static let accessibilityPreferencePaneURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func inputModeRequiresAccessibilityPermissions(_ inputMode: VNCConnection.Settings.InputMode) -> Bool {
 		inputMode.requiresAccessibilityPermissions
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static var hasAccessibilityPermissions: Bool {
 		AXIsProcessTrusted()
 	}
 	
 	@discardableResult
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func openAccessibilityPermissionsPreferencePane() -> Bool {
 		let success = NSWorkspace.shared.open(accessibilityPreferencePaneURL)
 		

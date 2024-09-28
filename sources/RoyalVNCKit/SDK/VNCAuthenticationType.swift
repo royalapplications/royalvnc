@@ -1,6 +1,8 @@
 import Foundation
 
+#if canImport(ObjectiveC)
 @objc(VNCAuthenticationType)
+#endif
 public enum VNCAuthenticationType: Int {
 	case vnc
 	case appleRemoteDesktop
@@ -31,15 +33,21 @@ public extension VNCAuthenticationType {
 	}
 }
 
+#if canImport(ObjectiveC)
 @objc(VNCAuthenticationTypeUtils)
+#endif
 // swiftlint:disable:next type_name
 public class _ObjC_VNCAuthenticationTypeUtils: NSObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func authenticationTypeRequiresUsername(_ authenticationType: VNCAuthenticationType) -> Bool {
 		authenticationType.requiresUsername
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func authenticationTypeRequiresPassword(_ authenticationType: VNCAuthenticationType) -> Bool {
 		authenticationType.requiresPassword
 	}

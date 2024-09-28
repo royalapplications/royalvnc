@@ -6,26 +6,38 @@ import IOSurface
 import AppKit
 #endif
 
+#if canImport(ObjectiveC)
 @objc(VNCFramebuffer)
+#endif
 public class VNCFramebuffer: NSObject {
 	// MARK: - Public Properties
 	public let size: VNCSize
 	
+#if canImport(ObjectiveC)
 	@objc(size)
+#endif
 	public let cgSize: CGSize
 	
 	public let fullRegion: VNCRegion
 	
+#if canImport(ObjectiveC)
 	@objc(fullRegion)
+#endif
 	public let cgFullRegion: CGRect
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public let surface: IOSurface
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public private(set) var screens: [VNCScreen]
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	public var colorDepth: VNCConnection.Settings.ColorDepth {
 		guard let depth = VNCConnection.Settings.ColorDepth(rawValue: .init(sourceProperties.colorDepth)) else {
 			fatalError("Failed to convert color depth")
@@ -125,7 +137,9 @@ public class VNCFramebuffer: NSObject {
 
 // MARK: - Public APIs
 public extension VNCFramebuffer {
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	var ciImage: CIImage? {
 		guard framebufferHasBeenUpdatedAtLeastOnce else {
 			return nil
@@ -140,7 +154,9 @@ public extension VNCFramebuffer {
 		return image
 	}
 	
+#if canImport(ObjectiveC)
 	@objc
+#endif
 	var cgImage: CGImage? {
 		guard let ciImage = ciImage else {
 			return nil

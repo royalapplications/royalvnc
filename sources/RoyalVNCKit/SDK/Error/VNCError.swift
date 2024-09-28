@@ -68,10 +68,14 @@ extension VNCError {
 	}
 }
 
+#if canImport(ObjectiveC)
 @objc(VNCErrorUtils)
+#endif
 // swiftlint:disable:next type_name
 public class _ObjC_VNCErrorUtils: NSObject {
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func shouldDisplayErrorToUser(_ error: Error) -> Bool {
 		guard let vncError = error as? VNCError else {
 			return false
@@ -82,7 +86,9 @@ public class _ObjC_VNCErrorUtils: NSObject {
 		return should
 	}
 	
-	@objc
+#if canImport(ObjectiveC)
+    @objc
+#endif
 	public static func isAuthenticationError(_ error: Error) -> Bool {
 		guard let vncError = error as? VNCError else {
 			return false
