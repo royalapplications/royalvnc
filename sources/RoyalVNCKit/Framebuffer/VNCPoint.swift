@@ -27,8 +27,8 @@ extension VNCPoint: Hashable {
 
 public extension VNCPoint {
 	var cgPoint: CGPoint {
-		return .init(x: CGFloat(x),
-					 y: CGFloat(y))
+        .init(x: CGFloat(x),
+              y: CGFloat(y))
 	}
 	
 	static let zero: Self = .init(x: 0,
@@ -37,13 +37,13 @@ public extension VNCPoint {
 
 public extension CGPoint {
 	var vncPoint: VNCPoint {
-		return .init(cgPoint: self)
+		.init(cgPoint: self)
 	}
 }
 
 extension VNCPoint: CustomStringConvertible {
 	public var description: String {
-		return "x: \(x), y: \(y)"
+		"x: \(x), y: \(y)"
 	}
 }
 

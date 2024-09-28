@@ -25,8 +25,8 @@ extension VNCSize: Hashable {
 
 public extension VNCSize {
 	var cgSize: CGSize {
-		return .init(width: CGFloat(width),
-					 height: CGFloat(height))
+        .init(width: CGFloat(width),
+              height: CGFloat(height))
 	}
 	
 	static let zero: Self = .init(width: 0,
@@ -35,12 +35,12 @@ public extension VNCSize {
 
 public extension CGSize {
 	var vncSize: VNCSize {
-		return .init(cgSize: self)
+		.init(cgSize: self)
 	}
 }
 
 extension VNCSize: CustomStringConvertible {
 	public var description: String {
-		return "width: \(width), height: \(height)"
+		"width: \(width), height: \(height)"
 	}
 }

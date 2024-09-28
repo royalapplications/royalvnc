@@ -80,11 +80,11 @@ extension VNCFramebuffer.PixelUtils {
 								   bitsPerPixel: Int) -> Int {
 		switch bitsPerPixel {
 			case 32:
-				return .init(pixelData.load(fromByteOffset: pixelDataOffset, as: UInt32.self))
+				.init(pixelData.load(fromByteOffset: pixelDataOffset, as: UInt32.self))
 			case 16:
-				return .init(pixelData.load(fromByteOffset: pixelDataOffset, as: UInt16.self))
+				.init(pixelData.load(fromByteOffset: pixelDataOffset, as: UInt16.self))
 			case 8:
-				return .init(pixelData.load(fromByteOffset: pixelDataOffset, as: UInt8.self))
+				.init(pixelData.load(fromByteOffset: pixelDataOffset, as: UInt8.self))
 			default:
 				fatalError("Unsupported bits per pixel: \(bitsPerPixel)")
 		}

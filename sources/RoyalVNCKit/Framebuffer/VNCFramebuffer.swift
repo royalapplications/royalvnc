@@ -596,12 +596,12 @@ private extension VNCFramebuffer {
 private extension VNCFramebuffer {
 	func destinationPixelWith(sourcePixelData: UnsafeRawBufferPointer,
 							  sourcePixelDataOffset: Int) -> LocalPixel {
-		return PixelUtils.destinationPixelWith(sourcePixelData: sourcePixelData,
-											   sourcePixelDataOffset: sourcePixelDataOffset,
-											   sourceProperties: sourceProperties,
-											   destinationProperties: destinationProperties,
-											   colorMap: colorMap)
-	}
+        PixelUtils.destinationPixelWith(sourcePixelData: sourcePixelData,
+                                        sourcePixelDataOffset: sourcePixelDataOffset,
+                                        sourceProperties: sourceProperties,
+                                        destinationProperties: destinationProperties,
+                                        colorMap: colorMap)
+    }
 }
 
 // MARK: - Source Offsets

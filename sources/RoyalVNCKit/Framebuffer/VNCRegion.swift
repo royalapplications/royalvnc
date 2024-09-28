@@ -33,8 +33,8 @@ extension VNCRegion: Hashable {
 
 public extension VNCRegion {
 	var cgRect: CGRect {
-		return .init(origin: location.cgPoint,
-					 size: size.cgSize)
+        .init(origin: location.cgPoint,
+              size: size.cgSize)
 	}
 	
 	static let zero: Self = .init(location: .zero,
@@ -58,13 +58,13 @@ public extension VNCRegion {
 
 public extension CGRect {
 	var vncRegion: VNCRegion {
-		return .init(cgRect: self)
+		.init(cgRect: self)
 	}
 }
 
 extension VNCRegion: CustomStringConvertible {
 	public var description: String {
-		return "\(location); \(size)"
+		"\(location); \(size)"
 	}
 }
 
