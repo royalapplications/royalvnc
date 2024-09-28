@@ -469,8 +469,8 @@ extension VNCCAFramebufferView {
 private extension VNCCAFramebufferView {
     func updateImage(_ image: CGImage?) {
         DispatchQueue.main.async { [weak self] in
-            guard let strongSelf = self,
-                  let layer = strongSelf.layer else {
+            guard let self,
+                  let layer = self.layer else {
                 return
             }
             

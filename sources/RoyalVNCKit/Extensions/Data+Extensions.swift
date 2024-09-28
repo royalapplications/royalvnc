@@ -60,6 +60,7 @@ extension Data {
 	}
 	
 	func aes128ECBEncrypted(withKey key: Data) -> Data? {
-		return AES128ECBEncryption.encrypt(data: self, key: key)
+		AES128ECBEncryption.encrypt(data: self,
+                                    key: key)
 	}
 }

@@ -53,13 +53,13 @@ private extension VNCConnection {
 		}
 		
 		guard let credential: VNCCredential? = await withCheckedContinuation({ [weak self] continuation in
-			guard let strongSelf = self else {
+			guard let self else {
 				continuation.resume(returning: nil)
 				
 				return
 			}
 			
-			delegate.connection(strongSelf,
+			delegate.connection(self,
 								credentialFor: authenticationType) { credential in
 				continuation.resume(returning: credential)
 			}

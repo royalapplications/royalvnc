@@ -129,13 +129,13 @@ extension ZlibInflateStream {
 	
 	/// last error message, nil if no error
 	var errorMessage: String? {
-		return Self.errorMessage(streamPtr: streamPtr)
+		Self.errorMessage(streamPtr: streamPtr)
 	}
 	
 	/// Adler-32 or CRC-32 value of the uncompressed data
 	var adler: UInt {
 		get {
-			return streamPtr.pointee.adler
+			streamPtr.pointee.adler
 		}
 		set {
 			streamPtr.pointee.adler = newValue
@@ -319,30 +319,30 @@ private extension ZlibInflateStream {
 
 private extension ZlibError {
 	static func isSuccess(_ status: Int32) -> Bool {
-		return status == Z_OK
+		status == Z_OK
 	}
 	
 	static func withStatus(_ status: Int32,
 						   errorMessage: String?) -> Self {
 		switch status {
 			case Z_STREAM_END:
-				return .streamEnd(message: errorMessage)
+				.streamEnd(message: errorMessage)
 			case Z_NEED_DICT:
-				return .needDict(message: errorMessage)
+				.needDict(message: errorMessage)
 			case Z_ERRNO:
-				return .errNo(message: errorMessage)
+				.errNo(message: errorMessage)
 			case Z_STREAM_ERROR:
-				return .streamError(message: errorMessage)
+				.streamError(message: errorMessage)
 			case Z_DATA_ERROR:
-				return .dataError(message: errorMessage)
+				.dataError(message: errorMessage)
 			case Z_MEM_ERROR:
-				return .memoryError(message: errorMessage)
+				.memoryError(message: errorMessage)
 			case Z_BUF_ERROR:
-				return .bufferError(message: errorMessage)
+				.bufferError(message: errorMessage)
 			case Z_VERSION_ERROR:
-				return .versionError(message: errorMessage)
+				.versionError(message: errorMessage)
 			default:
-				return .unknown(status: status, message: errorMessage)
+				.unknown(status: status, message: errorMessage)
 		}
 	}
 }

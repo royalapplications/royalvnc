@@ -45,18 +45,18 @@ extension VNCClipboardMonitor {
 		}
 		
 		DispatchQueue.main.async { [weak self] in
-			guard let strongSelf = self else { return }
+			guard let self else { return }
 			
-			let timer = Timer.scheduledTimer(timeInterval: strongSelf.monitoringInterval,
-											 target: strongSelf,
-											 selector: #selector(strongSelf.timerDidFire(_:)),
+			let timer = Timer.scheduledTimer(timeInterval: self.monitoringInterval,
+											 target: self,
+											 selector: #selector(self.timerDidFire(_:)),
 											 userInfo: nil,
 											 repeats: true)
 			
-			timer.tolerance = strongSelf.tolerance
+			timer.tolerance = self.tolerance
 			
-			strongSelf.timer = timer
-			strongSelf.isMonitoring = true
+            self.timer = timer
+            self.isMonitoring = true
 		}
 	}
 	
@@ -72,7 +72,7 @@ extension VNCClipboardMonitor {
 private extension VNCClipboardMonitor {
 	@objc
 	func timerDidFire(_ timer: Timer) {
-		guard let delegate = self.delegate,
+		guard let delegate,
 			  timer == self.timer else {
 			return
 		}

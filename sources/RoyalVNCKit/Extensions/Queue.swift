@@ -24,6 +24,6 @@ struct Queue<T> {
 	}
 	
 	var isEmpty: Bool {
-		return list.isEmpty
+		list.isEmpty
 	}
 }
