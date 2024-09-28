@@ -1,5 +1,4 @@
 import Foundation
-import Network
 
 // MARK: - Server to Client Messages
 extension VNCConnection {
@@ -8,7 +7,7 @@ extension VNCConnection {
         
         receiveTask = Task(priority: taskPriority) {
 			while !state.disconnectRequested,
-					connection.state == .ready {
+                  connection.isReady {
 				do {
 					try await receive()
 				} catch {
@@ -26,7 +25,7 @@ private extension VNCConnection {
 			return
 		}
 		
-		guard connection.state == .ready else {
+        guard connection.isReady else {
 			throw VNCError.connection(.notReady)
 		}
 		

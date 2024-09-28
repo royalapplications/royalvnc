@@ -1,5 +1,4 @@
 import Foundation
-import Network
 
 // MARK: - Client to Server Messages
 extension VNCConnection {
@@ -8,7 +7,7 @@ extension VNCConnection {
         
 		sendTask = Task(priority: taskPriority) {
 			while !state.disconnectRequested,
-					connection.state == .ready {
+                  connection.isReady {
 				do {
 					try await send()
 				} catch {
@@ -51,7 +50,7 @@ extension VNCConnection {
 private extension VNCConnection {
 	func send() async throws {
 		guard !state.disconnectRequested,
-			  connection.state == .ready,
+              connection.isReady,
 			  let message = clientToServerMessageQueue.dequeue() else {
 			try await Task.sleep(seconds: 0.01)
 			

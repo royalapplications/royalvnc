@@ -1,5 +1,8 @@
 import Foundation
+
+#if canImport(Network)
 import Network
+#endif
 
 #if canImport(ObjectiveC)
 @objc(VNCConnection)
@@ -54,20 +57,18 @@ public class VNCConnection: NSObject {
 	
 	var clientToServerMessageQueue = Queue<VNCSendableMessage>()
 	
-	lazy var connection: NWConnection = {
-		let tcpOptions = NWProtocolTCP.Options()
-		tcpOptions.connectionTimeout = 15
-		
-		let connectionParameters = NWParameters(tls: nil,
-												tcp: tcpOptions)
-		connectionParameters.expiredDNSBehavior = .allow
-		connectionParameters.serviceClass = .interactiveVideo
-		
-		let connection = NWConnection(host: .init(settings.hostname),
-									  port: .init(rawValue: settings.port)!,
-									  using: connectionParameters)
-		
-		connection.stateUpdateHandler = connectionStateDidChange
+    lazy var connection: some NetworkConnection = {
+        let connectionSettings = NetworkConnectionSettings(connectionTimeout: 15,
+                                                           host: settings.hostname,
+                                                           port: settings.port)
+        
+#if canImport(Network)
+        let connection = NWConnection(settings: connectionSettings)
+#else
+        fatalError("TODO: Implement NetworkConnection for Linux/Windows/etc.")
+#endif
+        
+        connection.setStatusUpdateHandler(connectionStatusDidChange)
 		
 		return connection
 	}()
@@ -217,7 +218,7 @@ extension VNCConnection {
 		state.disconnectRequested = true
 		updateConnectionState(.disconnecting)
 		
-		connection.stateUpdateHandler = nil
+		connection.setStatusUpdateHandler(nil)
 		connection.cancel()
 		
 		if let error = error {
@@ -254,7 +255,7 @@ extension VNCConnection {
 
 // MARK: - Connection State Change Handling
 private extension VNCConnection {
-	func connectionStateDidChange(_ newState: NWConnection.State) {
+	func connectionStatusDidChange(_ newState: NetworkConnectionStatus) {
 		switch newState {
 			case .setup:
 				logger.logDebug("Connection State - Setup")
@@ -282,8 +283,8 @@ private extension VNCConnection {
 				
 				connectionDidFail(error: .connection(.cancelled))
 				
-			@unknown default:
-				logger.logDebug("Connection State - Unknown (\(newState))")
+            case .unknown(let underlyingState):
+				logger.logDebug("Connection State - Unknown (\(underlyingState))")
 		}
 	}
 	

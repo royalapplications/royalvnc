@@ -1,5 +1,4 @@
 import Foundation
-import Network
 
 // MARK: - Connect/Disconnect
 public extension VNCConnection {

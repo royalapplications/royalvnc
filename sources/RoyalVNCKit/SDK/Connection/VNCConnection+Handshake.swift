@@ -1,5 +1,4 @@
 import Foundation
-import Network
 
 // MARK: - Entry Point for Handshaking Phase
 extension VNCConnection {
