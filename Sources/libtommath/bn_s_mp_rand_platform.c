@@ -7,14 +7,14 @@
  * - *BSD
  * - Windows
  */
-//#if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-//#define BN_S_READ_ARC4RANDOM_C
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
+#define BN_S_READ_ARC4RANDOM_C
 static mp_err s_read_arc4random(void *p, size_t n)
 {
    arc4random_buf(p, n);
    return MP_OKAY;
 }
-//#endif
+#endif
 
 #if defined(_WIN32) || defined(_WIN32_WCE)
 #define BN_S_READ_WINCSP_C
