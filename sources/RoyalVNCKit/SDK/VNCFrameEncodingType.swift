@@ -57,19 +57,14 @@ public extension VNCFrameEncodingType {
 
 #if canImport(ObjectiveC)
 @objc(VNCFrameEncodingTypeUtils)
-#endif
 // swiftlint:disable:next type_name
 public class _ObjC_VNCFrameEncodingTypeUtils: NSObject {
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public static var defaultFrameEncodings: [Int64] {
 		VNCFrameEncodingType.defaultFrameEncodings.map({ $0.rawValue.rawValue })
 	}
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public static func descriptionForFrameEncoding(_ frameEncoding: _ObjC_VNCFrameEncodingType) -> String {
 		let enc = VNCFrameEncodingType.fromObjCFrameEncodingType(frameEncoding)
 		let desc = enc.description
@@ -77,6 +72,7 @@ public class _ObjC_VNCFrameEncodingTypeUtils: NSObject {
 		return desc
 	}
 }
+#endif
 
 public extension [VNCFrameEncodingType] {
 	static var `default`: Self {

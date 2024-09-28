@@ -35,20 +35,16 @@ public extension VNCAuthenticationType {
 
 #if canImport(ObjectiveC)
 @objc(VNCAuthenticationTypeUtils)
-#endif
 // swiftlint:disable:next type_name
 public class _ObjC_VNCAuthenticationTypeUtils: NSObject {
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public static func authenticationTypeRequiresUsername(_ authenticationType: VNCAuthenticationType) -> Bool {
 		authenticationType.requiresUsername
 	}
 	
-#if canImport(ObjectiveC)
     @objc
-#endif
 	public static func authenticationTypeRequiresPassword(_ authenticationType: VNCAuthenticationType) -> Bool {
 		authenticationType.requiresPassword
 	}
 }
+#endif
