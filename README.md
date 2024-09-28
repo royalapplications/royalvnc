@@ -1,4 +1,4 @@
-[![Build RoyalVNCDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncdemo.yml) [![Build RoyalVNCObjCDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncobjcdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvncobjcdemo.yml) [![Build RoyalVNCiOSDemo](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvnciosdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc/actions/workflows/build-royalvnciosdemo.yml)
+[![Build RoyalVNCDemo](https://github.com/royalapplications/royalvnc-demo/actions/workflows/build-royalvncdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc-demo/actions/workflows/build-royalvncdemo.yml) [![Build RoyalVNCObjCDemo](https://github.com/royalapplications/royalvnc-demo/actions/workflows/build-royalvncobjcdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc-demo/actions/workflows/build-royalvncobjcdemo.yml) [![Build RoyalVNCiOSDemo](https://github.com/royalapplications/royalvnc-demo/actions/workflows/build-royalvnciosdemo.yml/badge.svg)](https://github.com/royalapplications/royalvnc-demo/actions/workflows/build-royalvnciosdemo.yml)
 
 ![RoyalVNC](Design/Banner_Rendered/Banner.png)
 
@@ -37,7 +37,7 @@ It has no external dependencies but includes some free (public domain) third par
 - Connection state management and rendering is decoupled from each other, so it's possible to build "headless" clients (ie. no rendering of the remote desktop). 
 - The SDK includes a ready-to-use implementation of a framebuffer view for macOS (subclass of `NSView`), which also handles mouse and keyboard input, local cursor (`NSCursor`), scaling and rendering. The iOS/iPadOS equivalent (`UIView`) is a work-in-progress.
 - First-class error handling. The `VNCError` type divides all possible errors into three broad categories: Protocol, Authentication and Connection errors. There are helper functions to retrieve human-readable descriptions for all errors and a convenience functions that allows the SDK consumer to distinguish between errors that should be displayed to the user and ones that shouldn't.
-- The repository contains Demo/Sample clients for macOS (one written in Swift, one in Objective-C) and iOS/iPadOS.
+- [This repository](https://github.com/royalapplications/royalvnc-demo) contains Demo/Sample clients for macOS (one written in Swift, one in Objective-C) and iOS/iPadOS.
 
 ## Usage
 See [Usage](USAGE.md).
