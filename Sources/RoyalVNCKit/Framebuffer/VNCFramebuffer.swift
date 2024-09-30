@@ -421,7 +421,7 @@ private extension VNCFramebuffer {
 		let sourceColumnLength = regionWidth * sourceBytesPerPixel
 		let destinationColumnLength = regionWidth * destinationBytesPerPixel
 		
-		let targetBase = surface.baseAddress
+        let targetBase = surfaceAddress
 		
 		data.withUnsafeBytes { sourcePixelDataPtr in
 			for row in 0..<regionHeight {
@@ -536,7 +536,7 @@ private extension VNCFramebuffer {
 			}
 		}
 		
-		let targetBase = surface.baseAddress
+		let targetBase = surfaceAddress
 		
 		destinationPixelData.withUnsafeBytes { destinationPixelDataBytesPtr in
 			guard let destinationPixelDataBytes = destinationPixelDataBytesPtr.baseAddress else { return }
@@ -590,7 +590,7 @@ private extension VNCFramebuffer {
 		let regionX = Int(region.location.x)
 		let regionY = Int(region.location.y)
 		
-		let buffer = surface.baseAddress.assumingMemoryBound(to: UInt8.self)
+		let buffer = surfaceAddress.assumingMemoryBound(to: UInt8.self)
 		
 		let bytesPerPixel = destinationProperties.bytesPerPixel
 		
@@ -684,8 +684,17 @@ private extension VNCFramebuffer {
     }
 }
 
-// MARK: - IOSurface Lock/Unlock
+// MARK: - Surface Access
 private extension VNCFramebuffer {
+    var surfaceAddress: UnsafeMutableRawPointer {
+#if canImport(IOSurface)
+        surface.baseAddress
+#else
+        // TODO: Implement on Linux/Windows/etc.
+        fatalError("VNCFramebuffer.surfaceAddress is not implemented on this platform")
+#endif
+    }
+    
 	func lockSurfaceReadOnly() {
 #if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
