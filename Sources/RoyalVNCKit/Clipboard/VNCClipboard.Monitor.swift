@@ -46,12 +46,10 @@ extension VNCClipboardMonitor {
 		
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
-			
-			let timer = Timer.scheduledTimer(timeInterval: self.monitoringInterval,
-											 target: self,
-											 selector: #selector(self.timerDidFire(_:)),
-											 userInfo: nil,
-											 repeats: true)
+            
+            let timer = Timer.scheduledTimer(withTimeInterval: self.monitoringInterval,
+                                             repeats: true,
+                                             block: timerDidFire(_:))
 			
 			timer.tolerance = self.tolerance
 			
@@ -70,9 +68,6 @@ extension VNCClipboardMonitor {
 }
 
 private extension VNCClipboardMonitor {
-#if canImport(ObjectiveC)
-	@objc
-#endif
 	func timerDidFire(_ timer: Timer) {
 		guard let delegate,
 			  timer == self.timer else {
