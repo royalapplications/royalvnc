@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(Security)
+import Security
+#endif
+
 extension VNCProtocol.ARDAuthentication {
     struct Authentication {
         let cipherText: Data
@@ -24,9 +28,16 @@ extension VNCProtocol.ARDAuthentication {
             let randomCredsDataSuccess = creds.withUnsafeMutableBytes {
                 guard let credsBytes = $0.baseAddress else { return false }
                 
-                let randomStatus = SecRandomCopyBytes(kSecRandomDefault, credArraySize, credsBytes)
+#if canImport(Security)
+				let randomStatus = SecRandomCopyBytes(kSecRandomDefault, credArraySize, credsBytes)
                 
                 guard randomStatus == errSecSuccess else { return false }
+#else
+				// TODO: Probably not secure
+				for i in 0..<credArraySize {
+					$0[i] = UInt8.random(in: 0...255)
+				}
+#endif
                 
                 return true
             }

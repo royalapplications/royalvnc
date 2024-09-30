@@ -151,7 +151,7 @@ extension ZlibInflateStream {
 	func inflateEnd() throws {
 		let streamPtr = self.streamPtr
 		
-		let status = zlib.inflateEnd(streamPtr)
+		let status = Z.inflateEnd(streamPtr)
 		
 		guard ZlibError.isSuccess(status) else {
 			throw Self.error(streamPtr: streamPtr,
@@ -281,7 +281,7 @@ extension ZlibInflateStream {
 		
 		let flushValue = flush.rawValue
 		
-		let status = zlib.inflate(streamPtr, flushValue)
+		let status = Z.inflate(streamPtr, flushValue)
 		
 		if status == Z_STREAM_END {
 			return true
