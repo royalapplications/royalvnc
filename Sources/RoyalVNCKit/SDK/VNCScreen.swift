@@ -3,7 +3,7 @@ import Foundation
 #if canImport(ObjectiveC)
 @objc(VNCScreen)
 #endif
-public final class VNCScreen: NSObjectOrAnyObject, Equatable {
+public final class VNCScreen: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -50,7 +50,7 @@ extension VNCScreen {
 	}
 }
 #else
-extension VNCScreen {
+extension VNCScreen: Equatable {
 	public static func ==(lhs: VNCScreen, rhs: VNCScreen) -> Bool {
         let equal = lhs.id == rhs.id &&
 				    lhs.frame == rhs.frame

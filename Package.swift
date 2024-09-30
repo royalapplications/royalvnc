@@ -32,7 +32,8 @@ let package = Package(
             dependencies: [
                 "d3des",
                 "libtommath",
-                .product(name: "Z",package:"swift-package-zlib"),
+                
+                .product(name: "Z", package:"swift-package-zlib"),
                 .product(name: "Crypto", package: "swift-crypto")
             ],
             swiftSettings: [
