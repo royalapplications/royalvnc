@@ -1,3 +1,4 @@
+#if canImport(Security)
 import Foundation
 import Security
 
@@ -89,3 +90,4 @@ private extension Keychain {
 		return success
 	}
 }
+#endif

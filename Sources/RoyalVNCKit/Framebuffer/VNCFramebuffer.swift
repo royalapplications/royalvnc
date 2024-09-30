@@ -1,6 +1,12 @@
 import Foundation
+
+#if canImport(CoreImage)
 import CoreImage
+#endif
+
+#if canImport(IOSurface)
 import IOSurface
+#endif
 
 #if os(macOS)
 import AppKit
@@ -24,11 +30,13 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 	@objc(fullRegion)
 #endif
 	public let cgFullRegion: CGRect
-	
+
+#if canImport(IOSurface)
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	public let surface: IOSurface
+#endif
 	
 #if canImport(ObjectiveC)
 	@objc
@@ -58,17 +66,23 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 	
 	private(set) var colorMap: ColorMap?
 	
+#if canImport(CoreGraphics)
 	// MARK: - Private Properties
 	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
-	
+#endif
+
+#if canImport(IOSurface)
 	private static let surfaceLockOptionsReadOnly: IOSurfaceLockOptions = [ .readOnly ]
 	private static let surfaceLockOptionsReadWrite: IOSurfaceLockOptions = [ ]
+#endif
 	
 	private let width: Int
 	private let height: Int
-	
+
+#if canImport(CoreImage)
 	private let ciContext: CIContext
 	private let ciImageOptions: [CIImageOption: Any]?
+#endif
 
 	private var framebufferHasBeenUpdatedAtLeastOnce = false
 	
@@ -106,6 +120,7 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 		self.needsColorConversion = sourceProperties.bytesPerPixel != destinationProperties.bytesPerPixel ||
 									sourceProperties.bitsPerPixel != destinationProperties.bitsPerPixel
 		
+#if canImport(CoreImage)
 		self.ciContext = .init(options: [
 			.allowLowPower: true,
 			.outputColorSpace: Self.rgbColorSpace,
@@ -115,9 +130,11 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 		self.ciImageOptions = [
 			.colorSpace: Self.rgbColorSpace
 		]
+#endif
 		
 		let bufferLength = width * height * destinationProperties.bytesPerPixel
 		
+#if canImport(IOSurface)
 		let cvPixelFormat = kCVPixelFormatType_32BGRA
 		
 		guard let surface = IOSurface(properties: [
@@ -132,11 +149,13 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 		}
 		
 		self.surface = surface
+#endif
 	}
 }
 
 // MARK: - Public APIs
 public extension VNCFramebuffer {
+#if canImport(CoreImage)
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -153,7 +172,9 @@ public extension VNCFramebuffer {
 		
 		return image
 	}
-	
+#endif
+
+#if canImport(CoreImage)
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -174,6 +195,7 @@ public extension VNCFramebuffer {
 		
 		return finalImage
 	}
+#endif
 	
 #if os(macOS)
     @objc
@@ -665,19 +687,27 @@ private extension VNCFramebuffer {
 // MARK: - IOSurface Lock/Unlock
 private extension VNCFramebuffer {
 	func lockSurfaceReadOnly() {
+#if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
+#endif
 	}
 	
 	func unlockSurfaceReadOnly() {
+#if canImport(IOSurface)
 		surface.unlock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
+#endif
 	}
 	
 	func lockSurfaceReadWrite() {
+#if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
+#endif
 	}
 	
 	func unlockSurfaceReadWrite() {
+#if canImport(IOSurface)
 		surface.unlock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
+#endif
 	}
 }
 

@@ -1,5 +1,5 @@
 import Foundation
-import CryptoKit
+import Crypto
 
 extension Data {
 	mutating func append(_ uint32: UInt32,

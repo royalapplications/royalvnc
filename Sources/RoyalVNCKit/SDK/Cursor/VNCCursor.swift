@@ -1,5 +1,8 @@
 import Foundation
+
+#if canImport(CoreGraphics)
 import CoreGraphics
+#endif
 
 #if canImport(ObjectiveC)
 @objc(VNCCursor)
@@ -42,8 +45,10 @@ public class VNCCursor: NSObjectOrAnyObject {
     @objc
 #endif
 	public let bytesPerRow: Int
-	
+
+#if canImport(CoreGraphics)
 	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+#endif
 	
 	override init() {
 		self.isEmpty = true
@@ -92,7 +97,8 @@ public extension VNCCursor {
 	var cgHotspot: CGPoint {
 		hotspot.cgPoint
 	}
-	
+
+#if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -121,4 +127,5 @@ public extension VNCCursor {
 		
 		return image
 	}
+#endif
 }

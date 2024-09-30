@@ -1,5 +1,5 @@
 import Foundation
-import CommonCrypto
+import Crypto
 
 struct AES128ECBEncryption {
 	static func encrypt(data: Data,

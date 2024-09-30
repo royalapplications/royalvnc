@@ -1,4 +1,5 @@
 import Foundation
+import CoreFoundation
 
 protocol AnyStream {
 	func read(length: Int) throws -> Data

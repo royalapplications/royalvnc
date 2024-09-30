@@ -1,5 +1,6 @@
 import Foundation
-import zlib
+
+import Z
 
 enum ZlibError: Error {
 	case unknown(status: Int32, message: String?)
@@ -38,7 +39,7 @@ class ZlibInflateStream {
         var status = Z_VERSION_ERROR
         
         withUnsafeMutablePointer(to: &version) { versionPtr in
-            status = zlib.inflateInit_(streamPtr, versionPtr, .init(MemoryLayout<z_stream>.size))
+            status = inflateInit_(streamPtr, versionPtr, .init(MemoryLayout<z_stream>.size))
         }
         
 		guard ZlibError.isSuccess(status) else {

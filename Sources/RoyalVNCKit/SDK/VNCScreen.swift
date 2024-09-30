@@ -1,10 +1,9 @@
 import Foundation
-import CoreGraphics
 
 #if canImport(ObjectiveC)
 @objc(VNCScreen)
 #endif
-public class VNCScreen: NSObjectOrAnyObject {
+public final class VNCScreen: NSObjectOrAnyObject, Equatable {
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -28,6 +27,7 @@ public extension VNCScreen {
 	}
 }
 
+#if canImport(ObjectiveC)
 // MARK: - Equatable overrides for NSObject
 extension VNCScreen {
 	public override func isEqual(_ object: Any?) -> Bool {
@@ -49,6 +49,16 @@ extension VNCScreen {
 		return hasher.finalize()
 	}
 }
+#else
+extension VNCScreen {
+	public static func ==(lhs: VNCScreen, rhs: VNCScreen) -> Bool {
+        let equal = lhs.id == rhs.id &&
+				    lhs.frame == rhs.frame
+		
+		return equal
+    }
+}
+#endif
 
 extension VNCScreen {
 	convenience init(screen: VNCProtocol.Screen) {

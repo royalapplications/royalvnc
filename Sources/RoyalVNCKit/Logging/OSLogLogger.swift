@@ -1,3 +1,4 @@
+#if canImport(OSLog)
 import Foundation
 import OSLog
 
@@ -35,3 +36,4 @@ fileprivate extension Logger {
 	
 	static let main = Logger(subsystem: subsystem, category: category)
 }
+#endif

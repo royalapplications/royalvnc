@@ -65,7 +65,7 @@ public class VNCConnection: NSObjectOrAnyObject {
 #if canImport(Network)
         let connection = NWConnection(settings: connectionSettings)
 #else
-        fatalError("TODO: Implement NetworkConnection for Linux/Windows/etc.")
+		let connection = LinuxNetworkConnection(settings: connectionSettings)
 #endif
         
         connection.setStatusUpdateHandler(connectionStatusDidChange)
@@ -189,7 +189,11 @@ public class VNCConnection: NSObjectOrAnyObject {
 	@objc
 #endif
 	public convenience init(settings: Settings) {
+#if canImport(OSLog)
 		let logger = OSLogLogger()
+#else
+		let logger = PrintLogger() 
+#endif
 		
 		self.init(settings: settings,
 				  logger: logger)

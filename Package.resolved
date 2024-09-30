@@ -1,0 +1,24 @@
+{
+  "originHash" : "1f827297446fe3fb967378696002f8db296d9fcbd3e66fd193a4508c3508a587",
+  "pins" : [
+    {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "81bee98e706aee68d39ed5996db069ef2b313d62",
+        "version" : "3.7.1"
+      }
+    },
+    {
+      "identity" : "swift-package-zlib",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/fourplusone/swift-package-zlib",
+      "state" : {
+        "branch" : "master",
+        "revision" : "03ecd41814d8929362f7439529f9682536a8de13"
+      }
+    }
+  ],
+  "version" : 3
+}

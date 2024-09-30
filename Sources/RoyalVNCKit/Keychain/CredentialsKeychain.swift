@@ -1,7 +1,9 @@
 import Foundation
 
 struct CredentialsKeychain {
+#if canImport(Security)
 	private let keychain = Keychain()
+#endif
 }
 
 extension CredentialsKeychain {
@@ -30,6 +32,7 @@ extension CredentialsKeychain {
 
 private extension CredentialsKeychain {
 	func string(forKey key: String) -> String {
+#if canImport(Security)
 		guard let data = keychain.get(key: key) else {
 			return ""
 		}
@@ -39,15 +42,22 @@ private extension CredentialsKeychain {
 		}
 		
 		return string
+#else
+		fatalError("Not implemented")
+#endif
 	}
 	
 	func setString(_ string: String,
 				   forKey key: String) {
+#if canImport(Security)
 		guard let data = string.data(using: .utf8) else {
 			return
 		}
 		
 		keychain.set(data, forKey: key)
+#else
+		fatalError("Not implemented")
+#endif
 	}
 	
 	func usernameKey(forHostname hostname: String,

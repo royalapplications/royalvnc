@@ -7,5 +7,11 @@ import ObjectiveC
 #if canImport(ObjectiveC)
 public typealias NSObjectOrAnyObject = NSObject
 #else
-public typealias NSObjectOrAnyObject = AnyObject
+public typealias NSObjectOrAnyObject = BaseType
+
+public class BaseType {
+    init() {
+
+    }
+}
 #endif

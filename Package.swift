@@ -20,13 +20,20 @@ let package = Package(
             targets: [ "RoyalVNCKit" ]
         ),
     ],
+
+    dependencies: [
+        .package(url:"https://github.com/fourplusone/swift-package-zlib", branch: "master"),
+        .package(url: "https://github.com/apple/swift-crypto.git", "1.0.0" ..< "4.0.0")
+    ],
     
     targets: [
         .target(
             name: "RoyalVNCKit",
             dependencies: [
                 "d3des",
-                "libtommath"
+                "libtommath",
+                .product(name: "Z",package:"swift-package-zlib"),
+                .product(name: "Crypto", package: "swift-crypto")
             ],
             swiftSettings: [
                 .swiftLanguageMode(.v5)

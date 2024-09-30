@@ -1,5 +1,6 @@
 import Foundation
-import zlib
+
+import Z
 
 class ZlibStream {
 	private let stream: ZlibInflateStream

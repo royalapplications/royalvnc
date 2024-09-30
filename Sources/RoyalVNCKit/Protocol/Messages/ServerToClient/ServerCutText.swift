@@ -1,6 +1,7 @@
 // swiftlint:disable nesting
 
 import Foundation
+import CoreFoundation
 
 extension VNCProtocol {
     struct ServerCutText: VNCReceivableMessage {
