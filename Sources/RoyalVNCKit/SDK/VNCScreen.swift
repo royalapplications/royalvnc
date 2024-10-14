@@ -1,5 +1,12 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 #if canImport(ObjectiveC)
 @objc(VNCScreen)
@@ -19,6 +26,7 @@ public final class VNCScreen: NSObjectOrAnyObject {
 	}
 }
 
+#if canImport(CoreGraphics)
 public extension VNCScreen {
 #if canImport(ObjectiveC)
     @objc
@@ -27,6 +35,7 @@ public extension VNCScreen {
 		frame.cgRect
 	}
 }
+#endif
 
 #if canImport(ObjectiveC)
 // MARK: - Equatable overrides for NSObject

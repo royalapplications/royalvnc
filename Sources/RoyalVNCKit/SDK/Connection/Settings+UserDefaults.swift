@@ -1,4 +1,4 @@
-// TODO: FoundationEssentials
+#if !os(Linux) && !os(Windows)
 import Foundation
 
 public extension VNCConnection.Settings {
@@ -175,3 +175,4 @@ private extension VNCConnection.Settings {
 		}
 	}
 }
+#endif
