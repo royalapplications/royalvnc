@@ -1,4 +1,4 @@
-// TODO: FoundationEssentials
+#if os(macOS) || os(iOS)
 import Foundation
 
 #if canImport(ObjectiveC)
@@ -58,3 +58,4 @@ public protocol VNCFramebufferView: AnyObject {
 	func connection(_ connection: VNCConnection,
 					didUpdateCursor cursor: VNCCursor)
 }
+#endif

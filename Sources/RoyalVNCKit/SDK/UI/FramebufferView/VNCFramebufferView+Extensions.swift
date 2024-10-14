@@ -1,4 +1,4 @@
-// TODO: FoundationEssentials
+#if os(macOS) || os(iOS)
 import Foundation
 
 extension VNCFramebufferView {
@@ -78,3 +78,4 @@ extension VNCFramebufferView {
 		}
 	}
 }
+#endif
