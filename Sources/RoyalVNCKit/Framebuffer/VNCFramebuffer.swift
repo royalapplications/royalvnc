@@ -1,6 +1,10 @@
 // TODO: FoundationEssentials
 import Foundation
 
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
+
 #if canImport(CoreImage)
 import CoreImage
 #endif
@@ -20,17 +24,21 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 	// MARK: - Public Properties
 	public let size: VNCSize
 	
+#if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
 	@objc(size)
 #endif
 	public let cgSize: CGSize
+#endif
 	
 	public let fullRegion: VNCRegion
-	
+
+#if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
 	@objc(fullRegion)
 #endif
 	public let cgFullRegion: CGRect
+#endif
 
 #if canImport(IOSurface)
 #if canImport(ObjectiveC)
@@ -95,10 +103,16 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 		let height = Int(size.height)
 		
 		self.size = size
+
+#if canImport(CoreGraphics)
 		self.cgSize = size.cgSize
+#endif
 		
 		self.fullRegion = .init(location: .zero, size: size)
+
+#if canImport(CoreGraphics)
 		self.cgFullRegion = .init(origin: .zero, size: size.cgSize)
+#endif
 		
 		self.width = width
 		self.height = height
