@@ -1,5 +1,12 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 // MARK: - Queue Management
 extension VNCConnection {
@@ -60,29 +67,39 @@ extension VNCConnection {
 	func enqueueClientToServerMessage(_ message: VNCSendableMessage) {
 		clientToServerMessageQueue.enqueue(message)
 	}
-	
+    
+#if canImport(CoreGraphics)
 	func normalizedMousePosition(cgPoint: CGPoint) -> VNCProtocol.MousePosition {
-		var normalizedX = Int(cgPoint.x)
-		var normalizedY = Int(cgPoint.y)
-		
-		let framebufferWidth = Int(framebuffer?.size.width ?? 0)
-		let framebufferHeight = Int(framebuffer?.size.height ?? 0)
-		
-		if normalizedY < 0 {
-			normalizedY = 0
-		} else if normalizedY > framebufferHeight {
-			normalizedY = framebufferHeight
-		}
-		
-		if normalizedX < 0 {
-			normalizedX = 0
-		} else if normalizedX > framebufferWidth {
-			normalizedX = framebufferWidth
-		}
-		
-		let normalizedPosition = VNCProtocol.MousePosition(x: .init(normalizedX),
-														   y: .init(normalizedY))
-		
-		return normalizedPosition
+        normalizedMousePosition(x: cgPoint.x,
+                                y: cgPoint.y)
 	}
+#endif
+}
+
+private extension VNCConnection {
+    func normalizedMousePosition(x: Double,
+                                 y: Double) -> VNCProtocol.MousePosition {
+        var normalizedX = Int(x)
+        var normalizedY = Int(y)
+        
+        let framebufferWidth = Int(framebuffer?.size.width ?? 0)
+        let framebufferHeight = Int(framebuffer?.size.height ?? 0)
+        
+        if normalizedY < 0 {
+            normalizedY = 0
+        } else if normalizedY > framebufferHeight {
+            normalizedY = framebufferHeight
+        }
+        
+        if normalizedX < 0 {
+            normalizedX = 0
+        } else if normalizedX > framebufferWidth {
+            normalizedX = framebufferWidth
+        }
+        
+        let normalizedPosition = VNCProtocol.MousePosition(x: .init(normalizedX),
+                                                           y: .init(normalizedY))
+        
+        return normalizedPosition
+    }
 }
