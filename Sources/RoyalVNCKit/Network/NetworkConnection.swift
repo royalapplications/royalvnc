@@ -4,9 +4,6 @@ import FoundationEssentials
 import Foundation
 #endif
 
-// TODO: No CoreFoundation when using FoundationEssentials?
-import CoreFoundation
-
 import Dispatch
 
 enum NetworkConnectionStatus {
@@ -124,7 +121,7 @@ extension NetworkConnectionReading {
             $0.load(as: UInt16.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? UInt16(bigEndian: bigEndianValue)
             : bigEndianValue
         
@@ -143,7 +140,7 @@ extension NetworkConnectionReading {
             $0.load(as: Int16.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? Int16(bigEndian: bigEndianValue)
             : bigEndianValue
         
@@ -162,7 +159,7 @@ extension NetworkConnectionReading {
             $0.load(as: UInt32.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? UInt32(bigEndian: bigEndianValue)
             : bigEndianValue
         
@@ -181,7 +178,7 @@ extension NetworkConnectionReading {
             $0.load(as: Int32.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? Int32(bigEndian: bigEndianValue)
             : bigEndianValue
         

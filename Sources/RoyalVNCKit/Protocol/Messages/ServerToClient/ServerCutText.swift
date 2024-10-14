@@ -1,8 +1,10 @@
 // swiftlint:disable nesting
 
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
-import CoreFoundation
+#endif
 
 extension VNCProtocol {
     struct ServerCutText: VNCReceivableMessage {
@@ -59,8 +61,10 @@ private extension VNCProtocol.ServerCutText {
 		let bigEndianUnsignedLength = lengthData.withUnsafeBytes {
 			$0.load(as: UInt32.self)
 		}
+        
+        let endianess = Endianness.current
 		
-		var length = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        var length = endianess == .little
 			? Int(UInt32(bigEndian: bigEndianUnsignedLength))
 			: Int(bigEndianUnsignedLength)
 		
@@ -70,7 +74,7 @@ private extension VNCProtocol.ServerCutText {
 				$0.load(as: Int32.self)
 			}
 			
-			length = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+			length = endianess == .little
 				? Int(Int32(bigEndian: bigEndianSignedLength))
 				: Int(bigEndianSignedLength)
 		}
