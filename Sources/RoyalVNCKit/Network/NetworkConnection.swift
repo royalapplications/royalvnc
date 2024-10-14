@@ -1,5 +1,12 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+// TODO: No CoreFoundation when using FoundationEssentials?
 import CoreFoundation
+
 import Dispatch
 
 enum NetworkConnectionStatus {

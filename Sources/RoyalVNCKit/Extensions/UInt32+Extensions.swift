@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension UInt32 {
 	func uint8Value(bigEndian: Bool) -> [UInt8] {

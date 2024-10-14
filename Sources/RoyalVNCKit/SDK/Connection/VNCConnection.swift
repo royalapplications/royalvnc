@@ -1,4 +1,7 @@
+// TODO: FoundationEssentials
 import Foundation
+
+import Dispatch
 
 #if canImport(Network)
 import Network

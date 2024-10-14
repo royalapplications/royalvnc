@@ -1,3 +1,4 @@
+#if !canImport(FoundationEssentials)
 import Foundation
 
 class NSLogLogger: VNCLogger {
@@ -27,3 +28,4 @@ private extension NSLogLogger {
 		NSLog(message)
 	}
 }
+#endif

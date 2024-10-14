@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 class PrintLogger: VNCLogger {
 	var isDebugLoggingEnabled = false

@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension VNCKeyCode {
 	static func keyCodesFrom(characters: String) -> [VNCKeyCode] {

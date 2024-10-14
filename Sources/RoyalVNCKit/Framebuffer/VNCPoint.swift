@@ -1,5 +1,6 @@
 // swiftlint:disable identifier_name
 
+// TODO: FoundationEssentials
 import Foundation
 
 public struct VNCPoint: Equatable {

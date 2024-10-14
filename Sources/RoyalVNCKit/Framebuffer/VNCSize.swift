@@ -1,3 +1,4 @@
+// TODO: FoundationEssentials
 import Foundation
 
 public struct VNCSize: Equatable {

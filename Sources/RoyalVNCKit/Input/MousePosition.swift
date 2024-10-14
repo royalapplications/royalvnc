@@ -1,6 +1,10 @@
 // swiftlint:disable identifier_name
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension VNCProtocol {
 	struct MousePosition {

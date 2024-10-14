@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public enum VNCPseudoEncodingType: VNCEncodingType {
 	case lastRect = -224

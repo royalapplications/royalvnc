@@ -1,6 +1,10 @@
 // swiftlint:disable file_length type_body_length
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 struct X11KeySymbols {
 	static let XK_VoidSymbol                  = UInt32(0xffffff)  /* Void symbol */

@@ -1,5 +1,11 @@
 #if os(Linux)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+import Dispatch
 
 final class LinuxNetworkConnection: NetworkConnection {
     init(settings: NetworkConnectionSettings) {
