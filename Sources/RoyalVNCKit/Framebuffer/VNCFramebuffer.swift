@@ -309,7 +309,7 @@ extension VNCFramebuffer {
 					let destinationPixel = destinationPixelWith(sourcePixelData: sourcePixelDataPtr,
 																sourcePixelDataOffset: sourceOffset)
 					
-					let maskIdx = row * Int(ceil(Double(cursorWidth) / 8.0)) + Int(floor(Double(column) / 8.0))
+                    let maskIdx = row * Int(ceil(Double(cursorWidth) / 8.0)) + Int((Double(column) / 8.0).rounded(.down))
 					
 					let destinationAlpha: UInt8 = (mask[maskIdx] << (column % 8)) & 0x80 != 0
 						? destinationMaxAlpha

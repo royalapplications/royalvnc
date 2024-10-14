@@ -76,7 +76,7 @@ extension VNCFramebuffer {
 			let bytesPerPixel = 4
 			let bytesPerRow = width * bytesPerPixel
 			
-			let bits = Int(floor(Double(colorDepth) / 3.0))
+            let bits = Int((Double(colorDepth) / 3.0).rounded(.down))
 			let colorMax = Int((1 << bits) - 1)
 			
 			let redMax = colorMax
