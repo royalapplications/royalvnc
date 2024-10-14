@@ -1,5 +1,8 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct VNCSize: Equatable {
 	public let width: UInt16
@@ -9,11 +12,6 @@ public struct VNCSize: Equatable {
 				height: UInt16) {
 		self.width = width
 		self.height = height
-	}
-	
-	public init(cgSize: CGSize) {
-		self.width = .init(cgSize.width)
-		self.height = .init(cgSize.height)
 	}
 }
 
@@ -25,19 +23,8 @@ extension VNCSize: Hashable {
 }
 
 public extension VNCSize {
-	var cgSize: CGSize {
-        .init(width: CGFloat(width),
-              height: CGFloat(height))
-	}
-	
 	static let zero: Self = .init(width: 0,
 								  height: 0)
-}
-
-public extension CGSize {
-	var vncSize: VNCSize {
-		.init(cgSize: self)
-	}
 }
 
 extension VNCSize: CustomStringConvertible {

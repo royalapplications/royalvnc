@@ -1,7 +1,10 @@
 // swiftlint:disable identifier_name
 
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct VNCRegion: Equatable {
 	public let location: VNCPoint
@@ -18,11 +21,6 @@ public struct VNCRegion: Equatable {
 		self.location = .init(x: x, y: y)
 		self.size = .init(width: width, height: height)
 	}
-	
-	public init(cgRect: CGRect) {
-		self.location = .init(cgPoint: cgRect.origin)
-		self.size = .init(cgSize: cgRect.size)
-	}
 }
 
 extension VNCRegion: Hashable {
@@ -33,34 +31,14 @@ extension VNCRegion: Hashable {
 }
 
 public extension VNCRegion {
-	var cgRect: CGRect {
-        .init(origin: location.cgPoint,
-              size: size.cgSize)
-	}
-	
 	static let zero: Self = .init(location: .zero,
 								  size: .zero)
-	
-	func flipped(bounds: VNCRegion) -> Self {
-		let selfCG = self.cgRect
-		
-		return .init(x: .init(selfCG.minX),
-					 y: .init(bounds.cgRect.maxY - selfCG.maxY),
-					 width: .init(selfCG.width),
-					 height: .init(selfCG.height))
-	}
 	
 	var x: UInt16 { location.x }
 	var y: UInt16 { location.y }
 	
 	var width: UInt16 { size.width }
 	var height: UInt16 { size.height }
-}
-
-public extension CGRect {
-	var vncRegion: VNCRegion {
-		.init(cgRect: self)
-	}
 }
 
 extension VNCRegion: CustomStringConvertible {

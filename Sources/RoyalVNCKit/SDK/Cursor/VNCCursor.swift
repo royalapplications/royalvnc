@@ -1,5 +1,8 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 #if canImport(CoreGraphics)
 import CoreGraphics
@@ -84,6 +87,7 @@ public class VNCCursor: NSObjectOrAnyObject {
 	}
 }
 
+#if canImport(CoreGraphics)
 public extension VNCCursor {
 #if canImport(ObjectiveC)
     @objc
@@ -99,7 +103,6 @@ public extension VNCCursor {
 		hotspot.cgPoint
 	}
 
-#if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -128,5 +131,5 @@ public extension VNCCursor {
 		
 		return image
 	}
-#endif
 }
+#endif
