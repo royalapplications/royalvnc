@@ -1,5 +1,10 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+import Dispatch
 
 #if os(macOS)
 import AppKit
@@ -16,7 +21,10 @@ class VNCClipboardMonitor {
 	
 	private(set) var isMonitoring = false
 	
+#if !canImport(FoundationEssentials)
 	private var timer: Timer?
+#endif
+
 	private var lastChangeCount = 0
 	
 	init(clipboard: VNCClipboard,
@@ -41,6 +49,7 @@ extension VNCClipboardMonitor {
 		// -1 to send clipboard to trigger notification immediately if something's on the pasteboard
 		lastChangeCount = clipboard.changeCount - 1
 		
+#if !canImport(FoundationEssentials)
 		guard timer == nil else { // Already have a timer
 			return
 		}
@@ -57,17 +66,21 @@ extension VNCClipboardMonitor {
             self.timer = timer
             self.isMonitoring = true
 		}
+#endif
 	}
 	
 	func stopMonitoring() {
+#if !canImport(FoundationEssentials)
 		timer?.invalidate()
 		timer = nil
+#endif
 		
 		lastChangeCount = 0
 		isMonitoring = false
 	}
 }
 
+#if !canImport(FoundationEssentials)
 private extension VNCClipboardMonitor {
 	func timerDidFire(_ timer: Timer) {
 		guard let delegate,
@@ -95,3 +108,4 @@ private extension VNCClipboardMonitor {
 								  didChangeText: text)
 	}
 }
+#endif
