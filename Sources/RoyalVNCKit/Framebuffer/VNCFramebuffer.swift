@@ -1,5 +1,8 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 #if canImport(CoreGraphics)
 import CoreGraphics
@@ -323,7 +326,7 @@ extension VNCFramebuffer {
 					let destinationPixel = destinationPixelWith(sourcePixelData: sourcePixelDataPtr,
 																sourcePixelDataOffset: sourceOffset)
 					
-                    let maskIdx = row * Int(ceil(Double(cursorWidth) / 8.0)) + Int((Double(column) / 8.0).rounded(.down))
+                    let maskIdx = row * Int((Double(cursorWidth) / 8.0).rounded(.up)) + Int((Double(column) / 8.0).rounded(.down))
 					
 					let destinationAlpha: UInt8 = (mask[maskIdx] << (column % 8)) & 0x80 != 0
 						? destinationMaxAlpha
