@@ -16,6 +16,10 @@ import CoreImage
 import IOSurface
 #endif
 
+#if canImport(Glibc)
+import Glibc
+#endif
+
 #if os(macOS)
 import AppKit
 #endif
@@ -48,6 +52,15 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 	@objc
 #endif
 	public let surface: IOSurface
+#else
+	public let buffer: UnsafeMutableRawPointer
+
+	private lazy var bufferMutex: pthread_mutex_t = {
+		var mut = pthread_mutex_t()
+		pthread_mutex_init(&mut, nil)
+
+		return mut
+	}()
 #endif
 	
 #if canImport(ObjectiveC)
@@ -167,6 +180,22 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 		}
 		
 		self.surface = surface
+#else
+		let buffer = UnsafeMutableRawPointer.allocate(byteCount: bufferLength,
+																			   alignment: MemoryLayout<UInt8>.alignment)
+
+		buffer.initializeMemory(as: UInt8.self, 
+								repeating: 0,
+								count: bufferLength)
+
+		self.buffer = buffer
+#endif
+	}
+
+	deinit {
+#if !canImport(IOSurface)
+		self.buffer.deallocate()
+		pthread_mutex_destroy(&bufferMutex)
 #endif
 	}
 }
@@ -708,32 +737,39 @@ private extension VNCFramebuffer {
 #if canImport(IOSurface)
         surface.baseAddress
 #else
-        // TODO: Implement on Linux/Windows/etc.
-        fatalError("VNCFramebuffer.surfaceAddress is not implemented on this platform")
+        buffer
 #endif
     }
     
 	func lockSurfaceReadOnly() {
 #if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
+#else
+		pthread_mutex_lock(&bufferMutex)
 #endif
 	}
 	
 	func unlockSurfaceReadOnly() {
 #if canImport(IOSurface)
 		surface.unlock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
+#else
+		pthread_mutex_unlock(&bufferMutex)
 #endif
 	}
 	
 	func lockSurfaceReadWrite() {
 #if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
+#else
+		pthread_mutex_lock(&bufferMutex)
 #endif
 	}
 	
 	func unlockSurfaceReadWrite() {
 #if canImport(IOSurface)
 		surface.unlock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
+#else
+		pthread_mutex_unlock(&bufferMutex)
 #endif
 	}
 }
