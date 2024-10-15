@@ -19,6 +19,9 @@ let package = Package(
             type: .dynamic,
             targets: [ "RoyalVNCKit" ]
         ),
+        
+        .executable(name: "RoyalVNCKitDemo",
+                    targets: [ "RoyalVNCKitDemo" ])
     ],
 
     targets: [
@@ -43,6 +46,14 @@ let package = Package(
         
         .target(name: "Z", linkerSettings: [
             .linkedLibrary("z")
-        ])
+        ]),
+        
+        .executableTarget(
+            name: "RoyalVNCKitDemo",
+            
+            dependencies: [
+                "RoyalVNCKit"
+            ]
+        )
     ]
 )
