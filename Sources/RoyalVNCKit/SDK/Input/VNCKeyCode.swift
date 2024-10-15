@@ -194,7 +194,7 @@ public extension VNCKeyCode {
 	}
 	
 	var hexDescription: String {
-		let keyHex = String(format: "0x%04X", rawValue)
+		let keyHex = rawValue.hexString()
 		
 		return keyHex
 	}

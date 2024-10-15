@@ -60,7 +60,7 @@ public enum VNCError: Error, LocalizedError {
 extension VNCError {
 	static func combinedErrorDescription(_ baseErrorDescription: String,
 										 underlyingError: Error?) -> String {
-		let underlyingErrorDescription = underlyingError?.localizedDescription ?? ""
+		let underlyingErrorDescription = underlyingError?.humanReadableDescription ?? ""
 		
 		guard underlyingErrorDescription != baseErrorDescription else {
 			return baseErrorDescription

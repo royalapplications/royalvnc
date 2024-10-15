@@ -4,9 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if os(Linux)
-import Glibc
-#else
+#if !os(Linux)
 import CoreFoundation
 #endif
 

@@ -17,8 +17,14 @@ extension VNCProtocol {
 				return nil
 			}
 			
+#if canImport(FoundationEssentials)
+			// TODO: This is not equivalent to the non-FoundationEssentials version as it removes newlines even from within the string, not just the prefix/suffix
+			let trimmedProtocolVersion = protocolVersion
+				.replacing([ "\n", "\r" ], with: "")
+#else
 			let trimmedProtocolVersion = protocolVersion
 				.trimmingCharacters(in: .newlines)
+#endif
 			
 			guard let parsedProtocolVersion = Self.parseProtocolVersion(trimmedProtocolVersion) else {
 				return nil
@@ -36,8 +42,33 @@ extension VNCProtocol {
 		
 		init(majorVersion: UInt32,
 			 minorVersion: UInt32) {
-			let protocolVersion = String(format: "RFB %03d.%03d", majorVersion, minorVersion)
-			
+			func paddedVersion(_ version: UInt32) -> String {
+                let requiredLength = 3
+                let versionString = String(version)
+                
+                if versionString.count == requiredLength {
+                    return versionString
+                }
+                
+                let paddingCount = requiredLength - versionString.count
+                
+                guard paddingCount > 0 else {
+                    return versionString
+                }
+                
+                let padding = String(repeating: "0",
+                                     		 count: requiredLength - versionString.count)
+                
+                let padVersion = padding + versionString
+                
+                return padVersion
+            }
+            
+            let paddedMajorVersion = paddedVersion(majorVersion)
+            let paddedMinorVersion = paddedVersion(minorVersion)
+            
+            let protocolVersion = "RFB \(paddedMajorVersion).\(paddedMinorVersion)"
+            
 			self.data = Self.dataWith(protocolVersion: protocolVersion)
 			self.protocolVersion = protocolVersion
 			
@@ -54,10 +85,29 @@ extension VNCProtocol.ProtocolVersion {
 		if !protocolVersion.hasSuffix("\n") {
 			fixedProtocolVersion = "\(protocolVersion)\n"
 		}
+
+		func paddedVersion(_ version: String) -> String {
+			let requiredLength = 12
+			
+			if version.count == requiredLength {
+				return version
+			}
+			
+			let paddingCount = requiredLength - version.count
+			
+			guard paddingCount > 0 else {
+				return version
+			}
+			
+			let padding = String(repeating: "\0",
+								 		 count: requiredLength - version.count)
+			
+			let padVersion = version + padding
+			
+			return padVersion
+		}
 		
-		let paddedProtocolVersion = fixedProtocolVersion.padding(toLength: 12,
-																 withPad: "\0",
-																 startingAt: protocolVersion.count)
+		let paddedProtocolVersion = paddedVersion(fixedProtocolVersion)
 		
 		let data = paddedProtocolVersion.data(using: .utf8)!
 		
@@ -96,9 +146,16 @@ extension VNCProtocol.ProtocolVersion {
 
 private extension VNCProtocol.ProtocolVersion {
 	static func parseProtocolVersion(_ protocolVersion: String) -> (UInt32, UInt32)? {
+#if canImport(FoundationEssentials)
+		// TODO: This is not equivalent to the non-FoundationEssentials version as it removes newlines even from within the string, not just the prefix/suffix
+		let trimmed = protocolVersion
+			.replacing([ "\n", "\r" ], with: "")
+			.replacing("RFB ", with: "")
+#else
 		let trimmed = protocolVersion
 			.trimmingCharacters(in: .newlines)
 			.replacingOccurrences(of: "RFB ", with: "")
+#endif
 		
 		let split = trimmed.split(separator: ".")
 		
