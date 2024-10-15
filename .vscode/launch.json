@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:royalvnc}",
+            "name": "Debug RoyalVNCKitDemo",
+            "program": "${workspaceFolder:royalvnc}/.build/debug/RoyalVNCKitDemo",
+            "preLaunchTask": "swift: Build Debug RoyalVNCKitDemo"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:royalvnc}",
+            "name": "Release RoyalVNCKitDemo",
+            "program": "${workspaceFolder:royalvnc}/.build/release/RoyalVNCKitDemo",
+            "preLaunchTask": "swift: Build Release RoyalVNCKitDemo"
+        }
+    ]
+}
