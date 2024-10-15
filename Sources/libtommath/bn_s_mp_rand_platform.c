@@ -137,10 +137,13 @@ mp_err s_read_ltm_rng(void *p, size_t n);
 mp_err s_mp_rand_platform(void *p, size_t n)
 {
    mp_err err = MP_ERR;
+#if defined(__APPLE__) || defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
    if ((err != MP_OKAY) && MP_HAS(S_READ_ARC4RANDOM)) err = s_read_arc4random(p, n);
+#else
 //   if ((err != MP_OKAY) && MP_HAS(S_READ_WINCSP))     err = s_read_wincsp(p, n);
 //   if ((err != MP_OKAY) && MP_HAS(S_READ_GETRANDOM))  err = s_read_getrandom(p, n);
    if ((err != MP_OKAY) && MP_HAS(S_READ_URANDOM))    err = s_read_urandom(p, n);
+#endif
 //   if ((err != MP_OKAY) && MP_HAS(S_READ_LTM_RNG))    err = s_read_ltm_rng(p, n);
    return err;
 }
