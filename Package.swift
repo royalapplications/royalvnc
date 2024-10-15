@@ -21,10 +21,6 @@ let package = Package(
         ),
     ],
 
-    dependencies: [
-        .package(url: "https://github.com/apple/swift-crypto.git", "1.0.0" ..< "4.0.0")
-    ],
-    
     targets: [
         .target(
             name: "RoyalVNCKit",
@@ -32,9 +28,8 @@ let package = Package(
             dependencies: [
                 "d3des",
                 "libtommath",
-                "Z",
-                
-                .product(name: "Crypto", package: "swift-crypto")
+                "libtomcrypt",
+                "Z"
             ],
             
             swiftSettings: [
@@ -44,6 +39,7 @@ let package = Package(
         
         .target(name: "d3des"),
         .target(name: "libtommath"),
+        .target(name: "libtomcrypt"),
         
         .target(name: "Z", linkerSettings: [
             .linkedLibrary("z")
