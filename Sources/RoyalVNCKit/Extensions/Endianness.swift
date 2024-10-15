@@ -4,8 +4,11 @@ import FoundationEssentials
 import Foundation
 #endif
 
-// TODO: CoreFoudnation
+#if os(Linux)
+import Glibc
+#else
 import CoreFoundation
+#endif
 
 enum Endianness {
     case little
@@ -13,13 +16,22 @@ enum Endianness {
 }
 
 extension Endianness {
-    static var current: Endianness {
-        let byteOrder = CFByteOrderGetCurrent()
+    static var current: Endianness = {
+        let endianess: Endianness
         
-        let endianess: Endianness = byteOrder == .init(CFByteOrderLittleEndian.rawValue)
+#if !os(Linux)
+        endianess = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
             ? .little
             : .big
+#else
+        let number: UInt32 = 0x12345678
+        let converted = number.bigEndian
+        
+        endianess = number == converted
+            ? .big
+            : .little
+#endif
         
         return endianess
-    }
+    }()
 }
