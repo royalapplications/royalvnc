@@ -20,7 +20,8 @@ extension VNCProtocol {
 #if canImport(FoundationEssentials)
 			// TODO: This is not equivalent to the non-FoundationEssentials version as it removes newlines even from within the string, not just the prefix/suffix
 			let trimmedProtocolVersion = protocolVersion
-				.replacing([ "\n", "\r" ], with: "")
+				.replacing("\r", with: "")
+				.replacing("\n", with: "")
 #else
 			let trimmedProtocolVersion = protocolVersion
 				.trimmingCharacters(in: .newlines)
@@ -149,7 +150,8 @@ private extension VNCProtocol.ProtocolVersion {
 #if canImport(FoundationEssentials)
 		// TODO: This is not equivalent to the non-FoundationEssentials version as it removes newlines even from within the string, not just the prefix/suffix
 		let trimmed = protocolVersion
-			.replacing([ "\n", "\r" ], with: "")
+			.replacing("\r", with: "")
+			.replacing("\n", with: "")
 			.replacing("RFB ", with: "")
 #else
 		let trimmed = protocolVersion
