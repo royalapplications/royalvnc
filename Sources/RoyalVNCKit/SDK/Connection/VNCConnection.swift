@@ -1,5 +1,8 @@
-// TODO: FoundationEssentials
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 import Dispatch
 
@@ -110,7 +113,7 @@ public class VNCConnection: NSObjectOrAnyObject {
 			try encodingTypes.validate()
 		} catch {
             // If the sanity check fails here, it's a programming error
-			fatalError((error as NSError).debugDescription)
+			fatalError(error.debugDescription)
 		}
 		
 		return encs
