@@ -1,24 +1,26 @@
 #if !canImport(FoundationEssentials)
 import Foundation
 
-class NSLogLogger: VNCLogger {
-	var isDebugLoggingEnabled = false
+public class NSLogLogger: VNCLogger {
+    public var isDebugLoggingEnabled = false
+    
+    public init() { }
 	
-	func logDebug(_ message: String) {
+    public func logDebug(_ message: String) {
 		guard isDebugLoggingEnabled else { return }
 		
 		log(debugMessage(message))
 	}
 	
-	func logInfo(_ message: String) {
+    public func logInfo(_ message: String) {
 		log(infoMessage(message))
 	}
 	
-	func logWarning(_ message: String) {
+    public func logWarning(_ message: String) {
 		log(warningMessage(message))
 	}
 	
-	func logError(_ message: String) {
+    public func logError(_ message: String) {
 		log(errorMessage(message))
 	}
 }

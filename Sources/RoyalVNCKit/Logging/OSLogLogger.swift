@@ -2,26 +2,28 @@
 import Foundation
 import OSLog
 
-class OSLogLogger: VNCLogger {
-	var isDebugLoggingEnabled = false
+public class OSLogLogger: VNCLogger {
+    public var isDebugLoggingEnabled = false
 	
 	private let logger = Logger.main
+    
+    public init() { }
 	
-	func logDebug(_ message: String) {
+    public func logDebug(_ message: String) {
 		guard isDebugLoggingEnabled else { return }
 		
 		logger.info("\(message)")
 	}
 	
-	func logInfo(_ message: String) {
+    public func logInfo(_ message: String) {
 		logger.notice("\(message)")
 	}
 	
-	func logWarning(_ message: String) {
+    public func logWarning(_ message: String) {
 		logger.warning("\(message)")
 	}
 	
-	func logError(_ message: String) {
+    public func logError(_ message: String) {
 		logger.error("\(message)")
 	}
 }
