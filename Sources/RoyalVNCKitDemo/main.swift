@@ -28,5 +28,5 @@ connection.connect()
 
 // Start an endless loop
 while true {
-    
+    platformSleep(forTimeInterval: 0.5)
 }
