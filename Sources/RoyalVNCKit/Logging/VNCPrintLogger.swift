@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public class PrintLogger: VNCLogger {
+public class VNCPrintLogger: VNCLogger {
 	public var isDebugLoggingEnabled = false
     
     public init() { }
@@ -28,7 +28,7 @@ public class PrintLogger: VNCLogger {
 	}
 }
 
-private extension PrintLogger {
+private extension VNCPrintLogger {
 	func log(_ message: String) {
 		print(message)
 	}

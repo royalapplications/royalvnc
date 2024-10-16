@@ -2,7 +2,7 @@
 import Foundation
 import OSLog
 
-public class OSLogLogger: VNCLogger {
+public class VNCOSLogLogger: VNCLogger {
     public var isDebugLoggingEnabled = false
 	
 	private let logger = Logger.main

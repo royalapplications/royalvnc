@@ -6,8 +6,6 @@ import Foundation
 
 import RoyalVNCKit
 
-let logger = PrintLogger()
-
 let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
                                       hostname: "localhost",
                                       port: 5900,
@@ -19,8 +17,7 @@ let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
                                       colorDepth: .depth24Bit,
                                       frameEncodings: .default)
 
-let connection = VNCConnection(settings: settings,
-                               logger: logger)
+let connection = VNCConnection(settings: settings)
 
 let connectionDelegate = ConnectionDelegate()
 connection.delegate = connectionDelegate

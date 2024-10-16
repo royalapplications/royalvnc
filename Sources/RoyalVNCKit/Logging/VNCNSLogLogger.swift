@@ -1,7 +1,7 @@
 #if !canImport(FoundationEssentials)
 import Foundation
 
-public class NSLogLogger: VNCLogger {
+public class VNCNSLogLogger: VNCLogger {
     public var isDebugLoggingEnabled = false
     
     public init() { }
@@ -25,7 +25,7 @@ public class NSLogLogger: VNCLogger {
 	}
 }
 
-private extension NSLogLogger {
+private extension VNCNSLogLogger {
 	func log(_ message: String) {
 		NSLog(message)
 	}

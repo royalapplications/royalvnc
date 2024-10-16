@@ -196,9 +196,9 @@ public class VNCConnection: NSObjectOrAnyObject {
 #endif
 	public convenience init(settings: Settings) {
 #if canImport(OSLog)
-		let logger = OSLogLogger()
+		let logger = VNCOSLogLogger()
 #else
-		let logger = PrintLogger() 
+		let logger = VNCPrintLogger() 
 #endif
 		
 		self.init(settings: settings,
