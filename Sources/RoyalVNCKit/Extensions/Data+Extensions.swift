@@ -4,11 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if canImport(Crypto)
-import Crypto
-#else
 import libtomcrypt
-#endif
 
 extension Data {
 	mutating func append(_ uint32: UInt32,
@@ -62,12 +58,6 @@ extension Data {
 	}
 	
 	func md5Hash() -> Data {
-#if canImport(Crypto) // Swift implementation
-		let hash = Insecure.MD5.hash(data: self)
-		let hashData = Data(hash)
-        
-        return hashData
-#else // libtomcrypt implementation
         var hashState = hash_state()
         
         // Initialize the MD5 context
@@ -113,7 +103,6 @@ extension Data {
         }
 		
 		return hashData
-#endif
 	}
 	
 	func aes128ECBEncrypted(withKey key: Data) -> Data? {
