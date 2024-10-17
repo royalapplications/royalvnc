@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-import libtomcrypt
+@_implementationOnly import libtomcrypt
 
 extension Data {
 	mutating func append(_ uint32: UInt32,
