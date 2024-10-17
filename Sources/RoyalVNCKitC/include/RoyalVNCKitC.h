@@ -123,7 +123,6 @@ typedef void (*rvnc_connection_delegate_framebuffer_did_update_region)(rvnc_conn
 typedef void (*rvnc_connection_delegate_did_update_cursor)(rvnc_connection_t _Nonnull /* connection */,
                                                            const rvnc_context_t _Nullable /* context */);
 
-// TODO: credentialsFor missing
 extern rvnc_connection_delegate_t _Nonnull rvnc_connection_delegate_create(rvnc_connection_delegate_connection_state_did_change _Nonnull connectionStateDidChange,
                                                                            rvnc_connection_delegate_get_credential _Nonnull getCredential,
                                                                            rvnc_connection_delegate_did_create_framebuffer _Nonnull didCreateFramebuffer,
