@@ -721,7 +721,7 @@ private extension VNCFramebuffer {
 }
 
 // MARK: - Surface Access
-private extension VNCFramebuffer {
+extension VNCFramebuffer {
     var surfaceAddress: UnsafeMutableRawPointer {
 #if canImport(IOSurface)
         surface.baseAddress
@@ -729,7 +729,9 @@ private extension VNCFramebuffer {
         buffer
 #endif
     }
-    
+}
+
+private extension VNCFramebuffer {
 	func lockSurfaceReadOnly() {
 #if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadOnly, seed: nil)

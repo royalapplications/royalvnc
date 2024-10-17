@@ -26,9 +26,14 @@ let package = Package(
 
     targets: [
         .target(
+            name: "RoyalVNCKitC"
+        ),
+        
+        .target(
             name: "RoyalVNCKit",
             
             dependencies: [
+                "RoyalVNCKitC",
                 "d3des",
                 "libtommath",
                 "libtomcrypt",

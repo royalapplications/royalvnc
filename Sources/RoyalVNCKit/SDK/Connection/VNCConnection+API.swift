@@ -52,13 +52,13 @@ public extension VNCConnection {
 		enqueueMouseEvent(buttons: [ ],
 						  nonNormalizedPosition: mousePosition)
 	}
-#else
-	func mouseMove(x: Double, y: Double) {
-		enqueueMouseEvent(buttons: [ ],
-						  nonNormalizedX: x,
-						  nonNormalizedY: y)
-	}
 #endif
+    
+    func mouseMove(x: Double, y: Double) {
+        enqueueMouseEvent(buttons: [ ],
+                          nonNormalizedX: x,
+                          nonNormalizedY: y)
+    }
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -68,13 +68,13 @@ public extension VNCConnection {
 		enqueueMouseEvent(buttons: [ .button1 ],
 						  nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func mouseDown(x: Double, y: Double) {
 		enqueueMouseEvent(buttons: [ .button1 ],
 						  nonNormalizedX: x,
 						  nonNormalizedY: y)
 	}
-#endif
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -84,13 +84,12 @@ public extension VNCConnection {
 		enqueueMouseEvent(buttons: [ .button3 ],
 						  nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
 	func rightMouseDown(x: Double, y: Double) {
 		enqueueMouseEvent(buttons: [ .button3 ],
 						  nonNormalizedX: x,
 						  nonNormalizedY: y)
 	}
-#endif
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -100,13 +99,13 @@ public extension VNCConnection {
 		enqueueMouseEvent(buttons: [ .button2 ],
 						  nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func middleMouseDown(x: Double, y: Double) {
 		enqueueMouseEvent(buttons: [ .button2 ],
 						  nonNormalizedX: x,
 						  nonNormalizedY: y)
 	}
-#endif
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -116,13 +115,13 @@ public extension VNCConnection {
 		enqueueMouseEvent(buttons: [ ],
 						  nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func mouseUp(x: Double, y: Double) {
 		enqueueMouseEvent(buttons: [ ],
 						  nonNormalizedX: x,
 						  nonNormalizedY: y)
 	}
-#endif
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -132,13 +131,13 @@ public extension VNCConnection {
 		enqueueMousePressEvent(buttons: [ .button4 ],
 							   nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func mouseWheelUp(x: Double, y: Double) {
 		enqueueMousePressEvent(buttons: [ .button4 ],
 							   nonNormalizedX: x,
 							   nonNormalizedY: y)
 	}
-#endif
 	
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -148,13 +147,13 @@ public extension VNCConnection {
 		enqueueMousePressEvent(buttons: [ .button5 ],
 							   nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func mouseWheelDown(x: Double, y: Double) {
 		enqueueMousePressEvent(buttons: [ .button5 ],
 							   nonNormalizedX: x,
 							   nonNormalizedY: y)
 	}
-#endif
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -164,13 +163,13 @@ public extension VNCConnection {
 		enqueueMousePressEvent(buttons: [ .button6 ],
 							   nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func mouseWheelLeft(x: Double, y: Double) {
 		enqueueMousePressEvent(buttons: [ .button6 ],
 							   nonNormalizedX: x,
 							   nonNormalizedY: y)
 	}
-#endif
 
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
@@ -180,13 +179,13 @@ public extension VNCConnection {
 		enqueueMousePressEvent(buttons: [ .button7 ],
 							   nonNormalizedPosition: mousePosition)
 	}
-#else
+#endif
+    
 	func mouseWheelRight(x: Double, y: Double) {
 		enqueueMousePressEvent(buttons: [ .button7 ],
 							   nonNormalizedX: x,
 							   nonNormalizedY: y)
 	}
-#endif
 }
 
 // MARK: - Keyboard Input
