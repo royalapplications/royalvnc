@@ -61,7 +61,7 @@ public func rvnc_connection_state_error_description_get_copy(_ connectionState: 
         return nil
     }
     
-    let errorDescription = error.localizedDescription
+    let errorDescription = error.humanReadableDescription
     let errorDescriptionC = errorDescription.duplicateCString()
     
     return errorDescriptionC
