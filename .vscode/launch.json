@@ -17,6 +17,25 @@
             "name": "Release RoyalVNCKitDemo",
             "program": "${workspaceFolder:royalvnc}/.build/release/RoyalVNCKitDemo",
             "preLaunchTask": "swift: Build Release RoyalVNCKitDemo"
+        },
+        
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:royalvnc}",
+            "name": "Debug RoyalVNCKitCDemo",
+            "program": "${workspaceFolder:royalvnc}/.build/debug/RoyalVNCKitCDemo",
+            "preLaunchTask": "swift: Build Debug RoyalVNCKitCDemo"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:royalvnc}",
+            "name": "Release RoyalVNCKitCDemo",
+            "program": "${workspaceFolder:royalvnc}/.build/release/RoyalVNCKitCDemo",
+            "preLaunchTask": "swift: Build Release RoyalVNCKitCDemo"
         }
     ]
 }
