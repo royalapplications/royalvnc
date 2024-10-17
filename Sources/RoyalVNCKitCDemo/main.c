@@ -51,6 +51,42 @@ void delegate_connectionStateDidChange(rvnc_connection_t connection,
     }
 }
 
+rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
+                                         const rvnc_context_t context,
+                                         RVNC_AUTHENTICATIONTYPE authenticationType,
+                                         bool* isUsernamePasswordCredential) {
+    bool requiresUsername = rvnc_authentication_type_requires_username(authenticationType);
+    bool requiresPassword = rvnc_authentication_type_requires_password(authenticationType);
+    
+    char* username;
+    
+    if (requiresUsername) {
+        printf("Username: ");
+        
+        char *buffer;
+        size_t n = 1024;
+        buffer = malloc(n);
+        username = getline(&buffer, &n, stdin);
+    }
+    
+    char* password;
+    
+    if (requiresPassword) {
+        printf("Password: ");
+        
+        char *buffer;
+        size_t n = 1024;
+        buffer = malloc(n);
+        password = getline(&buffer, &n, stdin);
+    }
+    
+    if (requiresUsername) {
+        *isUsernamePasswordCredential = true;
+    }
+    
+    // TODO
+}
+
 void delegate_didCreateFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
@@ -146,6 +182,7 @@ int main(int argc, char *argv[]) {
     
     // Create connection delegate
     rvnc_connection_delegate_t connectionDelegate = rvnc_connection_delegate_create(delegate_connectionStateDidChange,
+                                                                                    delegate_getCredential,
                                                                                     delegate_didCreateFramebuffer,
                                                                                     delegate_didResizeFramebuffer,
                                                                                     delegate_framebufferDidUpdateRegion,

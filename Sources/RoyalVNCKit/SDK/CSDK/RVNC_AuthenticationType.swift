@@ -21,6 +21,21 @@ extension RVNC_AUTHENTICATIONTYPE {
     }
 }
 
+extension VNCAuthenticationType {
+    var cVNCAuthenticationType: RVNC_AUTHENTICATIONTYPE {
+        switch self {
+            case .vnc:
+                RVNC_AUTHENTICATIONTYPE_VNC
+            case .appleRemoteDesktop:
+                RVNC_AUTHENTICATIONTYPE_APPLEREMOTEDESKTOP
+            case .ultraVNCMSLogonII:
+                RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII
+            default:
+                fatalError("Unknown authentication type: \(self)")
+        }
+    }
+}
+
 @_cdecl("rvnc_authentication_type_requires_username")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)

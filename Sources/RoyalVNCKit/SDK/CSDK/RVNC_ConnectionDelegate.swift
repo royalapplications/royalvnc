@@ -29,6 +29,7 @@ extension VNCConnectionDelegate_C {
 @available(*, unavailable)
 public func rvnc_connection_delegate_create(
     _ connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change,
+    _ getCredential: rvnc_connection_delegate_get_credential,
     _ didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
     _ didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer,
     _ framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region,
@@ -36,6 +37,7 @@ public func rvnc_connection_delegate_create(
 ) -> rvnc_connection_delegate_t {
     let delegate = VNCConnectionDelegate_C(
         connectionStateDidChange: connectionStateDidChange,
+        getCredential: getCredential,
         didCreateFramebuffer: didCreateFramebuffer,
         didResizeFramebuffer: didResizeFramebuffer,
         framebufferDidUpdateRegion: framebufferDidUpdateRegion,
@@ -54,6 +56,7 @@ public func rvnc_connection_delegate_destroy(_ connectionDelegate: rvnc_connecti
 
 class VNCConnectionDelegate_C {
     let connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change
+    let getCredential: rvnc_connection_delegate_get_credential
     let didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer
     let didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer
     let framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region
@@ -61,12 +64,14 @@ class VNCConnectionDelegate_C {
     
     init(
         connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change,
+        getCredential: rvnc_connection_delegate_get_credential,
         didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
         didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer,
         framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region,
         didUpdateCursor: rvnc_connection_delegate_did_update_cursor
     ) {
         self.connectionStateDidChange = connectionStateDidChange
+        self.getCredential = getCredential
         self.didCreateFramebuffer = didCreateFramebuffer
         self.didResizeFramebuffer = didResizeFramebuffer
         self.framebufferDidUpdateRegion = framebufferDidUpdateRegion
@@ -87,9 +92,28 @@ extension VNCConnectionDelegate_C: VNCConnectionDelegate {
     func connection(_ connection: VNCConnection,
                     credentialFor authenticationType: VNCAuthenticationType,
                     completion: @escaping ((any VNCCredential)?) -> Void) {
-        // TODO
+        var isUsernamePasswordCredential = false
         
-        completion(nil)
+        let credC = self.getCredential(
+            connection.unretainedPointer(),
+            .init(OpaquePointer(connection.context)),
+            authenticationType.cVNCAuthenticationType,
+            &isUsernamePasswordCredential
+        )
+        
+        let credSwift: VNCCredential?
+        
+        if let credC {
+            if isUsernamePasswordCredential {
+                credSwift = VNCUsernamePasswordCredential.fromPointer(credC)
+            } else {
+                credSwift = VNCPasswordCredential.fromPointer(credC)
+            }
+        } else {
+            credSwift = nil
+        }
+        
+        completion(credSwift)
     }
     
     func connection(_ connection: VNCConnection,

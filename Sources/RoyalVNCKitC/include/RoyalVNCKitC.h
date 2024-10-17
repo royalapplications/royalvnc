@@ -37,7 +37,7 @@ typedef enum : int {
 #pragma mark - Types
 
 typedef void* rvnc_context_t;
-//typedef void* rvnc_credential_t;
+typedef void* rvnc_credential_t;
 typedef void* rvnc_password_credential_t;
 typedef void* rvnc_username_password_credential_t;
 typedef void* rvnc_settings_t;
@@ -98,7 +98,10 @@ typedef void (*rvnc_connection_delegate_connection_state_did_change)(rvnc_connec
                                                                      const rvnc_context_t _Nullable /* context */,
                                                                      _Nonnull rvnc_connection_state_t /* connectionState */);
 
-// TODO: credentialsFor missing
+typedef rvnc_credential_t _Nullable (*rvnc_connection_delegate_get_credential)(rvnc_connection_t _Nonnull /* connection */,
+                                                                               const rvnc_context_t _Nullable /* context */,
+                                                                               RVNC_AUTHENTICATIONTYPE /* authenticationType */,
+                                                                               bool* _Nonnull /* isUsernamePasswordCredential */);
 
 typedef void (*rvnc_connection_delegate_did_create_framebuffer)(rvnc_connection_t _Nonnull /* connection */,
                                                                 const rvnc_context_t _Nullable /* context */,
@@ -122,6 +125,7 @@ typedef void (*rvnc_connection_delegate_did_update_cursor)(rvnc_connection_t _No
 
 // TODO: credentialsFor missing
 extern rvnc_connection_delegate_t _Nonnull rvnc_connection_delegate_create(rvnc_connection_delegate_connection_state_did_change _Nonnull connectionStateDidChange,
+                                                                           rvnc_connection_delegate_get_credential _Nonnull getCredential,
                                                                            rvnc_connection_delegate_did_create_framebuffer _Nonnull didCreateFramebuffer,
                                                                            rvnc_connection_delegate_did_resize_framebuffer _Nonnull didResizeFramebuffer,
                                                                            rvnc_connection_delegate_framebuffer_did_update_region _Nonnull framebufferDidUpdateRegion,
