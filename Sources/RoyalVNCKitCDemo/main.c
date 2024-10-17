@@ -12,6 +12,13 @@ typedef struct Context {
 
 
 #pragma mark - Helpers
+char* getLine(void) {
+    char* str = malloc(sizeof(char) * 1024);
+    scanf(" %[^\n]s", str);
+    
+    return str;
+}
+
 char* connectionStatusToString(RVNC_CONNECTION_STATUS connectionStatus) {
     switch (connectionStatus) {
         case RVNC_CONNECTION_STATUS_DISCONNECTED:
@@ -55,6 +62,23 @@ rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
                                          const rvnc_context_t context,
                                          RVNC_AUTHENTICATIONTYPE authenticationType,
                                          bool* isUsernamePasswordCredential) {
+    char* authenticationTypeStr;
+    
+    switch (authenticationType) {
+        case RVNC_AUTHENTICATIONTYPE_VNC:
+            authenticationTypeStr = "VNC";
+            break;
+        case RVNC_AUTHENTICATIONTYPE_APPLEREMOTEDESKTOP:
+            authenticationTypeStr = "Apple Remote Desktop";
+            break;
+        case RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII:
+            authenticationTypeStr = "Ultra VNC MS Logon II";
+            break;
+    }
+    
+    printf("delegate_getCredential - Authentication type: %s\n",
+           authenticationTypeStr);
+    
     bool requiresUsername = rvnc_authentication_type_requires_username(authenticationType);
     bool requiresPassword = rvnc_authentication_type_requires_password(authenticationType);
     
@@ -62,29 +86,38 @@ rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
     
     if (requiresUsername) {
         printf("Username: ");
-        
-        char *buffer;
-        size_t n = 1024;
-        buffer = malloc(n);
-        username = getline(&buffer, &n, stdin);
+        username = getLine();
     }
     
     char* password;
     
     if (requiresPassword) {
         printf("Password: ");
-        
-        char *buffer;
-        size_t n = 1024;
-        buffer = malloc(n);
-        password = getline(&buffer, &n, stdin);
+        password = getLine();
     }
+    
+    rvnc_credential_t credential;
     
     if (requiresUsername) {
         *isUsernamePasswordCredential = true;
+        
+        credential = rvnc_username_password_credential_create(username,
+                                                              password);
+    } else if (requiresPassword) {
+        credential = rvnc_password_credential_create(password);
+    } else {
+        credential = NULL;
     }
     
-    // TODO
+    if (username) {
+        free(username);
+    }
+    
+    if (password) {
+        free(password);
+    }
+    
+    return credential;
 }
 
 void delegate_didCreateFramebuffer(rvnc_connection_t connection,
