@@ -813,3 +813,22 @@ private extension VNCFramebuffer {
 							  screens: newScreens)
 	}
 }
+
+/*
+// MARK: - Debug API
+extension VNCFramebuffer {
+	// Write the raw data buffers to disk for verification purposes
+	// The file name is of the format /tmp/framebuffer-{width}x{height}x{bytesPerPixel}.{timestamp}.raw
+	// The file can be converted to a png using Imagemagick
+	// > convert -size {width}x{height} -depth 8 BGRA:{filename} {output}.png
+	func writeSurface() throws {
+		lockSurfaceReadOnly()
+		
+		let url = URL(filePath: "/tmp/framebuffer-\(width)x\(height)x\(destinationProperties.bytesPerPixel).\(Int(Date().timeIntervalSince1970)).raw")
+		let data = Data(bytes: buffer, count: width * height * destinationProperties.bytesPerPixel)
+		try data.write(to: url)
+
+		unlockSurfaceReadOnly()
+	}
+}
+*/
