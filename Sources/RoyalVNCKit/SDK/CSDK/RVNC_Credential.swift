@@ -6,75 +6,57 @@ import Foundation
 
 @_implementationOnly import RoyalVNCKitC
 
-extension VNCPasswordCredential {
-    func retainedPointer() -> rvnc_password_credential_t {
+final class VNCCredential_C {
+    let username: String?
+    let password: String?
+    
+    init(username: String?,
+         password: String?) {
+        self.username = username
+        self.password = password
+    }
+}
+
+extension VNCCredential_C {
+    func retainedPointer() -> rvnc_credential_t {
         .retainedPointerFrom(self)
     }
     
-    func unretainedPointer() -> rvnc_password_credential_t {
+    func unretainedPointer() -> rvnc_credential_t {
         .unretainedPointerFrom(self)
     }
     
-    static func autoreleasePointer(_ pointer: rvnc_password_credential_t) {
-        pointer.autorelease(VNCPasswordCredential.self)
+    static func autoreleasePointer(_ pointer: rvnc_credential_t) {
+        pointer.autorelease(VNCCredential_C.self)
     }
     
-    static func fromPointer(_ pointer: rvnc_password_credential_t) -> Self {
+    static func fromPointer(_ pointer: rvnc_credential_t) -> Self {
         pointer.unretainedInstance()
     }
 }
 
-extension VNCUsernamePasswordCredential {
-    func retainedPointer() -> rvnc_username_password_credential_t {
-        .retainedPointerFrom(self)
-    }
-    
-    func unretainedPointer() -> rvnc_username_password_credential_t {
-        .unretainedPointerFrom(self)
-    }
-    
-    static func autoreleasePointer(_ pointer: rvnc_username_password_credential_t) {
-        pointer.autorelease(VNCUsernamePasswordCredential.self)
-    }
-    
-    static func fromPointer(_ pointer: rvnc_username_password_credential_t) -> Self {
-        pointer.unretainedInstance()
-    }
-}
-
-@_cdecl("rvnc_password_credential_create")
+@_cdecl("rvnc_credential_create")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_password_credential_create(_ password: UnsafePointer<CChar>) -> rvnc_password_credential_t {
-    let passwordStr = String(cString: password)
-    let credential = VNCPasswordCredential(password: passwordStr)
+public func rvnc_credential_create(_ username: UnsafePointer<CChar>?,
+                                   _ password: UnsafePointer<CChar>?) -> rvnc_credential_t {
+    let usernameStr: String?
+    let passwordStr: String?
+    
+    if let username {
+        usernameStr = String(cString: username)
+    } else {
+        usernameStr = nil
+    }
+    
+    if let password {
+        passwordStr = String(cString: password)
+    } else {
+        passwordStr = nil
+    }
+    
+    let credential = VNCCredential_C(username: usernameStr,
+                                     password: passwordStr)
     
     return credential.retainedPointer()
-}
-
-@_cdecl("rvnc_password_credential_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_password_credential_destroy(_ credential: rvnc_password_credential_t) {
-    VNCPasswordCredential.autoreleasePointer(credential)
-}
-
-@_cdecl("rvnc_username_password_credential_create")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_username_password_credential_create(_ username: UnsafePointer<CChar>, _ password: UnsafePointer<CChar>) -> rvnc_username_password_credential_t {
-    let usernameStr = String(cString: username)
-    let passwordStr = String(cString: password)
-    
-    let credential = VNCUsernamePasswordCredential(username: usernameStr,
-                                                   password: passwordStr)
-    
-    return credential.retainedPointer()
-}
-
-@_cdecl("rvnc_username_password_credential_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_username_password_credential_destroy(_ credential: rvnc_username_password_credential_t) {
-    VNCUsernamePasswordCredential.autoreleasePointer(credential)
 }

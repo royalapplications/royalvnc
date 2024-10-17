@@ -60,8 +60,7 @@ void delegate_connectionStateDidChange(rvnc_connection_t connection,
 
 rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
                                          const rvnc_context_t context,
-                                         RVNC_AUTHENTICATIONTYPE authenticationType,
-                                         bool* isUsernamePasswordCredential) {
+                                         RVNC_AUTHENTICATIONTYPE authenticationType) {
     char* authenticationTypeStr;
     
     switch (authenticationType) {
@@ -99,12 +98,11 @@ rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
     rvnc_credential_t credential;
     
     if (requiresUsername) {
-        *isUsernamePasswordCredential = true;
-        
-        credential = rvnc_username_password_credential_create(username,
-                                                              password);
+        credential = rvnc_credential_create(username,
+                                            password);
     } else if (requiresPassword) {
-        credential = rvnc_password_credential_create(password);
+        credential = rvnc_credential_create(NULL,
+                                            password);
     } else {
         credential = NULL;
     }

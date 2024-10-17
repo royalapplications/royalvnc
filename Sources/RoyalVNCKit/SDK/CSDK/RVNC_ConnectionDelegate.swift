@@ -92,28 +92,45 @@ extension VNCConnectionDelegate_C: VNCConnectionDelegate {
     func connection(_ connection: VNCConnection,
                     credentialFor authenticationType: VNCAuthenticationType,
                     completion: @escaping ((any VNCCredential)?) -> Void) {
-        var isUsernamePasswordCredential = false
-        
         let credC = self.getCredential(
             connection.unretainedPointer(),
             .init(OpaquePointer(connection.context)),
-            authenticationType.cVNCAuthenticationType,
-            &isUsernamePasswordCredential
+            authenticationType.cVNCAuthenticationType
         )
         
-        let credSwift: VNCCredential?
+        let credSwift: VNCCredential_C?
         
         if let credC {
-            if isUsernamePasswordCredential {
-                credSwift = VNCUsernamePasswordCredential.fromPointer(credC)
-            } else {
-                credSwift = VNCPasswordCredential.fromPointer(credC)
-            }
+            credSwift = VNCCredential_C.fromPointer(credC)
         } else {
             credSwift = nil
         }
         
-        completion(credSwift)
+        defer {
+            if let credC {
+                VNCCredential_C.autoreleasePointer(credC)
+            }
+        }
+        
+        let actualCred: VNCCredential?
+        
+        if let credSwift {
+            let username = credSwift.username
+            let password = credSwift.password
+            
+            if let username {
+                actualCred = VNCUsernamePasswordCredential(username: username,
+                                                           password: password ?? "")
+            } else if let password {
+                actualCred = VNCPasswordCredential(password: password)
+            } else {
+                actualCred = nil
+            }
+        } else {
+            actualCred = nil
+        }
+        
+        completion(actualCred)
     }
     
     func connection(_ connection: VNCConnection,

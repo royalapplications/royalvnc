@@ -38,8 +38,6 @@ typedef enum : int {
 
 typedef void* rvnc_context_t;
 typedef void* rvnc_credential_t;
-typedef void* rvnc_password_credential_t;
-typedef void* rvnc_username_password_credential_t;
 typedef void* rvnc_settings_t;
 typedef void* rvnc_connection_state_t;
 typedef void* rvnc_framebuffer_t;
@@ -55,11 +53,8 @@ extern bool rvnc_authentication_type_requires_password(RVNC_AUTHENTICATIONTYPE a
 
 #pragma mark - Credential
 
-extern rvnc_password_credential_t _Nonnull rvnc_password_credential_create(const char* _Nonnull password);
-extern void rvnc_password_credential_destroy(rvnc_password_credential_t _Nonnull credential);
-
-extern rvnc_username_password_credential_t _Nonnull rvnc_username_password_credential_create(const char* _Nonnull username, const char* _Nonnull password);
-extern void rvnc_username_password_credential_destroy(rvnc_username_password_credential_t _Nonnull credential);
+extern rvnc_credential_t _Nonnull rvnc_credential_create(const char* _Nullable username,
+                                                         const char* _Nullable password);
 
 
 #pragma mark - Settings
@@ -100,8 +95,7 @@ typedef void (*rvnc_connection_delegate_connection_state_did_change)(rvnc_connec
 
 typedef rvnc_credential_t _Nullable (*rvnc_connection_delegate_get_credential)(rvnc_connection_t _Nonnull /* connection */,
                                                                                const rvnc_context_t _Nullable /* context */,
-                                                                               RVNC_AUTHENTICATIONTYPE /* authenticationType */,
-                                                                               bool* _Nonnull /* isUsernamePasswordCredential */);
+                                                                               RVNC_AUTHENTICATIONTYPE /* authenticationType */);
 
 typedef void (*rvnc_connection_delegate_did_create_framebuffer)(rvnc_connection_t _Nonnull /* connection */,
                                                                 const rvnc_context_t _Nullable /* context */,
