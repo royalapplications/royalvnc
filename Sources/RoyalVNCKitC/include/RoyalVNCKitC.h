@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// TODO: Connection Delegate, Cursor, Logger
+// TODO: Cursor, Logger
 
 #pragma mark - Enums
 
@@ -44,6 +44,7 @@ typedef void* rvnc_settings_t;
 typedef void* rvnc_connection_state_t;
 typedef void* rvnc_framebuffer_t;
 typedef void* rvnc_connection_t;
+typedef void* rvnc_connection_delegate_t;
 
 
 #pragma mark - Authentication Type
@@ -91,6 +92,44 @@ extern uint16_t rvnc_framebuffer_size_height_get(rvnc_framebuffer_t _Nonnull fra
 extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnull framebuffer);
 
 
+#pragma mark - Connection Delegate
+
+typedef void (*rvnc_connection_delegate_connection_state_did_change)(rvnc_connection_t _Nonnull /* connection */,
+                                                                     const rvnc_context_t _Nullable /* context */,
+                                                                     _Nonnull rvnc_connection_state_t /* connectionState */);
+
+// TODO: credentialsFor missing
+
+typedef void (*rvnc_connection_delegate_did_create_framebuffer)(rvnc_connection_t _Nonnull /* connection */,
+                                                                const rvnc_context_t _Nullable /* context */,
+                                                                _Nonnull rvnc_framebuffer_t /* framebuffer */);
+
+typedef void (*rvnc_connection_delegate_did_resize_framebuffer)(rvnc_connection_t _Nonnull /* connection */,
+                                                                const rvnc_context_t _Nullable /* context */,
+                                                                _Nonnull rvnc_framebuffer_t /* framebuffer */);
+
+typedef void (*rvnc_connection_delegate_framebuffer_did_update_region)(rvnc_connection_t _Nonnull /* connection */,
+                                                                       const rvnc_context_t _Nullable /* context */,
+                                                                       _Nonnull rvnc_framebuffer_t /* framebuffer */,
+                                                                       uint16_t /* x */,
+                                                                       uint16_t /* y */,
+                                                                       uint16_t /* width */,
+                                                                       uint16_t /* height */);
+
+// TODO: Cursor type missing
+typedef void (*rvnc_connection_delegate_did_update_cursor)(rvnc_connection_t _Nonnull /* connection */,
+                                                           const rvnc_context_t _Nullable /* context */);
+
+// TODO: credentialsFor missing
+extern rvnc_connection_delegate_t _Nonnull rvnc_connection_delegate_create(rvnc_connection_delegate_connection_state_did_change _Nonnull connectionStateDidChange,
+                                                                           rvnc_connection_delegate_did_create_framebuffer _Nonnull didCreateFramebuffer,
+                                                                           rvnc_connection_delegate_did_resize_framebuffer _Nonnull didResizeFramebuffer,
+                                                                           rvnc_connection_delegate_framebuffer_did_update_region _Nonnull framebufferDidUpdateRegion,
+                                                                           rvnc_connection_delegate_did_update_cursor _Nonnull didUpdateCursor);
+
+extern void rvnc_connection_delegate_destroy(rvnc_connection_delegate_t _Nonnull connectionDelegate);
+
+
 #pragma mark - Connection
 
 extern rvnc_connection_t _Nonnull rvnc_connection_create(rvnc_settings_t _Nonnull settings, rvnc_context_t _Nullable context);
@@ -98,7 +137,9 @@ extern void rvnc_connection_destroy(rvnc_connection_t _Nonnull connection);
 
 extern void rvnc_connection_connect(rvnc_connection_t _Nonnull connection);
 extern void rvnc_connection_disconnect(rvnc_connection_t _Nonnull connection);
+
 extern void rvnc_connection_update_color_depth(rvnc_connection_t _Nonnull connection, RVNC_COLORDEPTH colorDepth);
+extern void rvnc_connection_delegate_set(rvnc_connection_t _Nonnull connection, rvnc_connection_delegate_t _Nullable connectionDelegate);
 
 extern rvnc_context_t _Nullable rvnc_connection_context_get(rvnc_connection_t _Nonnull connection);
 extern rvnc_connection_state_t _Nonnull rvnc_connection_state_get_copy(rvnc_connection_t _Nonnull connection);

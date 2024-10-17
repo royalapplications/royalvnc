@@ -79,6 +79,23 @@ public func rvnc_connection_update_color_depth(_ connection: rvnc_connection_t,
         .updateColorDepth(colorDepthSwift)
 }
 
+@_cdecl("rvnc_connection_delegate_set")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_connection_delegate_set(_ connection: rvnc_connection_t,
+                                         _ connectionDelegate: rvnc_connection_delegate_t?) {
+    let connectionSwift = VNCConnection.fromPointer(connection)
+    let connectionDelegateSwift: VNCConnectionDelegate?
+    
+    if let connectionDelegate {
+        connectionDelegateSwift = VNCConnectionDelegate_C.fromPointer(connectionDelegate)
+    } else {
+        connectionDelegateSwift = nil
+    }
+    
+    connectionSwift.delegate = connectionDelegateSwift
+}
+
 @_cdecl("rvnc_connection_context_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
