@@ -32,8 +32,7 @@ let package = Package(
                 "d3des",
                 "libtommath",
                 "libtomcrypt",
-                "Z",
-                .byName(name: "OpenSSL", condition: .when(platforms: [ .linux ]))
+                "Z"
             ],
             
             swiftSettings: [
@@ -52,11 +51,6 @@ let package = Package(
         
         .target(name: "Z", linkerSettings: [
             .linkedLibrary("z")
-        ]),
-
-        .target(name: "OpenSSL", linkerSettings: [
-            .linkedLibrary("ssl"),
-            .linkedLibrary("crypto")
         ]),
         
         .executableTarget(

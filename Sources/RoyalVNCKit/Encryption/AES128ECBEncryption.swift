@@ -4,175 +4,109 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if canImport(CommonCrypto)
-import CommonCrypto
-#elseif canImport(OpenSSL)
-import OpenSSL
-#endif
+import libtomcrypt
 
 struct AES128ECBEncryption {
     static func encrypt(data: Data,
                         key: Data) -> Data? {
-#if canImport(CommonCrypto)
-        let cipherBufferSize = data.count + kCCBlockSizeAES128
-        var cipherBuffer = Data(repeating: 0, count: cipherBufferSize)
-        
-        var cipherData: Data?
-        
-        cipherBuffer.withUnsafeMutableBytes { cipherBufferBytesPtr in
-            guard let cipherBufferPtr = cipherBufferBytesPtr.baseAddress else { return }
-            
-            data.withUnsafeBytes { dataBytesPtr in
-                guard let dataPtr = dataBytesPtr.baseAddress else { return }
-                
-                key.withUnsafeBytes { keyBytesPtr in
-                    guard let keyPtr = keyBytesPtr.baseAddress else { return }
-                    
-                    var cryptor: CCCryptorRef?
-                    
-                    let createStatus = CCCryptorCreateWithMode(.init(kCCEncrypt),
-                                                               .init(kCCModeECB),
-                                                               .init(kCCAlgorithmAES128),
-                                                               .init(ccNoPadding),
-                                                               nil,
-                                                               keyPtr,
-                                                               key.count,
-                                                               nil,
-                                                               0,
-                                                               0,
-                                                               .zero,
-                                                               &cryptor)
-                    
-                    defer {
-                        if let cryptor = cryptor {
-                            CCCryptorRelease(cryptor)
-                        }
-                    }
-                    
-                    guard createStatus == kCCSuccess,
-                          let cryptor = cryptor else {
-                        return
-                    }
-                    
-                    var actualLength = 0
-                    
-                    let updateStatus = CCCryptorUpdate(cryptor,
-                                                       dataPtr,
-                                                       data.count,
-                                                       cipherBufferPtr,
-                                                       cipherBufferSize,
-                                                       &actualLength)
-                    
-                    guard updateStatus == kCCSuccess else {
-                        return
-                    }
-                    
-                    var finalCipherBuffer = Data(bytes: cipherBufferPtr,
-                                                 count: actualLength)
-                    
-                    finalCipherBuffer.withUnsafeMutableBytes { finalCipherBufferBytesPtr in
-                        guard let finalCipherBufferPtr = finalCipherBufferBytesPtr.baseAddress else { return }
-                        
-                        let finalStatus = CCCryptorFinal(cryptor,
-                                                         finalCipherBufferPtr,
-                                                         actualLength,
-                                                         &actualLength)
-                        
-                        guard finalStatus == kCCSuccess else {
-                            return
-                        }
-                    }
-                    
-                    cipherData = finalCipherBuffer
-                }
-            }
-        }
-        
-        return cipherData
-#elseif canImport(OpenSSL)
         // Ensure the key is 16 bytes for AES-128
-        guard key.count == 16 else { return nil }
-
-        // Create and initialize the context
-        guard let ctx = EVP_CIPHER_CTX_new() else { 
+        guard key.count == 16 else {
             return nil
         }
-
+        
+        var aesDesc = aes_desc
+        
+        // Register the cipher if necessary
+        guard register_cipher(&aesDesc) == CRYPT_OK else {
+            return nil
+        }
+        
+        var ecbKey: symmetric_ECB = symmetric_ECB()
+        
         defer {
-            EVP_CIPHER_CTX_free(ctx)
+            // Clean up and free the ECB key structure
+            ecb_done(&ecbKey)
         }
-
-        // Initialize the encryption operation with AES-128 in ECB mode
-        let encInitResult: Int32 = key.withUnsafeBytes {
-            guard let keyPtr = $0.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
-                return -1
-            }
-
-            let res = EVP_EncryptInit_ex(ctx, EVP_aes_128_ecb(), nil, keyPtr, nil)
-
-            return res
-        }
-
-        guard encInitResult == 1 else {
-            return nil
-        }
-
-        var outLen: Int32 = 0
-        var finalLen: Int32 = 0
-
+        
         let blockSizeAES128 = 16
-
-        // Create a buffer for the ciphertext
-        let cipherBufferLen = data.count + blockSizeAES128
-        var cipherBuffer = Data(repeating: 0, count: cipherBufferLen)
-
-        // Encrypt the data
-        let encUpdateResult: Int32 = data.withUnsafeBytes { dataPtr in
-            guard let dataPtrAddr = dataPtr.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+        
+        // Set up the ECB key with AES-128
+        let keySetupResult: Int32 = key.withUnsafeBytes { keyPtr in
+            guard let keyPtrAddr = keyPtr.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
                 return -1
             }
-
-            let res: Int32 = cipherBuffer.withUnsafeMutableBytes { cipherBufferPtr in
-                guard let cipherBufferPtrAddr = cipherBufferPtr.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
-                    return -1
-                }
-
-                let innerRes = EVP_EncryptUpdate(ctx, cipherBufferPtrAddr, &outLen, dataPtrAddr, Int32(data.count))
-
-                return innerRes    
-            }
-
-            return res
+            
+            let aesCipher = find_cipher("aes")
+            
+            // Initialize the ECB structure with the key
+            let result = ecb_start(
+                aesCipher,
+                keyPtrAddr,
+                .init(key.count),
+                0,
+                &ecbKey
+            )
+            
+            return result
         }
-
-        guard encUpdateResult == 1 else {
+        
+        guard keySetupResult == CRYPT_OK else {
             return nil
         }
-
-        guard outLen <= cipherBufferLen else {
-            return nil
-        }
-
-        // Finalize the encryption
-        let encFinalResult: Int32 = cipherBuffer.withUnsafeMutableBytes { cipherBufferPtr in
+        
+        // Prepare output buffer for ciphertext (same size as input for ECB mode)
+        var cipherBuffer = Data(repeating: 0,
+                                count: ((data.count + blockSizeAES128 - 1) / blockSizeAES128) * blockSizeAES128)
+        
+        // Encrypt the data block by block
+        let encryptionResult = cipherBuffer.withUnsafeMutableBytes { cipherBufferPtr in
             guard let cipherBufferPtrAddr = cipherBufferPtr.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
                 return -1
             }
-
-            let res = EVP_EncryptFinal_ex(ctx, &cipherBufferPtrAddr[Int(outLen)], &finalLen)
-
-            return res
+            
+            // Encrypt each block of data
+            for blockStart in stride(from: 0,
+                                     to: data.count,
+                                     by: blockSizeAES128) {
+                let blockLength = min(blockSizeAES128,
+                                      data.count - blockStart)
+                
+                // Create a block from the data, padding with zeroes if necessary
+                let block = data[blockStart..<blockStart + blockLength]
+                
+                let padding = Data(repeating: 0,
+                                   count: blockSizeAES128 - blockLength)
+                
+                let paddedBlock = Data(block + padding)
+                
+                let encryptBlockResult: Int32 = paddedBlock.withUnsafeBytes { paddedBlockPtr in
+                    guard let paddedBlockPtrAddr = paddedBlockPtr.baseAddress?.assumingMemoryBound(to: UInt8.self) else {
+                        return -1
+                    }
+                    
+                    // Encrypt the padded block
+                    let result = ecb_encrypt(
+                        paddedBlockPtrAddr,
+                        cipherBufferPtrAddr.advanced(by: blockStart),
+                        .init(blockSizeAES128),
+                        &ecbKey
+                    )
+                    
+                    return result
+                }
+                
+                guard encryptBlockResult == CRYPT_OK else {
+                    return -1
+                }
+            }
+            
+            return CRYPT_OK
         }
-
-        guard encFinalResult == 1 else {
+        
+        guard encryptionResult == CRYPT_OK else {
             return nil
         }
-
-        let encData = Data(cipherBuffer[0..<outLen])
-
-        return encData
-#else
-        fatalError("TODO: AES 128 ECB Mode is not implemented on this platform")
-#endif
+        
+        return cipherBuffer
     }
 }
