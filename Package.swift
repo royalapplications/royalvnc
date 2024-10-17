@@ -40,18 +40,14 @@ let package = Package(
                 "Z"
             ],
             
-            swiftSettings: [
-                .swiftLanguageMode(.v5)
-            ]
+            swiftSettings: [ .swiftLanguageMode(.v5) ]
         ),
         
         .target(name: "d3des"),
         .target(name: "libtommath"),
         
         .target(name: "libtomcrypt", cSettings: [
-            .unsafeFlags([
-                "-Wno-shorten-64-to-32"
-            ])
+            .unsafeFlags([ "-Wno-shorten-64-to-32" ])
         ]),
         
         .target(name: "Z", linkerSettings: [
@@ -60,10 +56,12 @@ let package = Package(
         
         .executableTarget(
             name: "RoyalVNCKitDemo",
-            
-            dependencies: [
-                "RoyalVNCKit"
-            ]
+            dependencies: [ "RoyalVNCKit" ]
+        ),
+        
+        .executableTarget(
+            name: "RoyalVNCKitCDemo",
+            dependencies: [ "RoyalVNCKit" ]
         )
     ]
 )
