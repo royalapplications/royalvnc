@@ -7,7 +7,7 @@ import Foundation
 import RoyalVNCKit
 
 let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
-                                      hostname: "10.0.1.40",
+                                      hostname: "localhost",
                                       port: 5900,
                                       isShared: true,
                                       isScalingEnabled: true,
