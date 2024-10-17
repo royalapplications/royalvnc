@@ -4,7 +4,7 @@
 
 RoyalVNC is a modern, high performance implementation of the [VNC/RFB protocol](https://github.com/rfbproto/rfbproto/blob/master/rfbproto.rst) written in Swift.
 The SDK (RoyalVNCKit) is compatible with Swift and Objective-C on macOS, iOS and iPadOS.
-It has no external dependencies but includes some free (public domain) third party code from the libtommath and D3DES libraries (see [Credits](#Credits)).
+It has no external dependencies but includes some free (public domain) third party code from the libtommath, libtomcrypt and D3DES libraries (see [Credits](#Credits)).
 
 ## Supported Features
 
@@ -47,4 +47,5 @@ See [Usage](USAGE.md).
 
 ## Credits
 - [libtommath](https://github.com/libtom/libtommath) ([The LibTom license](https://github.com/libtom/libtommath/blob/develop/LICENSE))
+- [libtomcrypt](https://github.com/libtom/libtomcrypt) ([The LibTom license](https://github.com/libtom/libtomcrypt/blob/develop/LICENSE))
 - D3DES (Public Domain, Copyright Richard Outerbridge)

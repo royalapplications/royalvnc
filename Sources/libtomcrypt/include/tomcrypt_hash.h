@@ -1,153 +1,11 @@
-/* LibTomCrypt, modular cryptographic library -- Tom St Denis
- *
- * LibTomCrypt is a library that provides various cryptographic
- * algorithms in a highly modular and flexible manner.
- *
- * The library is free for all purposes without any express
- * guarantee it works.
- */
+/* LibTomCrypt, modular cryptographic library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
 
-#include <stdlib.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <limits.h>
-#include <stdio.h>
-#include <signal.h>
-#include <string.h>
-
-#ifndef LTC_EXPORT
-   #define LTC_EXPORT
-#endif
-
-#if defined(_WIN32) || defined(_MSC_VER)
-   #define LTC_CALL __cdecl
-#elif !defined(LTC_CALL)
-   #define LTC_CALL
-#endif
-
-#if defined(__clang__) || defined(__GNUC_MINOR__)
-#define LTC_NORETURN __attribute__ ((noreturn))
-#elif defined(_MSC_VER)
-#define LTC_NORETURN __declspec(noreturn)
-#else
-#define LTC_NORETURN
-#endif
-
-LTC_NORETURN void crypt_argchk(const char *v, const char *s, int d);
-#define LTC_ARGCHK(x) do { if (!(x)) { crypt_argchk(#x, __FILE__, __LINE__); } }while(0)
-#define LTC_ARGCHKVD(x) do { if (!(x)) { crypt_argchk(#x, __FILE__, __LINE__); } }while(0)
-
-/* ulong32: "32-bit at least" data type */
-#if defined(__x86_64__) || defined(_M_X64) || defined(_M_AMD64) || \
-    defined(__powerpc64__) || defined(__ppc64__) || defined(__PPC64__) || \
-    defined(__s390x__) || defined(__arch64__) || defined(__aarch64__) || \
-    defined(__sparcv9) || defined(__sparc_v9__) || defined(__sparc64__) || \
-    defined(__ia64) || defined(__ia64__) || defined(__itanium__) || defined(_M_IA64) || \
-    defined(__LP64__) || defined(_LP64) || defined(__64BIT__) || defined(_M_ARM64)
-   typedef unsigned ulong32;
-   #if !defined(ENDIAN_64BITWORD) && !defined(ENDIAN_32BITWORD)
-     #define ENDIAN_64BITWORD
-   #endif
-#else
-   typedef unsigned long ulong32;
-   #if !defined(ENDIAN_64BITWORD) && !defined(ENDIAN_32BITWORD)
-     #define ENDIAN_32BITWORD
-   #endif
-#endif
-
-/* ulong64: 64-bit data type */
-#ifdef _MSC_VER
-   #define CONST64(n) n ## ui64
-   typedef unsigned __int64 ulong64;
-   typedef __int64 long64;
-#else
-   #define CONST64(n) n ## uLL
-   typedef unsigned long long ulong64;
-   typedef long long long64;
-#endif
-
-/* error codes [will be expanded in future releases] */
-enum {
-   CRYPT_OK=0,             /* Result OK */
-   CRYPT_ERROR,            /* Generic Error */
-   CRYPT_NOP,              /* Not a failure but no operation was performed */
-
-   CRYPT_INVALID_KEYSIZE,  /* Invalid key size given */
-   CRYPT_INVALID_ROUNDS,   /* Invalid number of rounds */
-   CRYPT_FAIL_TESTVECTOR,  /* Algorithm failed test vectors */
-
-   CRYPT_BUFFER_OVERFLOW,  /* Not enough space for output */
-   CRYPT_INVALID_PACKET,   /* Invalid input packet given */
-
-   CRYPT_INVALID_PRNGSIZE, /* Invalid number of bits for a PRNG */
-   CRYPT_ERROR_READPRNG,   /* Could not read enough from PRNG */
-
-   CRYPT_INVALID_CIPHER,   /* Invalid cipher specified */
-   CRYPT_INVALID_HASH,     /* Invalid hash specified */
-   CRYPT_INVALID_PRNG,     /* Invalid PRNG specified */
-
-   CRYPT_MEM,              /* Out of memory */
-
-   CRYPT_PK_TYPE_MISMATCH, /* Not equivalent types of PK keys */
-   CRYPT_PK_NOT_PRIVATE,   /* Requires a private PK key */
-
-   CRYPT_INVALID_ARG,      /* Generic invalid argument */
-   CRYPT_FILE_NOTFOUND,    /* File Not Found */
-
-   CRYPT_PK_INVALID_TYPE,  /* Invalid type of PK key */
-
-   CRYPT_OVERFLOW,         /* An overflow of a value was detected/prevented */
-
-   CRYPT_PK_ASN1_ERROR,    /* An error occurred while en- or decoding ASN.1 data */
-
-   CRYPT_INPUT_TOO_LONG,   /* The input was longer than expected. */
-
-   CRYPT_PK_INVALID_SIZE,  /* Invalid size input for PK parameters */
-
-   CRYPT_INVALID_PRIME_SIZE, /* Invalid size of prime requested */
-   CRYPT_PK_INVALID_PADDING, /* Invalid padding on input */
-
-   CRYPT_HASH_OVERFLOW,     /* Hash applied to too many bits */
-   CRYPT_PW_CTX_MISSING,    /* Password context to decrypt key file is missing */
-   CRYPT_UNKNOWN_PEM,       /* The PEM header was not recognized */
-};
-
-#define STORE32L(x, y)                                                                     \
-  do { (y)[3] = (unsigned char)(((x)>>24)&255); (y)[2] = (unsigned char)(((x)>>16)&255);   \
-       (y)[1] = (unsigned char)(((x)>>8)&255); (y)[0] = (unsigned char)((x)&255); } while(0)
-
-#define LOAD32L(x, y)                            \
-  do { x = ((ulong32)((y)[3] & 255)<<24) | \
-           ((ulong32)((y)[2] & 255)<<16) | \
-           ((ulong32)((y)[1] & 255)<<8)  | \
-           ((ulong32)((y)[0] & 255)); } while(0)
-
-#define STORE64L(x, y)                                                                     \
-  do { (y)[7] = (unsigned char)(((x)>>56)&255); (y)[6] = (unsigned char)(((x)>>48)&255);   \
-       (y)[5] = (unsigned char)(((x)>>40)&255); (y)[4] = (unsigned char)(((x)>>32)&255);   \
-       (y)[3] = (unsigned char)(((x)>>24)&255); (y)[2] = (unsigned char)(((x)>>16)&255);   \
-       (y)[1] = (unsigned char)(((x)>>8)&255); (y)[0] = (unsigned char)((x)&255); } while(0)
-
-#ifndef MAX
-   #define MAX(x, y) ( ((x)>(y))?(x):(y) )
-#endif
-
-#ifndef MIN
-   #define MIN(x, y) ( ((x)<(y))?(x):(y) )
-#endif
-
-/* rotates the hard way */
-#define ROL(x, y) ( (((ulong32)(x)<<(ulong32)((y)&31)) | (((ulong32)(x)&0xFFFFFFFFUL)>>(ulong32)((32-((y)&31))&31))) & 0xFFFFFFFFUL)
-#define ROR(x, y) ( ((((ulong32)(x)&0xFFFFFFFFUL)>>(ulong32)((y)&31)) | ((ulong32)(x)<<(ulong32)((32-((y)&31))&31))) & 0xFFFFFFFFUL)
-#define ROLc(x, y) ( (((ulong32)(x)<<(ulong32)((y)&31)) | (((ulong32)(x)&0xFFFFFFFFUL)>>(ulong32)((32-((y)&31))&31))) & 0xFFFFFFFFUL)
-#define RORc(x, y) ( ((((ulong32)(x)&0xFFFFFFFFUL)>>(ulong32)((y)&31)) | ((ulong32)(x)<<(ulong32)((32-((y)&31))&31))) & 0xFFFFFFFFUL)
-
-#ifndef XMEMCPY
-#define XMEMCPY  memcpy
-#endif
+#ifndef TOMCRYPT_HASH_H_
+#define TOMCRYPT_HASH_H_
 
 /* ---- HASH FUNCTIONS ---- */
-#ifdef LTC_SHA3
+#if defined(LTC_SHA3) || defined(LTC_KECCAK)
 struct sha3_state {
     ulong64 saved;                  /* the portion of the input message that we didn't consume yet */
     ulong64 s[25];
@@ -183,13 +41,13 @@ struct sha1_state {
 };
 #endif
 
-//#ifdef LTC_MD5
+#ifdef LTC_MD5
 struct md5_state {
     ulong64 length;
     ulong32 state[4], curlen;
     unsigned char buf[64];
 };
-//#endif
+#endif
 
 #ifdef LTC_MD4
 struct md4_state {
@@ -202,8 +60,8 @@ struct md4_state {
 #ifdef LTC_TIGER
 struct tiger_state {
     ulong64 state[3], length;
-    unsigned long curlen;
-    unsigned char buf[64];
+    unsigned long curlen, passes;
+    unsigned char buf[64], pad;
 };
 #endif
 
@@ -294,7 +152,7 @@ typedef union Hash_state {
 #ifdef LTC_WHIRLPOOL
     struct whirlpool_state whirlpool;
 #endif
-#ifdef LTC_SHA3
+#if defined(LTC_SHA3) || defined(LTC_KECCAK)
     struct sha3_state sha3;
 #endif
 #ifdef LTC_SHA512
@@ -306,9 +164,9 @@ typedef union Hash_state {
 #ifdef LTC_SHA1
     struct sha1_state   sha1;
 #endif
-//#ifdef LTC_MD5
+#ifdef LTC_MD5
     struct md5_state    md5;
-//#endif
+#endif
 #ifdef LTC_MD4
     struct md4_state    md4;
 #endif
@@ -389,7 +247,7 @@ extern  struct ltc_hash_descriptor {
 int chc_register(int cipher);
 int chc_init(hash_state * md);
 int chc_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int chc_done(hash_state * md, unsigned char *hash);
+int chc_done(hash_state * md, unsigned char *out);
 int chc_test(void);
 extern const struct ltc_hash_descriptor chc_desc;
 #endif
@@ -397,39 +255,60 @@ extern const struct ltc_hash_descriptor chc_desc;
 #ifdef LTC_WHIRLPOOL
 int whirlpool_init(hash_state * md);
 int whirlpool_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int whirlpool_done(hash_state * md, unsigned char *hash);
+int whirlpool_done(hash_state * md, unsigned char *out);
 int whirlpool_test(void);
 extern const struct ltc_hash_descriptor whirlpool_desc;
 #endif
 
-#ifdef LTC_SHA3
+#if defined(LTC_SHA3) || defined(LTC_KECCAK)
+/* sha3_NNN_init are shared by SHA3 and KECCAK */
 int sha3_512_init(hash_state * md);
+int sha3_384_init(hash_state * md);
+int sha3_256_init(hash_state * md);
+int sha3_224_init(hash_state * md);
+/* sha3_process is the same for all variants of SHA3 + KECCAK */
+int sha3_process(hash_state * md, const unsigned char *in, unsigned long inlen);
+#endif
+
+#ifdef LTC_SHA3
 int sha3_512_test(void);
 extern const struct ltc_hash_descriptor sha3_512_desc;
-int sha3_384_init(hash_state * md);
 int sha3_384_test(void);
 extern const struct ltc_hash_descriptor sha3_384_desc;
-int sha3_256_init(hash_state * md);
 int sha3_256_test(void);
 extern const struct ltc_hash_descriptor sha3_256_desc;
-int sha3_224_init(hash_state * md);
 int sha3_224_test(void);
 extern const struct ltc_hash_descriptor sha3_224_desc;
-/* process + done are the same for all variants */
-int sha3_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int sha3_done(hash_state *md, unsigned char *hash);
+int sha3_done(hash_state *md, unsigned char *out);
 /* SHAKE128 + SHAKE256 */
 int sha3_shake_init(hash_state *md, int num);
 #define sha3_shake_process(a,b,c) sha3_process(a,b,c)
 int sha3_shake_done(hash_state *md, unsigned char *out, unsigned long outlen);
 int sha3_shake_test(void);
-int sha3_shake_memory(int num, const unsigned char *in, unsigned long inlen, unsigned char *out, unsigned long *outlen);
+int sha3_shake_memory(int num, const unsigned char *in, unsigned long inlen, unsigned char *out, const unsigned long *outlen);
+#endif
+
+#ifdef LTC_KECCAK
+#define keccak_512_init(a)    sha3_512_init(a)
+#define keccak_384_init(a)    sha3_384_init(a)
+#define keccak_256_init(a)    sha3_256_init(a)
+#define keccak_224_init(a)    sha3_224_init(a)
+#define keccak_process(a,b,c) sha3_process(a,b,c)
+extern const struct ltc_hash_descriptor keccak_512_desc;
+int keccak_512_test(void);
+extern const struct ltc_hash_descriptor keccak_384_desc;
+int keccak_384_test(void);
+extern const struct ltc_hash_descriptor keccak_256_desc;
+int keccak_256_test(void);
+extern const struct ltc_hash_descriptor keccak_224_desc;
+int keccak_224_test(void);
+int keccak_done(hash_state *md, unsigned char *out);
 #endif
 
 #ifdef LTC_SHA512
 int sha512_init(hash_state * md);
 int sha512_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int sha512_done(hash_state * md, unsigned char *hash);
+int sha512_done(hash_state * md, unsigned char *out);
 int sha512_test(void);
 extern const struct ltc_hash_descriptor sha512_desc;
 #endif
@@ -440,7 +319,7 @@ extern const struct ltc_hash_descriptor sha512_desc;
 #endif
 int sha384_init(hash_state * md);
 #define sha384_process sha512_process
-int sha384_done(hash_state * md, unsigned char *hash);
+int sha384_done(hash_state * md, unsigned char *out);
 int sha384_test(void);
 extern const struct ltc_hash_descriptor sha384_desc;
 #endif
@@ -451,7 +330,7 @@ extern const struct ltc_hash_descriptor sha384_desc;
 #endif
 int sha512_256_init(hash_state * md);
 #define sha512_256_process sha512_process
-int sha512_256_done(hash_state * md, unsigned char *hash);
+int sha512_256_done(hash_state * md, unsigned char *out);
 int sha512_256_test(void);
 extern const struct ltc_hash_descriptor sha512_256_desc;
 #endif
@@ -462,7 +341,7 @@ extern const struct ltc_hash_descriptor sha512_256_desc;
 #endif
 int sha512_224_init(hash_state * md);
 #define sha512_224_process sha512_process
-int sha512_224_done(hash_state * md, unsigned char *hash);
+int sha512_224_done(hash_state * md, unsigned char *out);
 int sha512_224_test(void);
 extern const struct ltc_hash_descriptor sha512_224_desc;
 #endif
@@ -470,7 +349,7 @@ extern const struct ltc_hash_descriptor sha512_224_desc;
 #ifdef LTC_SHA256
 int sha256_init(hash_state * md);
 int sha256_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int sha256_done(hash_state * md, unsigned char *hash);
+int sha256_done(hash_state * md, unsigned char *out);
 int sha256_test(void);
 extern const struct ltc_hash_descriptor sha256_desc;
 
@@ -480,7 +359,7 @@ extern const struct ltc_hash_descriptor sha256_desc;
 #endif
 int sha224_init(hash_state * md);
 #define sha224_process sha256_process
-int sha224_done(hash_state * md, unsigned char *hash);
+int sha224_done(hash_state * md, unsigned char *out);
 int sha224_test(void);
 extern const struct ltc_hash_descriptor sha224_desc;
 #endif
@@ -489,7 +368,7 @@ extern const struct ltc_hash_descriptor sha224_desc;
 #ifdef LTC_SHA1
 int sha1_init(hash_state * md);
 int sha1_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int sha1_done(hash_state * md, unsigned char *hash);
+int sha1_done(hash_state * md, unsigned char *out);
 int sha1_test(void);
 extern const struct ltc_hash_descriptor sha1_desc;
 #endif
@@ -513,7 +392,7 @@ int blake2s_128_test(void);
 
 int blake2s_init(hash_state * md, unsigned long outlen, const unsigned char *key, unsigned long keylen);
 int blake2s_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int blake2s_done(hash_state * md, unsigned char *hash);
+int blake2s_done(hash_state * md, unsigned char *out);
 #endif
 
 #ifdef LTC_BLAKE2B
@@ -535,21 +414,21 @@ int blake2b_160_test(void);
 
 int blake2b_init(hash_state * md, unsigned long outlen, const unsigned char *key, unsigned long keylen);
 int blake2b_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int blake2b_done(hash_state * md, unsigned char *hash);
+int blake2b_done(hash_state * md, unsigned char *out);
 #endif
 
-//#ifdef LTC_MD5
+#ifdef LTC_MD5
 int md5_init(hash_state * md);
 int md5_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int md5_done(hash_state * md, unsigned char *hash);
+int md5_done(hash_state * md, unsigned char *out);
 int md5_test(void);
 extern const struct ltc_hash_descriptor md5_desc;
-//#endif
+#endif
 
 #ifdef LTC_MD4
 int md4_init(hash_state * md);
 int md4_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int md4_done(hash_state * md, unsigned char *hash);
+int md4_done(hash_state * md, unsigned char *out);
 int md4_test(void);
 extern const struct ltc_hash_descriptor md4_desc;
 #endif
@@ -557,23 +436,29 @@ extern const struct ltc_hash_descriptor md4_desc;
 #ifdef LTC_MD2
 int md2_init(hash_state * md);
 int md2_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int md2_done(hash_state * md, unsigned char *hash);
+int md2_done(hash_state * md, unsigned char *out);
 int md2_test(void);
 extern const struct ltc_hash_descriptor md2_desc;
 #endif
 
 #ifdef LTC_TIGER
 int tiger_init(hash_state * md);
+int tiger_init_ex(hash_state *md, unsigned long passes);
 int tiger_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int tiger_done(hash_state * md, unsigned char *hash);
+int tiger_done(hash_state * md, unsigned char *out);
 int tiger_test(void);
-extern const struct ltc_hash_descriptor tiger_desc;
+int tiger2_init(hash_state *md);
+int tiger2_init_ex(hash_state *md, unsigned long passes);
+#define tiger2_process(m, i, l) tiger_process(m, i, l)
+#define tiger2_done(m, o)       tiger_done(m, o)
+int tiger2_test(void);
+extern const struct ltc_hash_descriptor tiger_desc, tiger2_desc;
 #endif
 
 #ifdef LTC_RIPEMD128
 int rmd128_init(hash_state * md);
 int rmd128_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int rmd128_done(hash_state * md, unsigned char *hash);
+int rmd128_done(hash_state * md, unsigned char *out);
 int rmd128_test(void);
 extern const struct ltc_hash_descriptor rmd128_desc;
 #endif
@@ -581,7 +466,7 @@ extern const struct ltc_hash_descriptor rmd128_desc;
 #ifdef LTC_RIPEMD160
 int rmd160_init(hash_state * md);
 int rmd160_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int rmd160_done(hash_state * md, unsigned char *hash);
+int rmd160_done(hash_state * md, unsigned char *out);
 int rmd160_test(void);
 extern const struct ltc_hash_descriptor rmd160_desc;
 #endif
@@ -589,7 +474,7 @@ extern const struct ltc_hash_descriptor rmd160_desc;
 #ifdef LTC_RIPEMD256
 int rmd256_init(hash_state * md);
 int rmd256_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int rmd256_done(hash_state * md, unsigned char *hash);
+int rmd256_done(hash_state * md, unsigned char *out);
 int rmd256_test(void);
 extern const struct ltc_hash_descriptor rmd256_desc;
 #endif
@@ -597,7 +482,7 @@ extern const struct ltc_hash_descriptor rmd256_desc;
 #ifdef LTC_RIPEMD320
 int rmd320_init(hash_state * md);
 int rmd320_process(hash_state * md, const unsigned char *in, unsigned long inlen);
-int rmd320_done(hash_state * md, unsigned char *hash);
+int rmd320_done(hash_state * md, unsigned char *out);
 int rmd320_test(void);
 extern const struct ltc_hash_descriptor rmd320_desc;
 #endif
@@ -612,55 +497,18 @@ int unregister_hash(const struct ltc_hash_descriptor *hash);
 int register_all_hashes(void);
 int hash_is_valid(int idx);
 
-//LTC_MUTEX_PROTO(ltc_hash_mutex)
+LTC_MUTEX_PROTO(ltc_hash_mutex)
 
 int hash_memory(int hash,
                 const unsigned char *in,  unsigned long inlen,
                       unsigned char *out, unsigned long *outlen);
 int hash_memory_multi(int hash, unsigned char *out, unsigned long *outlen,
-                      const unsigned char *in, unsigned long inlen, ...);
+                      const unsigned char *in, unsigned long inlen, ...)
+                      LTC_NULL_TERMINATED;
 
 #ifndef LTC_NO_FILE
-//int hash_filehandle(int hash, FILE *in, unsigned char *out, unsigned long *outlen);
+int hash_filehandle(int hash, FILE *in, unsigned char *out, unsigned long *outlen);
 int hash_file(int hash, const char *fname, unsigned char *out, unsigned long *outlen);
 #endif
 
-/* a simple macro for making hash "process" functions */
-#define HASH_PROCESS(func_name, compress_name, state_var, block_size)                       \
-int func_name (hash_state * md, const unsigned char *in, unsigned long inlen)               \
-{                                                                                           \
-    unsigned long n;                                                                        \
-    int           err;                                                                      \
-    LTC_ARGCHK(md != NULL);                                                                 \
-    LTC_ARGCHK(in != NULL);                                                                 \
-    if (md-> state_var .curlen > sizeof(md-> state_var .buf)) {                             \
-       return CRYPT_INVALID_ARG;                                                            \
-    }                                                                                       \
-    if ((md-> state_var .length + inlen) < md-> state_var .length) {                        \
-      return CRYPT_HASH_OVERFLOW;                                                           \
-    }                                                                                       \
-    while (inlen > 0) {                                                                     \
-        if (md-> state_var .curlen == 0 && inlen >= block_size) {                           \
-           if ((err = compress_name (md, (unsigned char *)in)) != CRYPT_OK) {               \
-              return err;                                                                   \
-           }                                                                                \
-           md-> state_var .length += block_size * 8;                                        \
-           in             += block_size;                                                    \
-           inlen          -= block_size;                                                    \
-        } else {                                                                            \
-           n = MIN(inlen, (block_size - md-> state_var .curlen));                           \
-           XMEMCPY(md-> state_var .buf + md-> state_var.curlen, in, (size_t)n);             \
-           md-> state_var .curlen += n;                                                     \
-           in             += n;                                                             \
-           inlen          -= n;                                                             \
-           if (md-> state_var .curlen == block_size) {                                      \
-              if ((err = compress_name (md, md-> state_var .buf)) != CRYPT_OK) {            \
-                 return err;                                                                \
-              }                                                                             \
-              md-> state_var .length += 8*block_size;                                       \
-              md-> state_var .curlen = 0;                                                   \
-           }                                                                                \
-       }                                                                                    \
-    }                                                                                       \
-    return CRYPT_OK;                                                                        \
-}
+#endif /* TOMCRYPT_HASH_H_ */

@@ -1,28 +1,14 @@
-/* LibTomCrypt, modular cryptographic library -- Tom St Denis
- *
- * LibTomCrypt is a library that provides various cryptographic
- * algorithms in a highly modular and flexible manner.
- *
- * The library is free for all purposes without any express
- * guarantee it works.
- */
-#include "tomcrypt_hash.h"
+/* LibTomCrypt, modular cryptographic library -- Tom St Denis */
+/* SPDX-License-Identifier: Unlicense */
+#include "tomcrypt_private.h"
 
-#if (ARGTYPE == 0)
-void crypt_argchk(const char *v, const char *s, int d)
-{
- fprintf(stderr, "LTC_ARGCHK '%s' failure on line %d of file %s\n",
-         v, d, s);
- abort();
-}
-#endif
 
 /**
   @file md5.c
   LTC_MD5 hash function by Tom St Denis
 */
 
-//#ifdef LTC_MD5
+#ifdef LTC_MD5
 
 const struct ltc_hash_descriptor md5_desc =
 {
@@ -104,9 +90,9 @@ static const ulong32 Korder[64] = {
 #endif
 
 #ifdef LTC_CLEAN_STACK
-static int _md5_compress(hash_state *md, unsigned char *buf)
+static int ss_md5_compress(hash_state *md, const unsigned char *buf)
 #else
-static int  md5_compress(hash_state *md, unsigned char *buf)
+static int  s_md5_compress(hash_state *md, const unsigned char *buf)
 #endif
 {
     ulong32 i, W[16], a, b, c, d;
@@ -222,10 +208,10 @@ static int  md5_compress(hash_state *md, unsigned char *buf)
 }
 
 #ifdef LTC_CLEAN_STACK
-static int md5_compress(hash_state *md, unsigned char *buf)
+static int s_md5_compress(hash_state *md, const unsigned char *buf)
 {
    int err;
-   err = _md5_compress(md, buf);
+   err = ss_md5_compress(md, buf);
    burn_stack(sizeof(ulong32) * 21);
    return err;
 }
@@ -255,7 +241,7 @@ int md5_init(hash_state * md)
    @param inlen  The length of the data (octets)
    @return CRYPT_OK if successful
 */
-HASH_PROCESS(md5_process, md5_compress, md5, 64)
+HASH_PROCESS(md5_process, s_md5_compress, md5, 64)
 
 /**
    Terminate the hash to get the digest
@@ -289,7 +275,7 @@ int md5_done(hash_state * md, unsigned char *out)
         while (md->md5.curlen < 64) {
             md->md5.buf[md->md5.curlen++] = (unsigned char)0;
         }
-        md5_compress(md, md->md5.buf);
+        s_md5_compress(md, md->md5.buf);
         md->md5.curlen = 0;
     }
 
@@ -300,7 +286,7 @@ int md5_done(hash_state * md, unsigned char *out)
 
     /* store length */
     STORE64L(md->md5.length, md->md5.buf+56);
-    md5_compress(md, md->md5.buf);
+    s_md5_compress(md, md->md5.buf);
 
     /* copy output */
     for (i = 0; i < 4; i++) {
@@ -355,7 +341,7 @@ int  md5_test(void)
 
   for (i = 0; tests[i].msg != NULL; i++) {
       md5_init(&md);
-      md5_process(&md, (unsigned char *)tests[i].msg, (unsigned long)strlen(tests[i].msg));
+      md5_process(&md, (unsigned char *)tests[i].msg, (unsigned long)XSTRLEN(tests[i].msg));
       md5_done(&md, tmp);
       if (compare_testvector(tmp, sizeof(tmp), tests[i].hash, sizeof(tests[i].hash), "MD5", i)) {
          return CRYPT_FAIL_TESTVECTOR;
@@ -365,4 +351,6 @@ int  md5_test(void)
  #endif
 }
 
-//#endif
+#endif
+
+

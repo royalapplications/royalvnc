@@ -43,7 +43,12 @@ let package = Package(
         
         .target(name: "d3des"),
         .target(name: "libtommath"),
-        .target(name: "libtomcrypt"),
+        
+        .target(name: "libtomcrypt", cSettings: [
+            .unsafeFlags([
+                "-Wno-shorten-64-to-32"
+            ])
+        ]),
         
         .target(name: "Z", linkerSettings: [
             .linkedLibrary("z")
