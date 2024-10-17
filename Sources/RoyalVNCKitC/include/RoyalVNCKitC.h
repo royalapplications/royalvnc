@@ -33,6 +33,19 @@ typedef enum : int {
     RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII = 2
 } RVNC_AUTHENTICATIONTYPE;
 
+
+#pragma mark - Types
+
+typedef void* rvnc_context_t;
+//typedef void* rvnc_credential_t;
+typedef void* rvnc_password_credential_t;
+typedef void* rvnc_username_password_credential_t;
+typedef void* rvnc_settings_t;
+typedef void* rvnc_connection_state_t;
+typedef void* rvnc_framebuffer_t;
+typedef void* rvnc_connection_t;
+
+
 #pragma mark - Authentication Type
 
 extern bool rvnc_authentication_type_requires_username(RVNC_AUTHENTICATIONTYPE authenticationType);
@@ -40,10 +53,6 @@ extern bool rvnc_authentication_type_requires_password(RVNC_AUTHENTICATIONTYPE a
 
 
 #pragma mark - Credential
-
-//typedef void* rvnc_credential_t;
-typedef void* rvnc_password_credential_t;
-typedef void* rvnc_username_password_credential_t;
 
 extern rvnc_password_credential_t _Nonnull rvnc_password_credential_create(const char* _Nonnull password);
 extern void rvnc_password_credential_destroy(rvnc_password_credential_t _Nonnull credential);
@@ -53,8 +62,6 @@ extern void rvnc_username_password_credential_destroy(rvnc_username_password_cre
 
 
 #pragma mark - Settings
-
-typedef void* rvnc_settings_t;
 
 extern rvnc_settings_t _Nonnull rvnc_settings_create(bool isDebugLoggingEnabled,
                                                      const char* _Nonnull hostname,
@@ -71,8 +78,6 @@ extern void rvnc_settings_destroy(rvnc_settings_t _Nonnull settings);
 
 #pragma mark - Connection State
 
-typedef void* rvnc_connection_state_t;
-
 extern void rvnc_connection_state_destroy(rvnc_connection_state_t _Nonnull connectionState);
 
 extern RVNC_CONNECTION_STATUS rvnc_connection_state_status_get(rvnc_connection_state_t _Nonnull connectionState);
@@ -81,8 +86,6 @@ extern char* _Nullable rvnc_connection_state_error_description_get_copy(rvnc_con
 
 #pragma mark - Framebuffer
 
-typedef void* rvnc_framebuffer_t;
-
 extern uint16_t rvnc_framebuffer_size_width_get(rvnc_framebuffer_t _Nonnull framebuffer);
 extern uint16_t rvnc_framebuffer_size_height_get(rvnc_framebuffer_t _Nonnull framebuffer);
 extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnull framebuffer);
@@ -90,15 +93,14 @@ extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnul
 
 #pragma mark - Connection
 
-typedef void* rvnc_connection_t;
-
-extern rvnc_connection_t _Nonnull rvnc_connection_create(const rvnc_settings_t _Nonnull settings);
+extern rvnc_connection_t _Nonnull rvnc_connection_create(rvnc_settings_t _Nonnull settings, rvnc_context_t _Nullable context);
 extern void rvnc_connection_destroy(rvnc_connection_t _Nonnull connection);
 
 extern void rvnc_connection_connect(rvnc_connection_t _Nonnull connection);
 extern void rvnc_connection_disconnect(rvnc_connection_t _Nonnull connection);
 extern void rvnc_connection_update_color_depth(rvnc_connection_t _Nonnull connection, RVNC_COLORDEPTH colorDepth);
 
+extern rvnc_context_t _Nullable rvnc_connection_context_get(rvnc_connection_t _Nonnull connection);
 extern rvnc_connection_state_t _Nonnull rvnc_connection_state_get_copy(rvnc_connection_t _Nonnull connection);
 extern rvnc_framebuffer_t _Nullable rvnc_connection_framebuffer_get(rvnc_connection_t _Nonnull connection);
 

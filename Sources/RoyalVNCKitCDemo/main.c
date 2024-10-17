@@ -3,6 +3,11 @@
 
 #include <RoyalVNCKitC.h>
 
+typedef struct Context {
+    rvnc_connection_t connection;
+//    rvnc_connection_delegate_t connectionDelegate;
+} Context;
+
 int main(int argc, char *argv[]) {
     const char* hostname = "localhost";
     
@@ -16,14 +21,41 @@ int main(int argc, char *argv[]) {
                                                     false,
                                                     RVNC_COLORDEPTH_24BIT);
     
-    rvnc_connection_t connection = rvnc_connection_create(settings);
+    Context* context = malloc(sizeof(Context));
+    
+    if (!context) {
+        printf("Error: Failed to create context\n");
+        
+        rvnc_settings_destroy(settings);
+        
+        return EXIT_FAILURE;
+    }
+    
+    rvnc_connection_t connection = rvnc_connection_create(settings, context);
+    
+    Context* connectionContext = rvnc_connection_context_get(connection);
+    
+    if (connectionContext != context) {
+        printf("Error: Connection context should be equal to the context we just created\n");
+        
+        rvnc_connection_destroy(connection);
+        free(context);
+        rvnc_settings_destroy(settings);
+        
+        return EXIT_FAILURE;
+    }
     
     rvnc_connection_state_t initialConnectionState = rvnc_connection_state_get_copy(connection);
     RVNC_CONNECTION_STATUS initialConnectionStatus = rvnc_connection_state_status_get(initialConnectionState);
     
     if (initialConnectionStatus != RVNC_CONNECTION_STATUS_DISCONNECTED) {
         printf("Error: Connection status should be disconnected\n");
-        exit(1);
+        
+        rvnc_connection_state_destroy(initialConnectionState);
+        rvnc_connection_destroy(connection);
+        rvnc_settings_destroy(settings);
+        
+        return EXIT_FAILURE;
     }
     
     rvnc_connection_state_destroy(initialConnectionState);
@@ -57,4 +89,6 @@ int main(int argc, char *argv[]) {
     
     rvnc_connection_destroy(connection);
     rvnc_settings_destroy(settings);
+    
+    return EXIT_SUCCESS;
 }

@@ -19,6 +19,8 @@ public class VNCConnection: NSObjectOrAnyObject {
 	@objc
 #endif
 	public let settings: Settings
+    
+    public let context: UnsafeMutableRawPointer?
 	
 #if canImport(ObjectiveC)
 	@objc
@@ -163,47 +165,64 @@ public class VNCConnection: NSObjectOrAnyObject {
 	}
 	
 	// MARK: - Public Initializers
+    public init(settings: Settings,
+                logger: VNCLogger,
+                context: UnsafeMutableRawPointer?) {
+        self.settings = settings
+        
+        logger.isDebugLoggingEnabled = settings.isDebugLoggingEnabled
+        
+        self.logger = logger
+        
+        self.context = context
+        
+        self.sharedZStream = .init()
+        
+        let clipboard = VNCClipboard()
+        
+        let clipboardMonitor = VNCClipboardMonitor(clipboard: clipboard,
+                                                   monitoringInterval: 0.5,
+                                                   tolerance: 0.15)
+        
+        self.clipboard = clipboard
+        
+        self.clipboardMonitor = clipboardMonitor
+        
+        super.init()
+        
+        self.clipboardMonitor.delegate = self
+    }
+    
 #if canImport(ObjectiveC)
 	@objc
 #endif
-	public init(settings: Settings,
-				logger: VNCLogger) {
-		self.settings = settings
-		
-		logger.isDebugLoggingEnabled = settings.isDebugLoggingEnabled
-		
-		self.logger = logger
-		
-		self.sharedZStream = .init()
-		
-		let clipboard = VNCClipboard()
-		
-		let clipboardMonitor = VNCClipboardMonitor(clipboard: clipboard,
-												   monitoringInterval: 0.5,
-												   tolerance: 0.15)
-		
-		self.clipboard = clipboard
-		
-		self.clipboardMonitor = clipboardMonitor
-		
-		super.init()
-		
-		self.clipboardMonitor.delegate = self
+    public convenience init(settings: Settings,
+                            logger: VNCLogger) {
+        self.init(settings: settings,
+                  logger: logger,
+                  context: nil)
 	}
 	
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	public convenience init(settings: Settings) {
-#if canImport(OSLog)
-		let logger = VNCOSLogLogger()
-#else
-		let logger = VNCPrintLogger() 
-#endif
-		
-		self.init(settings: settings,
-				  logger: logger)
+        self.init(settings: settings,
+                  context: nil)
 	}
+    
+    public convenience init(settings: Settings,
+                            context: UnsafeMutableRawPointer?) {
+#if canImport(OSLog)
+        let logger = VNCOSLogLogger()
+#else
+        let logger = VNCPrintLogger()
+#endif
+        
+        self.init(settings: settings,
+                  logger: logger,
+                  context: context)
+    }
 	
 	deinit {
 		let _self = self

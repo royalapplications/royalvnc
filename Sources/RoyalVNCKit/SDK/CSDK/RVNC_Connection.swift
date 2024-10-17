@@ -27,8 +27,9 @@ extension VNCConnection {
 @_cdecl("rvnc_connection_create")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_create(_ settings: rvnc_settings_t) -> rvnc_connection_t {
-    let connection = VNCConnection(settings: .fromPointer(settings))
+public func rvnc_connection_create(_ settings: rvnc_settings_t, _ context: rvnc_context_t) -> rvnc_connection_t {
+    let connection = VNCConnection(settings: .fromPointer(settings),
+                                   context: context)
     
     return connection.retainedPointer()
 }
@@ -76,6 +77,16 @@ public func rvnc_connection_update_color_depth(_ connection: rvnc_connection_t,
     
     VNCConnection.fromPointer(connection)
         .updateColorDepth(colorDepthSwift)
+}
+
+@_cdecl("rvnc_connection_context_get")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_connection_context_get(_ connection: rvnc_connection_t) -> rvnc_context_t? {
+    let connectionSwift = VNCConnection.fromPointer(connection)
+    let context = connectionSwift.context
+    
+    return context
 }
 
 @_cdecl("rvnc_connection_state_get_copy")
