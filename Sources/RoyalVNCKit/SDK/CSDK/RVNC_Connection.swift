@@ -117,6 +117,17 @@ public func rvnc_connection_state_get_copy(_ connection: rvnc_connection_t) -> r
     return connectionStateC
 }
 
+@_cdecl("rvnc_connection_settings_get_copy")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_connection_settings_get_copy(_ connection: rvnc_connection_t) -> rvnc_settings_t {
+    let connectionSwift = VNCConnection.fromPointer(connection)
+    let connectionSettings = connectionSwift.settings
+    let connectionSettingsC = connectionSettings.retainedPointer()
+    
+    return connectionSettingsC
+}
+
 @_cdecl("rvnc_connection_framebuffer_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
