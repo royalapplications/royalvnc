@@ -185,5 +185,6 @@ extern void rvnc_connection_mouse_wheel_down(rvnc_connection_t _Nonnull connecti
 extern void rvnc_connection_mouse_wheel_left(rvnc_connection_t _Nonnull connection, double x, double y);
 extern void rvnc_connection_mouse_wheel_right(rvnc_connection_t _Nonnull connection, double x, double y);
 
+// NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `X11KeySymbols` struct.
 extern void rvnc_connection_key_down(rvnc_connection_t _Nonnull connection, uint32_t key);
 extern void rvnc_connection_key_up(rvnc_connection_t _Nonnull connection, uint32_t key);
