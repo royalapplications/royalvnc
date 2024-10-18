@@ -58,9 +58,10 @@ void delegate_connectionStateDidChange(rvnc_connection_t connection,
     }
 }
 
-rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
-                                         const rvnc_context_t context,
-                                         RVNC_AUTHENTICATIONTYPE authenticationType) {
+void delegate_authenticate(rvnc_connection_t connection,
+                           const rvnc_context_t context,
+                           rvnc_authentication_request_t authenticationRequest) {
+    RVNC_AUTHENTICATIONTYPE authenticationType = rvnc_authentication_request_authentication_type_get(authenticationRequest);
     char* authenticationTypeStr;
     
     switch (authenticationType) {
@@ -75,47 +76,50 @@ rvnc_credential_t delegate_getCredential(rvnc_connection_t connection,
             break;
     }
     
-    printf("delegate_getCredential - Authentication type: %s\n",
+    printf("delegate_authenticate - Authentication type: %s\n",
            authenticationTypeStr);
     
     bool requiresUsername = rvnc_authentication_type_requires_username(authenticationType);
     bool requiresPassword = rvnc_authentication_type_requires_password(authenticationType);
     
-    char* username;
-    
     if (requiresUsername) {
         printf("Username: ");
-        username = getLine();
-    }
-    
-    char* password;
-    
-    if (requiresPassword) {
+        char* username = getLine();
+        
         printf("Password: ");
-        password = getLine();
-    }
-    
-    rvnc_credential_t credential;
-    
-    if (requiresUsername) {
-        credential = rvnc_credential_create(username,
-                                            password);
+        char* password = getLine();
+        
+        if (username &&
+            password) {
+            rvnc_authentication_request_complete_with_username_password(authenticationRequest,
+                                                                        username,
+                                                                        password);
+        } else {
+            rvnc_authentication_request_cancel(authenticationRequest);
+        }
+        
+        if (username) {
+            free(username);
+        }
+        
+        if (password) {
+            free(password);
+        }
     } else if (requiresPassword) {
-        credential = rvnc_credential_create(NULL,
-                                            password);
-    } else {
-        credential = NULL;
+        printf("Password: ");
+        char* password = getLine();
+        
+        if (password) {
+            rvnc_authentication_request_complete_with_password(authenticationRequest,
+                                                               password);
+            
+            free(password);
+        } else {
+            rvnc_authentication_request_cancel(authenticationRequest);
+        }
+    } else { // Should never happen because authenticate is only called if a credential is actually required. So either requiresUsername or requiresPassword or both must be true.
+        rvnc_authentication_request_cancel(authenticationRequest);
     }
-    
-    if (username) {
-        free(username);
-    }
-    
-    if (password) {
-        free(password);
-    }
-    
-    return credential;
 }
 
 void delegate_didCreateFramebuffer(rvnc_connection_t connection,
@@ -215,7 +219,7 @@ int main(int argc, char *argv[]) {
     
     // Create connection delegate
     rvnc_connection_delegate_t connectionDelegate = rvnc_connection_delegate_create(delegate_connectionStateDidChange,
-                                                                                    delegate_getCredential,
+                                                                                    delegate_authenticate,
                                                                                     delegate_didCreateFramebuffer,
                                                                                     delegate_didResizeFramebuffer,
                                                                                     delegate_framebufferDidUpdateRegion,

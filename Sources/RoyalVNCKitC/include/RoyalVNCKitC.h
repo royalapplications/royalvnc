@@ -37,7 +37,7 @@ typedef enum : int {
 #pragma mark - Types
 
 typedef void* rvnc_context_t;
-typedef void* rvnc_credential_t;
+typedef void* rvnc_authentication_request_t;
 typedef void* rvnc_settings_t;
 typedef void* rvnc_connection_state_t;
 typedef void* rvnc_framebuffer_t;
@@ -51,10 +51,18 @@ extern bool rvnc_authentication_type_requires_username(RVNC_AUTHENTICATIONTYPE a
 extern bool rvnc_authentication_type_requires_password(RVNC_AUTHENTICATIONTYPE authenticationType);
 
 
-#pragma mark - Credential
+#pragma mark - Authentication Request
 
-extern rvnc_credential_t _Nonnull rvnc_credential_create(const char* _Nullable username,
-                                                         const char* _Nullable password);
+extern RVNC_AUTHENTICATIONTYPE rvnc_authentication_request_authentication_type_get(rvnc_authentication_request_t _Nonnull authenticationRequest);
+
+extern void rvnc_authentication_request_cancel(rvnc_authentication_request_t _Nonnull authenticationRequest);
+
+extern void rvnc_authentication_request_complete_with_username_password(rvnc_authentication_request_t _Nonnull authenticationRequest,
+                                                                        const char* _Nonnull username,
+                                                                        const char* _Nonnull password);
+
+extern void rvnc_authentication_request_complete_with_password(rvnc_authentication_request_t _Nonnull authenticationRequest,
+                                                               const char* _Nonnull password);
 
 
 #pragma mark - Settings
@@ -93,9 +101,9 @@ typedef void (*rvnc_connection_delegate_connection_state_did_change)(rvnc_connec
                                                                      const rvnc_context_t _Nullable /* context */,
                                                                      _Nonnull rvnc_connection_state_t /* connectionState */);
 
-typedef rvnc_credential_t _Nullable (*rvnc_connection_delegate_get_credential)(rvnc_connection_t _Nonnull /* connection */,
-                                                                               const rvnc_context_t _Nullable /* context */,
-                                                                               RVNC_AUTHENTICATIONTYPE /* authenticationType */);
+typedef void (*rvnc_connection_delegate_authenticate)(rvnc_connection_t _Nonnull /* connection */,
+                                                      const rvnc_context_t _Nullable /* context */,
+                                                      _Nonnull rvnc_authentication_request_t /* authenticationRequest */);
 
 typedef void (*rvnc_connection_delegate_did_create_framebuffer)(rvnc_connection_t _Nonnull /* connection */,
                                                                 const rvnc_context_t _Nullable /* context */,
@@ -118,7 +126,7 @@ typedef void (*rvnc_connection_delegate_did_update_cursor)(rvnc_connection_t _No
                                                            const rvnc_context_t _Nullable /* context */);
 
 extern rvnc_connection_delegate_t _Nonnull rvnc_connection_delegate_create(rvnc_connection_delegate_connection_state_did_change _Nonnull connectionStateDidChange,
-                                                                           rvnc_connection_delegate_get_credential _Nonnull getCredential,
+                                                                           rvnc_connection_delegate_authenticate _Nonnull authenticate,
                                                                            rvnc_connection_delegate_did_create_framebuffer _Nonnull didCreateFramebuffer,
                                                                            rvnc_connection_delegate_did_resize_framebuffer _Nonnull didResizeFramebuffer,
                                                                            rvnc_connection_delegate_framebuffer_did_update_region _Nonnull framebufferDidUpdateRegion,

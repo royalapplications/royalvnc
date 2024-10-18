@@ -29,7 +29,7 @@ extension VNCConnectionDelegate_C {
 @available(*, unavailable)
 public func rvnc_connection_delegate_create(
     _ connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change,
-    _ getCredential: rvnc_connection_delegate_get_credential,
+    _ authenticate: rvnc_connection_delegate_authenticate,
     _ didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
     _ didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer,
     _ framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region,
@@ -37,7 +37,7 @@ public func rvnc_connection_delegate_create(
 ) -> rvnc_connection_delegate_t {
     let delegate = VNCConnectionDelegate_C(
         connectionStateDidChange: connectionStateDidChange,
-        getCredential: getCredential,
+        authenticate: authenticate,
         didCreateFramebuffer: didCreateFramebuffer,
         didResizeFramebuffer: didResizeFramebuffer,
         framebufferDidUpdateRegion: framebufferDidUpdateRegion,
@@ -56,7 +56,7 @@ public func rvnc_connection_delegate_destroy(_ connectionDelegate: rvnc_connecti
 
 class VNCConnectionDelegate_C {
     let connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change
-    let getCredential: rvnc_connection_delegate_get_credential
+    let authenticate: rvnc_connection_delegate_authenticate
     let didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer
     let didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer
     let framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region
@@ -64,14 +64,14 @@ class VNCConnectionDelegate_C {
     
     init(
         connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change,
-        getCredential: rvnc_connection_delegate_get_credential,
+        authenticate: rvnc_connection_delegate_authenticate,
         didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
         didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer,
         framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region,
         didUpdateCursor: rvnc_connection_delegate_did_update_cursor
     ) {
         self.connectionStateDidChange = connectionStateDidChange
-        self.getCredential = getCredential
+        self.authenticate = authenticate
         self.didCreateFramebuffer = didCreateFramebuffer
         self.didResizeFramebuffer = didResizeFramebuffer
         self.framebufferDidUpdateRegion = framebufferDidUpdateRegion
@@ -92,45 +92,16 @@ extension VNCConnectionDelegate_C: VNCConnectionDelegate {
     func connection(_ connection: VNCConnection,
                     credentialFor authenticationType: VNCAuthenticationType,
                     completion: @escaping ((any VNCCredential)?) -> Void) {
-        let credC = self.getCredential(
+        let authRequest = VNCAuthenticationRequest_C(authenticationType: authenticationType,
+                                                     completionHandler: completion)
+        
+        let authRequestC = authRequest.retainedPointer()
+        
+        self.authenticate(
             connection.unretainedPointer(),
             .init(OpaquePointer(connection.context)),
-            authenticationType.cVNCAuthenticationType
+            authRequestC
         )
-        
-        let credSwift: VNCCredential_C?
-        
-        if let credC {
-            credSwift = VNCCredential_C.fromPointer(credC)
-        } else {
-            credSwift = nil
-        }
-        
-        defer {
-            if let credC {
-                VNCCredential_C.autoreleasePointer(credC)
-            }
-        }
-        
-        let actualCred: VNCCredential?
-        
-        if let credSwift {
-            let username = credSwift.username
-            let password = credSwift.password
-            
-            if let username {
-                actualCred = VNCUsernamePasswordCredential(username: username,
-                                                           password: password ?? "")
-            } else if let password {
-                actualCred = VNCPasswordCredential(password: password)
-            } else {
-                actualCred = nil
-            }
-        } else {
-            actualCred = nil
-        }
-        
-        completion(actualCred)
     }
     
     func connection(_ connection: VNCConnection,
