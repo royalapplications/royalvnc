@@ -128,21 +128,6 @@ public func rvnc_connection_settings_get_copy(_ connection: rvnc_connection_t) -
     return connectionSettingsC
 }
 
-@_cdecl("rvnc_connection_framebuffer_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_framebuffer_get(_ connection: rvnc_connection_t) -> rvnc_framebuffer_t? {
-    let connectionSwift = VNCConnection.fromPointer(connection)
-    
-    guard let framebuffer = connectionSwift.framebuffer else {
-        return nil
-    }
-    
-    let framebufferC = framebuffer.unretainedPointer()
-    
-    return framebufferC
-}
-
 @_cdecl("rvnc_connection_mouse_move")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)

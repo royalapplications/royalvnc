@@ -173,7 +173,6 @@ extern void rvnc_connection_delegate_set(rvnc_connection_t _Nonnull connection, 
 extern rvnc_context_t _Nullable rvnc_connection_context_get(rvnc_connection_t _Nonnull connection);
 extern rvnc_connection_state_t _Nonnull rvnc_connection_state_get_copy(rvnc_connection_t _Nonnull connection);
 extern rvnc_settings_t _Nonnull rvnc_connection_settings_get_copy(rvnc_connection_t _Nonnull connection);
-extern rvnc_framebuffer_t _Nullable rvnc_connection_framebuffer_get(rvnc_connection_t _Nonnull connection);
 
 extern void rvnc_connection_mouse_move(rvnc_connection_t _Nonnull connection, double x, double y);
 extern void rvnc_connection_mouse_down(rvnc_connection_t _Nonnull connection, double x, double y);
