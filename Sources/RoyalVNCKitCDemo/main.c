@@ -32,6 +32,17 @@ char* connectionStatusToString(RVNC_CONNECTION_STATUS connectionStatus) {
     }
 }
 
+char* authenticationTypeToString(RVNC_AUTHENTICATIONTYPE authenticationType) {
+    switch (authenticationType) {
+        case RVNC_AUTHENTICATIONTYPE_VNC:
+            return "VNC";
+        case RVNC_AUTHENTICATIONTYPE_APPLEREMOTEDESKTOP:
+            return "Apple Remote Desktop";
+        case RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII:
+            return "Ultra VNC MS Logon II";
+    }
+}
+
 
 #pragma mark - Connection Delegate Implementation
 void delegate_connectionStateDidChange(rvnc_connection_t connection,
@@ -62,19 +73,7 @@ void delegate_authenticate(rvnc_connection_t connection,
                            const rvnc_context_t context,
                            rvnc_authentication_request_t authenticationRequest) {
     RVNC_AUTHENTICATIONTYPE authenticationType = rvnc_authentication_request_authentication_type_get(authenticationRequest);
-    char* authenticationTypeStr;
-    
-    switch (authenticationType) {
-        case RVNC_AUTHENTICATIONTYPE_VNC:
-            authenticationTypeStr = "VNC";
-            break;
-        case RVNC_AUTHENTICATIONTYPE_APPLEREMOTEDESKTOP:
-            authenticationTypeStr = "Apple Remote Desktop";
-            break;
-        case RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII:
-            authenticationTypeStr = "Ultra VNC MS Logon II";
-            break;
-    }
+    char* authenticationTypeStr = authenticationTypeToString(authenticationType);
     
     printf("delegate_authenticate - Authentication type: %s\n",
            authenticationTypeStr);
