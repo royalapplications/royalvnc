@@ -11,6 +11,7 @@ typedef struct Context {
 
 
 #pragma mark - Helpers
+
 char* getLine(void) {
     char* str = malloc(sizeof(char) * 1024);
     scanf(" %[^\n]s", str);
@@ -71,6 +72,7 @@ void loggerDelegate_log(rvnc_logger_t logger,
 
 
 #pragma mark - Connection Delegate implementation
+
 void delegate_connectionStateDidChange(rvnc_connection_t connection,
                                        const rvnc_context_t context,
                                        rvnc_connection_state_t connectionState) {
