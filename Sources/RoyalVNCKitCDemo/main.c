@@ -143,9 +143,11 @@ void delegate_didCreateFramebuffer(rvnc_connection_t connection,
 void delegate_didResizeFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
-    printf("delegate_didResizeFramebuffer - Framebuffer Size: %ix%i\n",
+    printf("delegate_didResizeFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %llu; Pixel Data Pointer: %p\n",
            rvnc_framebuffer_size_width_get(framebuffer),
-           rvnc_framebuffer_size_height_get(framebuffer));
+           rvnc_framebuffer_size_height_get(framebuffer),
+           rvnc_framebuffer_pixel_data_size_get(framebuffer),
+           rvnc_framebuffer_pixel_data_get(framebuffer));
 }
 
 void delegate_framebufferDidUpdateRegion(rvnc_connection_t connection,
@@ -156,13 +158,43 @@ void delegate_framebufferDidUpdateRegion(rvnc_connection_t connection,
                                          uint16_t width,
                                          uint16_t height) {
     printf("delegate_framebufferDidUpdateRegion - x: %i; y: %i; width: %i; height: %i\n",
-           x, y, width, height);
+           x,
+           y,
+           width,
+           height);
 }
 
-// TODO: Missing cursor type
 void delegate_didUpdateCursor(rvnc_connection_t connection,
-                              const rvnc_context_t context) {
-    printf("delegate_didUpdateCursor\n");
+                              const rvnc_context_t context,
+                              rvnc_cursor_t cursor) {
+    bool isEmpty = rvnc_cursor_is_empty_get(cursor);
+    uint16_t width = rvnc_cursor_size_width_get(cursor);
+    uint16_t height = rvnc_cursor_size_height_get(cursor);
+    uint16_t hotspotX = rvnc_cursor_hotspot_x_get(cursor);
+    uint16_t hotspotY = rvnc_cursor_hotspot_y_get(cursor);
+    int bitsPerComponent = rvnc_cursor_bits_per_component_get(cursor);
+    int bitsPerPixel = rvnc_cursor_bits_per_pixel_get(cursor);
+    int bytesPerPixel = rvnc_cursor_bytes_per_pixel_get(cursor);
+    int bytesPerRow = rvnc_cursor_bytes_per_row_get(cursor);
+    void* pixelData = rvnc_cursor_pixel_data_get_copy(cursor);
+    uint64_t pixelDataSize = rvnc_cursor_pixel_data_size_get(cursor);
+    
+    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %i; bitsPerPixel: %i; bytesPerPixel: %i; bytesPerRow: %i; pixelData: %p; pixelDataSize: %llu\n",
+           isEmpty ? "Yes" : "No",
+           width,
+           height,
+           hotspotX,
+           hotspotY,
+           bitsPerComponent,
+           bitsPerPixel,
+           bytesPerPixel,
+           bytesPerRow,
+           pixelData,
+           pixelDataSize);
+    
+    if (pixelData) {
+        free(pixelData);
+    }
 }
 
 
@@ -188,45 +220,8 @@ int main(int argc, char *argv[]) {
     // Create context
     Context* context = malloc(sizeof(Context));
     
-    if (!context) {
-        printf("Error: Failed to create context\n");
-        
-        rvnc_settings_destroy(settings);
-        
-        return EXIT_FAILURE;
-    }
-    
     // Create connection
     rvnc_connection_t connection = rvnc_connection_create(settings, context);
-    
-    // Verify context is properly set in connection
-    Context* connectionContext = rvnc_connection_context_get(connection);
-    
-    if (connectionContext != context) {
-        printf("Error: Connection context should be equal to the context we just created\n");
-        
-        rvnc_connection_destroy(connection);
-        free(context);
-        rvnc_settings_destroy(settings);
-        
-        return EXIT_FAILURE;
-    }
-    
-    // Verify initial connection status is disconnected
-    rvnc_connection_state_t initialConnectionState = rvnc_connection_state_get_copy(connection);
-    RVNC_CONNECTION_STATUS initialConnectionStatus = rvnc_connection_state_status_get(initialConnectionState);
-    
-    if (initialConnectionStatus != RVNC_CONNECTION_STATUS_DISCONNECTED) {
-        printf("Error: Connection status should be disconnected\n");
-        
-        rvnc_connection_state_destroy(initialConnectionState);
-        rvnc_connection_destroy(connection);
-        rvnc_settings_destroy(settings);
-        
-        return EXIT_FAILURE;
-    }
-    
-    rvnc_connection_state_destroy(initialConnectionState);
     
     // Create connection delegate
     rvnc_connection_delegate_t connectionDelegate = rvnc_connection_delegate_create(delegate_connectionStateDidChange,

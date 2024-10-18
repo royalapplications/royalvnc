@@ -154,10 +154,10 @@ extension VNCConnectionDelegate_C: VNCConnectionDelegate {
     
     func connection(_ connection: VNCConnection,
                     didUpdateCursor cursor: VNCCursor) {
-        // TODO: Cursor type missing
         self.didUpdateCursor(
             connection.unretainedPointer(),
-            .init(OpaquePointer(connection.context))
+            .init(OpaquePointer(connection.context)),
+            cursor.unretainedPointer()
         )
     }
 }

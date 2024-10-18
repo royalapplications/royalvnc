@@ -3,7 +3,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// TODO: Cursor, Logger
+// TODO: Logger
+
+// NOTE: Memory management roughly follows Apple's CoreFoundation Ownership Policy: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-CJBEJBHH
+// If you create an object (by calling a method suffixed with either `_create` or `_copy`), you own it and must relinquish ownership when you have finished using it (by calling a matching method suffixed with `_destroy` or `free` in case of C strings).
+// If you get an object from somewhere else, you do not own it. You must not store a reference to such objects since they might be destroyed right after the function call that they're passed into finishes.
+
 
 #pragma mark - Enums
 
@@ -43,6 +48,7 @@ typedef void* rvnc_connection_state_t;
 typedef void* rvnc_framebuffer_t;
 typedef void* rvnc_connection_t;
 typedef void* rvnc_connection_delegate_t;
+typedef void* rvnc_cursor_t;
 
 
 #pragma mark - Authentication Type
@@ -98,6 +104,21 @@ extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnul
 extern uint64_t rvnc_framebuffer_pixel_data_size_get(rvnc_framebuffer_t _Nonnull framebuffer);
 
 
+#pragma mark - Cursor
+
+extern bool rvnc_cursor_is_empty_get(rvnc_cursor_t _Nonnull cursor);
+extern uint16_t rvnc_cursor_size_width_get(rvnc_cursor_t _Nonnull cursor);
+extern uint16_t rvnc_cursor_size_height_get(rvnc_cursor_t _Nonnull cursor);
+extern uint16_t rvnc_cursor_hotspot_x_get(rvnc_cursor_t _Nonnull cursor);
+extern uint16_t rvnc_cursor_hotspot_y_get(rvnc_cursor_t _Nonnull cursor);
+extern int rvnc_cursor_bits_per_component_get(rvnc_cursor_t _Nonnull cursor);
+extern int rvnc_cursor_bits_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
+extern int rvnc_cursor_bytes_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
+extern int rvnc_cursor_bytes_per_row_get(rvnc_cursor_t _Nonnull cursor);
+extern void* _Nullable rvnc_cursor_pixel_data_get_copy(rvnc_cursor_t _Nonnull cursor);
+extern uint64_t rvnc_cursor_pixel_data_size_get(rvnc_cursor_t _Nonnull cursor);
+
+
 #pragma mark - Connection Delegate
 
 typedef void (*rvnc_connection_delegate_connection_state_did_change)(rvnc_connection_t _Nonnull /* connection */,
@@ -124,9 +145,9 @@ typedef void (*rvnc_connection_delegate_framebuffer_did_update_region)(rvnc_conn
                                                                        uint16_t /* width */,
                                                                        uint16_t /* height */);
 
-// TODO: Cursor type missing
 typedef void (*rvnc_connection_delegate_did_update_cursor)(rvnc_connection_t _Nonnull /* connection */,
-                                                           const rvnc_context_t _Nullable /* context */);
+                                                           const rvnc_context_t _Nullable /* context */,
+                                                           rvnc_cursor_t _Nonnull /* cursor */);
 
 extern rvnc_connection_delegate_t _Nonnull rvnc_connection_delegate_create(rvnc_connection_delegate_connection_state_did_change _Nonnull connectionStateDidChange,
                                                                            rvnc_connection_delegate_authenticate _Nonnull authenticate,
