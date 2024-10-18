@@ -27,9 +27,29 @@ extension VNCConnection {
 @_cdecl("rvnc_connection_create")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_create(_ settings: rvnc_settings_t, _ context: rvnc_context_t) -> rvnc_connection_t {
-    let connection = VNCConnection(settings: .fromPointer(settings),
+public func rvnc_connection_create(_ settings: rvnc_settings_t,
+                                   _ logger: rvnc_logger_t?,
+                                   _ context: rvnc_context_t?) -> rvnc_connection_t {
+    let loggerSwift: VNCLogger_C?
+    
+    if let logger {
+        loggerSwift = VNCLogger_C.fromPointer(logger)
+    } else {
+        loggerSwift = nil
+    }
+    
+    let settingsSwift = VNCConnection.Settings.fromPointer(settings)
+    
+    let connection: VNCConnection
+    
+    if let loggerSwift {
+        connection = VNCConnection(settings: settingsSwift,
+                                   logger: loggerSwift,
                                    context: context)
+    } else {
+        connection = VNCConnection(settings: settingsSwift,
+                                   context: context)
+    }
     
     return connection.retainedPointer()
 }

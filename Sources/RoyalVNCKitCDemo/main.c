@@ -7,7 +7,6 @@
 
 typedef struct Context {
     rvnc_connection_t connection;
-//    rvnc_connection_delegate_t connectionDelegate;
 } Context;
 
 
@@ -43,8 +42,35 @@ char* authenticationTypeToString(RVNC_AUTHENTICATIONTYPE authenticationType) {
     }
 }
 
+char* logLevelToString(RVNC_LOG_LEVEL logLevel) {
+    switch (logLevel) {
+        case RVNC_LOG_LEVEL_DEBUG:
+            return "Debug";
+        case RVNC_LOG_LEVEL_INFO:
+            return "Info";
+        case RVNC_LOG_LEVEL_WARNING:
+            return "Warning";
+        case RVNC_LOG_LEVEL_ERROR:
+            return "Error";
+    }
+}
 
-#pragma mark - Connection Delegate Implementation
+
+#pragma mark - Logger Delegate implementation
+
+void loggerDelegate_log(rvnc_logger_t logger,
+                        const rvnc_context_t context,
+                        RVNC_LOG_LEVEL logLevel,
+                        const char* message) {
+    char* logLevelStr = logLevelToString(logLevel);
+    
+    printf("[%s] %s\n",
+           logLevelStr,
+           message);
+}
+
+
+#pragma mark - Connection Delegate implementation
 void delegate_connectionStateDidChange(rvnc_connection_t connection,
                                        const rvnc_context_t context,
                                        rvnc_connection_state_t connectionState) {
@@ -201,27 +227,39 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
 #pragma mark - Main
 
 int main(int argc, char *argv[]) {
+    // Declare settings
     const char* hostname = "localhost";
     const uint16_t port = 5900;
-    
+    const bool isShared = true;
+    const bool isScalingEnabled = false;
+    const bool useDisplayLink = false;
+    const RVNC_INPUTMODE inputMode = RVNC_INPUTMODE_NONE;
+    const bool isClipboardRedirectionEnabled = false;
+    const RVNC_COLORDEPTH colorDepth = RVNC_COLORDEPTH_24BIT;
     const bool enableDebugLogging = true;
+    
+    // Create context
+    Context* context = malloc(sizeof(Context));
+    
+    // Create logger
+    rvnc_logger_t logger = rvnc_logger_create(loggerDelegate_log,
+                                              context);
     
     // Create settings
     rvnc_settings_t settings = rvnc_settings_create(enableDebugLogging,
                                                     hostname,
                                                     port,
-                                                    true,
-                                                    false,
-                                                    false,
-                                                    RVNC_INPUTMODE_NONE,
-                                                    false,
-                                                    RVNC_COLORDEPTH_24BIT);
-    
-    // Create context
-    Context* context = malloc(sizeof(Context));
+                                                    isShared,
+                                                    isScalingEnabled,
+                                                    useDisplayLink,
+                                                    inputMode,
+                                                    isClipboardRedirectionEnabled,
+                                                    colorDepth);
     
     // Create connection
-    rvnc_connection_t connection = rvnc_connection_create(settings, context);
+    rvnc_connection_t connection = rvnc_connection_create(settings,
+                                                          logger,
+                                                          context);
     
     // Create connection delegate
     rvnc_connection_delegate_t connectionDelegate = rvnc_connection_delegate_create(delegate_connectionStateDidChange,
@@ -255,6 +293,7 @@ int main(int argc, char *argv[]) {
     rvnc_connection_destroy(connection);
     rvnc_connection_delegate_destroy(connectionDelegate);
     rvnc_settings_destroy(settings);
+    rvnc_logger_destroy(logger);
     free(context);
     
     return EXIT_SUCCESS;

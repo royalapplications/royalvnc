@@ -3,14 +3,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-// TODO: Logger
-
 // NOTE: Memory management roughly follows Apple's CoreFoundation Ownership Policy: https://developer.apple.com/library/archive/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/Ownership.html#//apple_ref/doc/uid/20001148-CJBEJBHH
 // If you create an object (by calling a method suffixed with either `_create` or `_copy`), you own it and must relinquish ownership when you have finished using it (by calling a matching method suffixed with `_destroy` or `free` in case of C strings).
 // If you get an object from somewhere else, you do not own it. You must not store a reference to such objects since they might be destroyed right after the function call that they're passed into finishes.
 
 
 #pragma mark - Enums
+
+typedef enum : uint32_t {
+    RVNC_LOG_LEVEL_DEBUG = 0,
+    RVNC_LOG_LEVEL_INFO = 1,
+    RVNC_LOG_LEVEL_WARNING = 2,
+    RVNC_LOG_LEVEL_ERROR = 3
+} RVNC_LOG_LEVEL;
 
 typedef enum : int {
     RVNC_CONNECTION_STATUS_DISCONNECTED = 0,
@@ -42,6 +47,8 @@ typedef enum : int {
 #pragma mark - Types
 
 typedef void* rvnc_context_t;
+typedef void* rvnc_logger_t;
+typedef void* rvnc_logger_delegate_t;
 typedef void* rvnc_authentication_request_t;
 typedef void* rvnc_settings_t;
 typedef void* rvnc_connection_state_t;
@@ -49,6 +56,18 @@ typedef void* rvnc_framebuffer_t;
 typedef void* rvnc_connection_t;
 typedef void* rvnc_connection_delegate_t;
 typedef void* rvnc_cursor_t;
+
+
+#pragma mark - Logger
+
+typedef void (*rvnc_logger_delegate_log)(rvnc_logger_t _Nonnull /* logger */,
+                                         const rvnc_context_t _Nullable /* context */,
+                                         RVNC_LOG_LEVEL /* logLevel */,
+                                         const char* _Nonnull /* message */);
+
+extern rvnc_logger_t _Nonnull rvnc_logger_create(rvnc_logger_delegate_log _Nonnull log,
+                                                 rvnc_context_t _Nullable context);
+extern void rvnc_logger_destroy(rvnc_logger_t _Nonnull logger);
 
 
 #pragma mark - Authentication Type
@@ -163,7 +182,10 @@ extern void rvnc_connection_delegate_destroy(rvnc_connection_delegate_t _Nonnull
 
 #pragma mark - Connection
 
-extern rvnc_connection_t _Nonnull rvnc_connection_create(rvnc_settings_t _Nonnull settings, rvnc_context_t _Nullable context);
+extern rvnc_connection_t _Nonnull rvnc_connection_create(rvnc_settings_t _Nonnull settings,
+                                                         rvnc_logger_t _Nullable logger,
+                                                         rvnc_context_t _Nullable context);
+
 extern void rvnc_connection_destroy(rvnc_connection_t _Nonnull connection);
 
 extern void rvnc_connection_connect(rvnc_connection_t _Nonnull connection);
