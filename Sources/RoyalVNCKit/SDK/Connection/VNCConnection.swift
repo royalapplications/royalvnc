@@ -324,6 +324,8 @@ private extension VNCConnection {
 				try await sendFramebufferUpdateRequest()
 			} catch {
 				handleBreakingError(error)
+                
+                return
 			}
 			
 			updateConnectionState(.connected)
