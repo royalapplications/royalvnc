@@ -125,9 +125,10 @@ void delegate_authenticate(rvnc_connection_t connection,
 void delegate_didCreateFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
-    printf("delegate_didCreateFramebuffer - Framebuffer Size: %ix%i; Pixel Data Pointer: %p\n",
+    printf("delegate_didCreateFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %llu; Pixel Data Pointer: %p\n",
            rvnc_framebuffer_size_width_get(framebuffer),
            rvnc_framebuffer_size_height_get(framebuffer),
+           rvnc_framebuffer_pixel_data_size_get(framebuffer),
            rvnc_framebuffer_pixel_data_get(framebuffer));
 }
 

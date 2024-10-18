@@ -47,3 +47,13 @@ public func rvnc_framebuffer_pixel_data_get(_ framebuffer: rvnc_connection_state
     VNCFramebuffer.fromPointer(framebuffer)
         .surfaceAddress
 }
+
+@_cdecl("rvnc_framebuffer_pixel_data_size_get")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_framebuffer_pixel_data_size_get(_ framebuffer: rvnc_connection_state_t) -> UInt64 {
+    let framebufferSwift = VNCFramebuffer.fromPointer(framebuffer)
+    let surfaceByteCount = framebufferSwift.surfaceByteCount
+    
+    return .init(surfaceByteCount)
+}

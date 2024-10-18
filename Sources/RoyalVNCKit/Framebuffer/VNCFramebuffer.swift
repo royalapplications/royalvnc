@@ -52,6 +52,8 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 	public let buffer: UnsafeMutableRawPointer
 	private let bufferLock = Spinlock()
 #endif
+    
+    public let surfaceByteCount: Int
 	
 #if canImport(ObjectiveC)
 	@objc
@@ -154,6 +156,8 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 #endif
 		
 		let bufferLength = width * height * destinationProperties.bytesPerPixel
+        
+        self.surfaceByteCount = bufferLength
 		
 #if canImport(IOSurface)
 		let cvPixelFormat = kCVPixelFormatType_32BGRA
@@ -172,7 +176,7 @@ public class VNCFramebuffer: NSObjectOrAnyObject {
 		self.surface = surface
 #else
 		let buffer = UnsafeMutableRawPointer.allocate(byteCount: bufferLength,
-																			   alignment: MemoryLayout<UInt8>.alignment)
+                                                      alignment: MemoryLayout<UInt8>.alignment)
 
 		buffer.initializeMemory(as: UInt8.self, 
 								repeating: 0,
