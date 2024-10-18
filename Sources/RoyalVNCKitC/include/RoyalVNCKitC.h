@@ -100,6 +100,8 @@ extern bool rvnc_connection_state_error_is_authentication_error_get(rvnc_connect
 
 extern uint16_t rvnc_framebuffer_size_width_get(rvnc_framebuffer_t _Nonnull framebuffer);
 extern uint16_t rvnc_framebuffer_size_height_get(rvnc_framebuffer_t _Nonnull framebuffer);
+
+// NOTE: This always returns 32-bit BGRA data.
 extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnull framebuffer);
 extern uint64_t rvnc_framebuffer_pixel_data_size_get(rvnc_framebuffer_t _Nonnull framebuffer);
 
