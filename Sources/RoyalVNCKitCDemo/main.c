@@ -60,9 +60,18 @@ void delegate_connectionStateDidChange(rvnc_connection_t connection,
         errorDescriptionForLog = "N/A";
     }
     
-    printf("delegate_connectionStateDidChange - Status: %s; Error Description: %s\n",
-           statusStr,
-           errorDescriptionForLog);
+    bool shouldDisplayErrorToUser = rvnc_connection_state_error_should_display_to_user_get(connectionState);
+    bool isAuthenticationError = rvnc_connection_state_error_is_authentication_error_get(connectionState);
+    
+    if (shouldDisplayErrorToUser) {
+        printf("delegate_connectionStateDidChange - Status: %s; Error Description: %s; Is Authentication Error: %s\n",
+               statusStr,
+               errorDescriptionForLog,
+               isAuthenticationError ? "Yes" : "No");
+    } else {
+        printf("delegate_connectionStateDidChange - Status: %s\n",
+               statusStr);
+    }
     
     if (errorDescription) {
         free(errorDescription);
@@ -161,12 +170,14 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
 
 int main(int argc, char *argv[]) {
     const char* hostname = "localhost";
+    const uint16_t port = 5900;
+    
     const bool enableDebugLogging = true;
     
     // Create settings
     rvnc_settings_t settings = rvnc_settings_create(enableDebugLogging,
                                                     hostname,
-                                                    5900,
+                                                    port,
                                                     true,
                                                     false,
                                                     false,

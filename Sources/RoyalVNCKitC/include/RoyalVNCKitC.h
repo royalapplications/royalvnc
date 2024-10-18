@@ -86,6 +86,8 @@ extern void rvnc_connection_state_destroy(rvnc_connection_state_t _Nonnull conne
 
 extern RVNC_CONNECTION_STATUS rvnc_connection_state_status_get(rvnc_connection_state_t _Nonnull connectionState);
 extern char* _Nullable rvnc_connection_state_error_description_get_copy(rvnc_connection_state_t _Nonnull connectionState);
+extern bool rvnc_connection_state_error_should_display_to_user_get(rvnc_connection_state_t _Nonnull connectionState);
+extern bool rvnc_connection_state_error_is_authentication_error_get(rvnc_connection_state_t _Nonnull connectionState);
 
 
 #pragma mark - Framebuffer

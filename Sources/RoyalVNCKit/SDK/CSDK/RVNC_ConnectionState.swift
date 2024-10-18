@@ -66,3 +66,31 @@ public func rvnc_connection_state_error_description_get_copy(_ connectionState: 
     
     return errorDescriptionC
 }
+
+@_cdecl("rvnc_connection_state_error_should_display_to_user_get")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_connection_state_error_should_display_to_user_get(_ connectionState: rvnc_connection_state_t) -> Bool {
+    let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
+    let error = connectionStateSwift.error
+    
+    guard let vncError = error as? VNCError else {
+        return false
+    }
+    
+    return vncError.shouldDisplayToUser
+}
+
+@_cdecl("rvnc_connection_state_error_is_authentication_error_get")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_connection_state_error_is_authentication_error_get(_ connectionState: rvnc_connection_state_t) -> Bool {
+    let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
+    let error = connectionStateSwift.error
+    
+    guard let vncError = error as? VNCError else {
+        return false
+    }
+    
+    return vncError.isAuthenticationError
+}
