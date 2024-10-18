@@ -82,18 +82,7 @@ public func rvnc_connection_disconnect(_ connection: rvnc_connection_t) {
 @available(*, unavailable)
 public func rvnc_connection_update_color_depth(_ connection: rvnc_connection_t,
                                                _ colorDepth: RVNC_COLORDEPTH) {
-    let colorDepthSwift: VNCConnection.Settings.ColorDepth
-    
-    switch colorDepth {
-        case RVNC_COLORDEPTH_8BIT:
-            colorDepthSwift = .depth8Bit
-        case RVNC_COLORDEPTH_16BIT:
-            colorDepthSwift = .depth16Bit
-        case RVNC_COLORDEPTH_24BIT:
-            colorDepthSwift = .depth24Bit
-        default:
-            fatalError("Invalid color depth: \(colorDepth)")
-    }
+    let colorDepthSwift = colorDepth.swiftColorDepth
     
     VNCConnection.fromPointer(connection)
         .updateColorDepth(colorDepthSwift)

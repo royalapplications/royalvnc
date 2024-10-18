@@ -30,8 +30,6 @@ extension VNCAuthenticationType {
                 RVNC_AUTHENTICATIONTYPE_APPLEREMOTEDESKTOP
             case .ultraVNCMSLogonII:
                 RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII
-            default:
-                fatalError("Unknown authentication type: \(self)")
         }
     }
 }

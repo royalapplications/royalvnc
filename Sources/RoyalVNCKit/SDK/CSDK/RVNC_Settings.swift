@@ -6,6 +6,38 @@ import Foundation
 
 @_implementationOnly import RoyalVNCKitC
 
+extension RVNC_INPUTMODE {
+    var swiftInputMode: VNCConnection.Settings.InputMode {
+        switch self {
+            case RVNC_INPUTMODE_NONE:
+                .none
+            case RVNC_INPUTMODE_FORWARDKEYBOARDSHORTCUTSIFNOTINUSELOCALLY:
+                .forwardKeyboardShortcutsIfNotInUseLocally
+            case RVNC_INPUTMODE_FORWARDKEYBOARDSHORTCUTSEVENIFINUSELOCALLY:
+                .forwardKeyboardShortcutsEvenIfInUseLocally
+            case RVNC_INPUTMODE_FORWARDALLKEYBOARDSHORTCUTSANDHOTKEYS:
+                .forwardAllKeyboardShortcutsAndHotKeys
+            default:
+                fatalError("Invalid input mode: \(self)")
+        }
+    }
+}
+
+extension RVNC_COLORDEPTH {
+    var swiftColorDepth: VNCConnection.Settings.ColorDepth {
+        switch self {
+            case RVNC_COLORDEPTH_8BIT:
+                .depth8Bit
+            case RVNC_COLORDEPTH_16BIT:
+                .depth16Bit
+            case RVNC_COLORDEPTH_24BIT:
+                .depth24Bit
+            default:
+                fatalError("Invalid color depth: \(self)")
+        }
+    }
+}
+
 extension VNCConnection.Settings {
     func retainedPointer() -> rvnc_settings_t {
         .retainedPointerFrom(self)
@@ -38,33 +70,8 @@ public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
                                  _ colorDepth: RVNC_COLORDEPTH) -> rvnc_settings_t {
     let hostnameStr = String(cString: hostname)
     
-    let inputModeSwift: VNCConnection.Settings.InputMode
-    
-    switch inputMode {
-        case RVNC_INPUTMODE_NONE:
-            inputModeSwift = .none
-        case RVNC_INPUTMODE_FORWARDKEYBOARDSHORTCUTSIFNOTINUSELOCALLY:
-            inputModeSwift = .forwardKeyboardShortcutsIfNotInUseLocally
-        case RVNC_INPUTMODE_FORWARDKEYBOARDSHORTCUTSEVENIFINUSELOCALLY:
-            inputModeSwift = .forwardKeyboardShortcutsEvenIfInUseLocally
-        case RVNC_INPUTMODE_FORWARDALLKEYBOARDSHORTCUTSANDHOTKEYS:
-            inputModeSwift = .forwardAllKeyboardShortcutsAndHotKeys
-        default:
-            fatalError("Invalid input mode: \(inputMode)")
-    }
-    
-    let colorDepthSwift: VNCConnection.Settings.ColorDepth
-    
-    switch colorDepth {
-        case RVNC_COLORDEPTH_8BIT:
-            colorDepthSwift = .depth8Bit
-        case RVNC_COLORDEPTH_16BIT:
-            colorDepthSwift = .depth16Bit
-        case RVNC_COLORDEPTH_24BIT:
-            colorDepthSwift = .depth24Bit
-        default:
-            fatalError("Invalid color depth: \(colorDepth)")
-    }
+    let inputModeSwift = inputMode.swiftInputMode
+    let colorDepthSwift = colorDepth.swiftColorDepth
     
     let settings = VNCConnection.Settings(isDebugLoggingEnabled: isDebugLoggingEnabled,
                                           hostname: hostnameStr,

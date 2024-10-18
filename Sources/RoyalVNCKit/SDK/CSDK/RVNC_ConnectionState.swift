@@ -6,6 +6,21 @@ import Foundation
 
 @_implementationOnly import RoyalVNCKitC
 
+extension VNCConnection.Status {
+    var cConnectionStatus: RVNC_CONNECTION_STATUS {
+        switch self {
+            case .disconnected:
+                RVNC_CONNECTION_STATUS_DISCONNECTED
+            case .connecting:
+                RVNC_CONNECTION_STATUS_CONNECTING
+            case .connected:
+                RVNC_CONNECTION_STATUS_CONNECTED
+            case .disconnecting:
+                RVNC_CONNECTION_STATUS_DISCONNECTING
+        }
+    }
+}
+
 extension VNCConnection.ConnectionState {
     func retainedPointer() -> rvnc_connection_state_t {
         .retainedPointerFrom(self)
@@ -37,17 +52,9 @@ public func rvnc_connection_state_destroy(_ connectionState: rvnc_connection_sta
 public func rvnc_connection_state_status_get(_ connectionState: rvnc_connection_state_t) -> RVNC_CONNECTION_STATUS {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let status = connectionStateSwift.status
+    let cStatus = status.cConnectionStatus
     
-    switch status {
-        case .disconnected:
-            return RVNC_CONNECTION_STATUS_DISCONNECTED
-        case .connecting:
-            return RVNC_CONNECTION_STATUS_CONNECTING
-        case .connected:
-            return RVNC_CONNECTION_STATUS_CONNECTED
-        case .disconnecting:
-            return RVNC_CONNECTION_STATUS_DISCONNECTING
-    }
+    return cStatus
 }
 
 @_cdecl("rvnc_connection_state_error_description_get_copy")
