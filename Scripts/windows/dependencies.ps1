@@ -51,17 +51,12 @@ nmake_build $cryptDir @(
 function make_bundle([string]$targetDir, [string]$headers, [string]$libs) {
     Write-Host "Bunding to ${targetDir}" -ForegroundColor Cyan
 
-    Push-Location "${ROOT_PATH}\Sources"
-    try {
-        remove_dir  "${targetDir}\include"
-        create_dir  "${targetDir}\include"
-        remove_file "${targetDir}\*.lib"
+    remove_dir  "${targetDir}\include"
+    create_dir  "${targetDir}\include"
+    remove_file "${targetDir}\*.lib"
 
-        Copy-Item "${headers}" "${targetDir}\include" -Force
-        Copy-Item "${libs}"    "${targetDir}"         -Force
-    } finally {
-        Pop-Location
-    }
+    Copy-Item "${headers}" "${targetDir}\include" -Force
+    Copy-Item "${libs}"    "${targetDir}"         -Force
 }
 
 make_bundle "${ROOT_PATH}\Sources\libtommath-win"  "${mathDir}\*.h"              "${mathDir}\*.lib"
