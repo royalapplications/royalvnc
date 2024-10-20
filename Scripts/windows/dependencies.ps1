@@ -5,10 +5,10 @@ Set-StrictMode -Version Latest
 
 . $PSScriptRoot\utils.ps1
 
-$cmake = (Get-Command nmake.exe -ErrorAction Stop)
+$nmake = (Get-Command nmake.exe -ErrorAction Stop)
 $swift = (Get-Command swift.exe -ErrorAction Stop)
 
-$cmake,$swift | Format-Table -AutoSize -HideTableHeaders -Property Source 
+$nmake,$swift | Format-Table -AutoSize -HideTableHeaders -Property Source 
 
 exec { swift --version }
 
@@ -31,7 +31,7 @@ function download_and_extract([string]$repo, [string]$version, [string]$file) {
 $mathDir  = download_and_extract 'libtommath'  '1.3.0'  'ltm'
 $cryptDir = download_and_extract 'libtomcrypt' '1.18.2' 'crypt'
 
-function build([string]$dir, [string[]]$nmakeArgs) {
+function nmake_build([string]$dir, [string[]]$nmakeArgs) {
     Write-Host "Building ${dir}" -ForegroundColor Cyan
 
     Push-Location $dir
@@ -42,13 +42,13 @@ function build([string]$dir, [string[]]$nmakeArgs) {
     }
 }
 
-build $mathDir  @()
-build $cryptDir @(
+nmake_build $mathDir  @()
+nmake_build $cryptDir @(
     "CFLAGS=/DUSE_LTM /DLTM_DESC /DENDIAN_LITTLE /DENDIAN_64BITWORD /DLTC_FAST /I${mathDir}"
     "EXTRALIBS=${mathDir}\tommath.lib"
 )
 
-function make_bundle([string]$targetDir, [string]$headersDir, [string]$libDir) {
+function make_bundle([string]$targetDir, [string]$headers, [string]$libs) {
     Write-Host "Bunding to ${targetDir}" -ForegroundColor Cyan
 
     Push-Location "${ROOT_PATH}\Sources"
@@ -57,12 +57,12 @@ function make_bundle([string]$targetDir, [string]$headersDir, [string]$libDir) {
         create_dir  "${targetDir}\include"
         remove_file "${targetDir}\*.lib"
 
-        Copy-Item "${headersDir}\*.h" "${targetDir}\include" -Force
-        Copy-Item "${libDir}\*.lib"   "${targetDir}"         -Force
+        Copy-Item "${headers}" "${targetDir}\include" -Force
+        Copy-Item "${libs}"    "${targetDir}"         -Force
     } finally {
         Pop-Location
     }
 }
 
-make_bundle "${ROOT_PATH}\Sources\libtommath-win"  "${mathDir}"              "${mathDir}"
-make_bundle "${ROOT_PATH}\Sources\libtomcrypt-win" "${cryptDir}\src\headers" "${cryptDir}"
+make_bundle "${ROOT_PATH}\Sources\libtommath-win"  "${mathDir}\*.h"              "${mathDir}\*.lib"
+make_bundle "${ROOT_PATH}\Sources\libtomcrypt-win" "${cryptDir}\src\headers\*.h" "${cryptDir}\*.lib"
