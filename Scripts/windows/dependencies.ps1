@@ -7,27 +7,21 @@ Set-StrictMode -Version Latest
 
 $nmake = (Get-Command nmake.exe -ErrorAction Stop)
 $swift = (Get-Command swift.exe -ErrorAction Stop)
-$tar   = (Get-Command $env:windir\system32\tar.exe -ErrorAction Stop)
 
-$nmake,$swift,$tar | Format-Table -AutoSize -HideTableHeaders -Property Source 
+$nmake,$swift | Format-Table -AutoSize -HideTableHeaders -Property Source 
 
 exec { swift --version }
-exec { & $tar --version }
 
 $BIN_DIR = Join-Path $ROOT_PATH "bin" -Resolve
 
 function download_and_extract([string]$repo, [string]$version, [string]$file) {
-    [string]$filename = "${file}-${version}.tar.xz"
+    [string]$filename = "${file}-${version}.zip"
     if (-not (file_exists "${BIN_DIR}\${filename}")) {
-        exec { curl.exe -L -o "${BIN_DIR}\${filename}" "https://github.com/libtom/${repo}/releases/download/v${version}/${filename}" }
+        exec { curl.exe -sSL -o "${BIN_DIR}\${filename}" "https://github.com/libtom/${repo}/releases/download/v${version}/${filename}" }
     }
 
-    [string]$directory = "${BIN_DIR}\${repo}-${version}"
-    if (-not (dir_exists $directory)) {
-        exec { tar.exe -xzf "${BIN_DIR}\${filename}" -C "${BIN_DIR}" }
-    }
-
-    return $directory
+    Expand-Archive "${BIN_DIR}\${filename}" "${BIN_DIR}"
+    return "${BIN_DIR}\${repo}-${version}"
 }
 
 $mathDir  = download_and_extract 'libtommath'  '1.3.0'  'ltm'
