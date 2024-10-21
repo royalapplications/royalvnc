@@ -20,15 +20,7 @@ function download_and_extract([string]$releaseFile, [string]$localName) {
         exec { curl.exe -sSL -o "${BIN_DIR}\${filename}" "https://github.com/${releaseFile}" }
     }
     if (-not (dir_exists "${BIN_DIR}\${localName}")) {
-        remove_dir "${BIN_DIR}\_tmp"
-        create_dir "${BIN_DIR}\_tmp"
-        Expand-Archive "${BIN_DIR}\${filename}" "${BIN_DIR}\_tmp"
-
-        if (dir_exists "${BIN_DIR}\_tmp\${localName}") {
-            Move-Item "${BIN_DIR}\_tmp\${localName}" "${BIN_DIR}\${localName}"
-        } else {
-            Move-Item "${BIN_DIR}\_tmp" "${BIN_DIR}\${localName}"
-        }
+        Expand-Archive "${BIN_DIR}\${filename}" "${BIN_DIR}"
     }
     return Join-Path $BIN_DIR $localName -Resolve
 }
@@ -69,7 +61,7 @@ nmake_build $zlibDir $zlibMakefile @(
 )
 
 function make_bundle([string]$targetDir, [string]$headers, [string]$libs) {
-    Write-Host "Bunding to ${targetDir}" -ForegroundColor Cyan
+    Write-Host "Bundling to ${targetDir}" -ForegroundColor Cyan
 
     remove_dir  "${targetDir}\include"
     create_dir  "${targetDir}\include"
