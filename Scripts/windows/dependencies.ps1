@@ -7,10 +7,12 @@ Set-StrictMode -Version Latest
 
 $nmake = (Get-Command nmake.exe -ErrorAction Stop)
 $swift = (Get-Command swift.exe -ErrorAction Stop)
+$tar   = (Get-Command $env:windir\system32\tar.exe -ErrorAction Stop)
 
-$nmake,$swift | Format-Table -AutoSize -HideTableHeaders -Property Source 
+$nmake,$swift,$tar | Format-Table -AutoSize -HideTableHeaders -Property Source 
 
 exec { swift --version }
+exec { & $tar --version }
 
 $BIN_DIR = Join-Path $ROOT_PATH "bin" -Resolve
 
