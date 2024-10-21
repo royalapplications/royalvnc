@@ -65,6 +65,7 @@ nmake_build $cryptDir "makefile.msvc" @(
 $zlibMakefile = if ($HOST_MSVC_ARCH -eq "arm64") { 'win32/Makefile.a64' } else { 'win32/Makefile.msc' }
 nmake_build $zlibDir $zlibMakefile @(
     "ZLIB_COMPAT=yes"
+    "zlib.lib"
 )
 
 function make_bundle([string]$targetDir, [string]$headers, [string]$libs) {
