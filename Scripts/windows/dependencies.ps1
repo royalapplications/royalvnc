@@ -38,9 +38,17 @@ function nmake_build([string]$dir, [string[]]$nmakeArgs) {
     }
 }
 
+# Needed because the endian detection macros does not work on arm64 in a released version.
+# This was fixed but no new release was made -- avoid warnings on x64 by not overrinding there.
+# ref. https://github.com/libtom/libtomcrypt/commit/c4d22b904604f2f49c717ffc9bf86678658117b0#diff-2db5eece44c5b2ec42c2e2a08d847e6b0e3723d7d11bf7d5bda16f20fe795ff9R83
+[string]$endian_flags = ''
+if ($HOST_MSVC_ARCH -eq "arm64") { 
+    $endian_flags = '/DENDIAN_LITTLE /DENDIAN_64BITWORD /DLTC_FAST'
+}
+
 nmake_build $mathDir  @()
 nmake_build $cryptDir @(
-    "CFLAGS=/DUSE_LTM /DLTM_DESC /DENDIAN_LITTLE /DENDIAN_64BITWORD /DLTC_FAST /I${mathDir}"
+    "CFLAGS=/DUSE_LTM /DLTM_DESC ${endian_flags} /I${mathDir}"
     "EXTRALIBS=${mathDir}\tommath.lib"
 )
 
