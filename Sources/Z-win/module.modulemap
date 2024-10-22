@@ -1,0 +1,7 @@
+module Z [system] {
+    umbrella header "include/zlib.h"
+
+    link "zlib"
+
+    export *
+}
