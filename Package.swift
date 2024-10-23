@@ -2,10 +2,6 @@
 
 import PackageDescription
 
-// swift-tools-version: 6.0
-
-import PackageDescription
-
 #if os(Windows)
 let thisFilePath = #filePath
 let depsWindowsPath = "\(thisFilePath)\\bin\\deps-windows"
@@ -23,7 +19,7 @@ let linkerSettings: [LinkerSetting]? = [
 
 let libtommathTarget = Target.systemLibrary(name: "libtommath", path: "Sources/libtommath-win")
 let libtomcryptTarget = Target.systemLibrary(name: "libtomcrypt", path: "Sources/libtomcrypt-win")
-let zTarget = Target.systemLibrary(name: "Z", path: "Sources/Z-win")
+let zTarget = Target.systemLibrary(name: "zlib", path: "Sources/Z-win")
 #else
 let cSettings: [CSetting]? = []
 let linkerSettings: [LinkerSetting]? = []
