@@ -19,7 +19,7 @@ let linkerSettings: [LinkerSetting]? = [
 
 let libtommathTarget = Target.systemLibrary(name: "libtommath", path: "Sources/libtommath-win")
 let libtomcryptTarget = Target.systemLibrary(name: "libtomcrypt", path: "Sources/libtomcrypt-win")
-let zTarget = Target.systemLibrary(name: "zlib", path: "Sources/Z-win")
+let zTarget = Target.systemLibrary(name: "Z", path: "Sources/Z-win")
 #else
 let cSettings: [CSetting]? = []
 let linkerSettings: [LinkerSetting]? = []

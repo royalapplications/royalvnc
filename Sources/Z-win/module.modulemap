@@ -1,3 +1,4 @@
-module zlib [system] {
+module Z [system] {
+    umbrella header "../../bin/deps-windows/include/zlib.h"
     link "zlib"
 }
