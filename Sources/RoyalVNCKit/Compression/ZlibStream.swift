@@ -4,7 +4,11 @@ import FoundationEssentials
 import Foundation
 #endif
 
+#if !os(Windows)
 @_implementationOnly import Z
+#else
+@_implementationOnly import zlib
+#endif
 
 class ZlibStream {
 	private let stream: ZlibInflateStream
