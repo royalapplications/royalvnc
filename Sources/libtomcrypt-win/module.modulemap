@@ -1,7 +1,3 @@
 module libtomcrypt [system] {
-    umbrella header "include/tomcrypt.h"
-
     link "tomcrypt"
-
-    export *
 }

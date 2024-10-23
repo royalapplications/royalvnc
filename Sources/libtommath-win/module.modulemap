@@ -1,7 +1,3 @@
 module libtommath [system] {
-    umbrella header "include/tommath.h"
-
     link "tommath"
-
-    export *
 }

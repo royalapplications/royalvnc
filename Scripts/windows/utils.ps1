@@ -54,3 +54,8 @@ function remove_file([string]$path) {
         Remove-Item $path -Force
     }
 }
+
+function clean_dir([string]$path) {
+    remove_dir $path
+    create_dir $path
+}
