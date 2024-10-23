@@ -1,3 +1,0 @@
-module libtomcrypt [system] {
-    link "tomcrypt"
-}
