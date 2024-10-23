@@ -6,9 +6,19 @@ import PackageDescription
 let thisFilePath = #filePath
 let depsWindowsPath = "\(thisFilePath)\\bin\\deps-windows"
 
+// Sources\libtommath\bignumshim.c:28:10: warning: 'mp_read_unsigned_bin' is deprecated: replaced by mp_from_ubin [-Wdeprecated-declarations]
+// Sources\libtomcrypt\mac\xcbc\xcbc_file.c:55:9: warning: 'fopen' is deprecated: This function or variable may be unsafe. Consider using fopen_s instead. [-Wdeprecated-declarations]
+let disableDeprecatedDeclarationsWarning = "-Wno-deprecated-declarations"
+
+// Sources\libtomcrypt\include\tomcrypt_cfg.h:27:28: warning: 'malloc' redeclared without 'dllimport' attribute: previous 'dllimport' ignored [-Winconsistent-dllimport]
+// Sources\libtomcrypt\include\tomcrypt_cfg.h:28:28: warning: 'realloc' redeclared without 'dllimport' attribute: previous 'dllimport' ignored [-Winconsistent-dllimport]
+let disableInconsistentDllImportWarning = "-Wno-inconsistent-dllimport"
+
 let cSettings: [CSetting]? = [
     .unsafeFlags([
-        "-I\(depsWindowsPath)\\include"
+        "-I\(depsWindowsPath)\\include",
+        disableDeprecatedDeclarationsWarning,
+        disableInconsistentDllImportWarning
     ])
 ]
 let linkerSettings: [LinkerSetting]? = [
@@ -19,21 +29,14 @@ let linkerSettings: [LinkerSetting]? = [
 
 let libtommathTarget = Target.target(name: "libtommath", cSettings: [
     .unsafeFlags([
-        // silence
-        // Sources\libtommath\bignumshim.c:28:10: warning: 'mp_read_unsigned_bin' is deprecated: replaced by mp_from_ubin [-Wdeprecated-declarations]
-        "-Wno-deprecated-declarations"
+        disableDeprecatedDeclarationsWarning
     ])
 ])
 let libtomcryptTarget = Target.target(name: "libtomcrypt", cSettings: [
     .unsafeFlags([
         "-Wno-shorten-64-to-32",
-        // silence
-        // Sources\libtomcrypt\include\tomcrypt_cfg.h:27:28: warning: 'malloc' redeclared without 'dllimport' attribute: previous 'dllimport' ignored [-Winconsistent-dllimport]
-        // Sources\libtomcrypt\include\tomcrypt_cfg.h:28:28: warning: 'realloc' redeclared without 'dllimport' attribute: previous 'dllimport' ignored [-Winconsistent-dllimport]
-        "-Wno-inconsistent-dllimport",
-        // silence
-        // Sources\libtomcrypt\mac\xcbc\xcbc_file.c:55:9: warning: 'fopen' is deprecated: This function or variable may be unsafe. Consider using fopen_s instead. [-Wdeprecated-declarations]
-        "-Wno-deprecated-declarations"
+        disableDeprecatedDeclarationsWarning,
+        disableInconsistentDllImportWarning
     ])
 ])
 let zTarget = Target.systemLibrary(name: "Z", path: "Sources/Z-win")
