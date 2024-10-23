@@ -2,6 +2,41 @@
 
 import PackageDescription
 
+// swift-tools-version: 6.0
+
+import PackageDescription
+
+#if os(Windows)
+let thisFilePath = #filePath
+let depsWindowsPath = "\(thisFilePath)\\bin\\deps-windows"
+
+let cSettings: [CSetting]? = [
+    .unsafeFlags([
+        "-I\(depsWindowsPath)\\include"
+    ])
+]
+let linkerSettings: [LinkerSetting]? = [
+    .unsafeFlags([
+        "-L./\(depsWindowsPath)\\lib"
+    ])
+]
+
+let libtommathTarget = Target.systemLibrary(name: "libtommath", path: "Sources/libtommath-win")
+let libtomcryptTarget = Target.systemLibrary(name: "libtomcrypt", path: "Sources/libtomcrypt-win")
+let zTarget = Target.systemLibrary(name: "Z", path: "Sources/Z-win")
+#else
+let cSettings: [CSetting]? = []
+let linkerSettings: [LinkerSetting]? = []
+
+let libtommathTarget = Target.target(name: "libtommath")
+let libtomcryptTarget = Target.target(name: "libtomcrypt", cSettings: [
+    .unsafeFlags([ "-Wno-shorten-64-to-32" ])
+])
+let zTarget = Target.target(name: "Z", linkerSettings: [
+    .linkedLibrary("z")
+])
+#endif
+
 let package = Package(
     name: "RoyalVNCKit",
     
@@ -35,24 +70,20 @@ let package = Package(
             dependencies: [
                 "RoyalVNCKitC",
                 "d3des",
-                "libtommath",
-                "libtomcrypt",
-                "Z"
+                .byName(name: libtommathTarget.name),
+                .byName(name: libtomcryptTarget.name),
+                .byName(name: zTarget.name)
             ],
             
-            swiftSettings: [ .swiftLanguageMode(.v5) ]
+            cSettings: cSettings,
+            swiftSettings: [ .swiftLanguageMode(.v5) ],
+            linkerSettings: linkerSettings
         ),
         
         .target(name: "d3des"),
-        .target(name: "libtommath"),
-        
-        .target(name: "libtomcrypt", cSettings: [
-            .unsafeFlags([ "-Wno-shorten-64-to-32" ])
-        ]),
-        
-        .target(name: "Z", linkerSettings: [
-            .linkedLibrary("z")
-        ]),
+        libtommathTarget,
+        libtomcryptTarget,
+        zTarget,
         
         .executableTarget(
             name: "RoyalVNCKitDemo",
