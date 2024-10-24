@@ -27,3 +27,36 @@ class Spinlock {
     }
 }
 #endif
+
+#if canImport(ucrt)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#endif
+
+import ucrt
+import WinSDK
+
+class Spinlock {
+    private var spinlock = CRITICAL_SECTION()
+
+    init() {
+        // ref. https://learn.microsoft.com/en-us/windows/win32/Sync/using-critical-section-objects
+        let spinCount: DWORD = 0x00000400
+        guard InitializeCriticalSectionAndSpinCount(&spinlock, spinCount) else {
+            fatalError("Could not initialize critical section (Spinlock)")
+        }
+    }
+
+    deinit {
+        DeleteCriticalSection(&spinlock)
+    }
+
+    func lock() {
+        EnterCriticalSection(&spinlock)
+    }
+
+    func unlock() {
+        LeaveCriticalSection(&spinlock)
+    }
+}
+#endif
