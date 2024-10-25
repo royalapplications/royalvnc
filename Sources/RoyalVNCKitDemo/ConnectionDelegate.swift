@@ -96,7 +96,7 @@ class ConnectionDelegate: VNCConnectionDelegate {
         connection.logger.logDebug("connection didResizeFramebuffer")
     }
     
-#if os(Linux)
+#if os(Linux) || os(Windows)
     func connection(_ connection: VNCConnection,
                     framebuffer: VNCFramebuffer,
                     didUpdateRegion updatedRegion: VNCRegion) {
