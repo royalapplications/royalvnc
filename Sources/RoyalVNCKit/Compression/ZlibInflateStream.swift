@@ -75,20 +75,10 @@ extension ZlibInflateStream {
 	/// total number of bytes output so far
 	var totalOut: UInt {
 		get {
-#if os(Windows)
-			let result: UInt = .init(streamPtr.pointee.total_out)
-			return result
-#else
-			streamPtr.pointee.total_out
-#endif
+			.init(streamPtr.pointee.total_out)
 		}
 		set {
-#if os(Windows)
-			let value: UInt32 = .init(newValue)
-			streamPtr.pointee.total_out = value
-#else
-			streamPtr.pointee.total_out = newValue
-#endif
+			streamPtr.pointee.total_out = .init(newValue)
 		}
 	}
 	
@@ -105,20 +95,10 @@ extension ZlibInflateStream {
 	/// total number of input bytes read so far
 	var totalIn: UInt {
 		get {
-#if os(Windows)
-			let result: UInt = .init(streamPtr.pointee.total_in)
-			return result
-#else
-			streamPtr.pointee.total_in
-#endif
+			.init(streamPtr.pointee.total_in)
 		}
 		set {
-#if os(Windows)
-			let value: UInt32 = .init(newValue)
-			streamPtr.pointee.total_in = value
-#else
-			streamPtr.pointee.total_in = newValue
-#endif
+			streamPtr.pointee.total_in = .init(newValue)
 		}
 	}
 	
@@ -160,20 +140,10 @@ extension ZlibInflateStream {
 	/// Adler-32 or CRC-32 value of the uncompressed data
 	var adler: UInt {
 		get {
-#if os(Windows)
-			let result: UInt = .init(streamPtr.pointee.adler)
-			return result
-#else
-			streamPtr.pointee.adler
-#endif
+			.init(streamPtr.pointee.adler)
 		}
 		set {
-#if os(Windows)
-			let value: UInt32 = .init(newValue)
-			streamPtr.pointee.adler = value
-#else
-			streamPtr.pointee.adler = newValue
-#endif
+			streamPtr.pointee.adler = .init(newValue)
 		}
 	}
 }
