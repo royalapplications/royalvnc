@@ -1,5 +1,17 @@
 #include <stdio.h>
-#include <unistd.h>
+
+#ifndef _WIN32
+    #include <unistd.h>
+#else // _WIN32
+    // resolve:
+    // Sources\RoyalVNCKitCDemo\main.c:301:9: error: call to undeclared function 'usleep'; ISO C99 and later do not support implicit function declarations
+    // Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
+    // note: convert from microseconds to milliseconds and call the builtin `_sleep` function
+    #define usleep(us) _sleep((us)/1000)
+
+    // resolve: Sources\RoyalVNCKitCDemo\main.c:20:5: warning: 'scanf' is deprecated: This function or variable may be unsafe. Consider using scanf_s instead.
+    #define scanf scanf_s
+#endif // _WIN32
 
 #include <RoyalVNCKitC.h>
 
