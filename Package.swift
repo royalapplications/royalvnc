@@ -4,7 +4,7 @@ import PackageDescription
 
 #if os(Windows)
 let thisFilePath = #filePath
-let depsWindowsPath = "\(thisFilePath)\\bin\\deps-windows"
+let depsWindowsPath = "\(thisFilePath)\\..\\bin\\deps-windows"
 
 // Sources\libtommath\bignumshim.c:28:10: warning: 'mp_read_unsigned_bin' is deprecated: replaced by mp_from_ubin [-Wdeprecated-declarations]
 // Sources\libtomcrypt\mac\xcbc\xcbc_file.c:55:9: warning: 'fopen' is deprecated: This function or variable may be unsafe. Consider using fopen_s instead. [-Wdeprecated-declarations]
@@ -23,7 +23,7 @@ let cSettings: [CSetting]? = [
 ]
 let linkerSettings: [LinkerSetting]? = [
     .unsafeFlags([
-        "-L./\(depsWindowsPath)\\lib"
+        "-L\(depsWindowsPath)\\lib"
     ])
 ]
 
@@ -77,8 +77,11 @@ let package = Package(
 
     targets: [
         .target(
-            name: "RoyalVNCKitC"
-        ),
+            name: "RoyalVNCKitC",
+
+            cSettings: cSettings,
+            linkerSettings: linkerSettings
+       ),
         
         .target(
             name: "RoyalVNCKit",
@@ -103,12 +106,18 @@ let package = Package(
         
         .executableTarget(
             name: "RoyalVNCKitDemo",
-            dependencies: [ "RoyalVNCKit" ]
+            dependencies: [ "RoyalVNCKit" ],
+
+            cSettings: cSettings,
+            linkerSettings: linkerSettings
         ),
         
         .executableTarget(
             name: "RoyalVNCKitCDemo",
-            dependencies: [ "RoyalVNCKit" ]
+            dependencies: [ "RoyalVNCKit" ],
+
+            cSettings: cSettings,
+            linkerSettings: linkerSettings
         )
     ]
 )
