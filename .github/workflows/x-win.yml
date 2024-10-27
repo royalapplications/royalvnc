@@ -97,7 +97,6 @@ jobs:
 
     # .NET bindings and NuGet package artifacts
 
-    # TODO(later)
-    #- name: build .NET bindings
-    #  run: |
-    #    dotnet build "Bindings/dotnet/RoyalApps.RoyalVNCKit.sln" -c Release
+    - name: build .NET bindings
+      run: |
+        dotnet build "Bindings/dotnet/RoyalApps.RoyalVNCKit.sln" -c Release
