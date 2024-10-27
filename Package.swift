@@ -39,7 +39,14 @@ let libtomcryptTarget = Target.target(name: "libtomcrypt", cSettings: [
         disableInconsistentDllImportWarning
     ])
 ])
-let zTarget = Target.systemLibrary(name: "Z", path: "Sources/Z-win")
+let zTarget = Target.target(name: "Z", path: "Sources/zlib-1.3.1", cSettings: [
+    .define("STDC"),
+    .define("HAVE_STDARG_H"), 
+    .define("HAVE_HIDDEN"),
+    .unsafeFlags([
+        disableDeprecatedDeclarationsWarning,
+    ])
+])
 #else
 let cSettings: [CSetting]? = []
 let linkerSettings: [LinkerSetting]? = []

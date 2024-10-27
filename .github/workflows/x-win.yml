@@ -88,13 +88,6 @@ jobs:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
 
-    # setup dependencies
-
-    - name: dependencies
-      if: "success() && matrix.env.OS == 'windows'"
-      run: |
-        Scripts/windows/dependencies.ps1
-
     # build RoyalVNCKit
 
     - name: build RoyalVNCKit

@@ -48,4 +48,5 @@ See [Usage](USAGE.md).
 ## Credits
 - [libtommath](https://github.com/libtom/libtommath) ([The LibTom license](https://github.com/libtom/libtommath/blob/develop/LICENSE))
 - [libtomcrypt](https://github.com/libtom/libtomcrypt) ([The LibTom license](https://github.com/libtom/libtomcrypt/blob/develop/LICENSE))
+- [zlib](https://github.com/madler/zlib) ([zlib license](https://github.com/madler/zlib/blob/develop/LICENSE))
 - D3DES (Public Domain, Copyright Richard Outerbridge)
