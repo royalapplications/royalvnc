@@ -3,9 +3,6 @@
 import PackageDescription
 
 #if os(Windows)
-let thisFilePath = #filePath
-let depsWindowsPath = "\(thisFilePath)\\..\\bin\\deps-windows"
-
 // Sources\libtommath\bignumshim.c:28:10: warning: 'mp_read_unsigned_bin' is deprecated: replaced by mp_from_ubin [-Wdeprecated-declarations]
 // Sources\libtomcrypt\mac\xcbc\xcbc_file.c:55:9: warning: 'fopen' is deprecated: This function or variable may be unsafe. Consider using fopen_s instead. [-Wdeprecated-declarations]
 let disableDeprecatedDeclarationsWarning = "-Wno-deprecated-declarations"
@@ -16,16 +13,12 @@ let disableInconsistentDllImportWarning = "-Wno-inconsistent-dllimport"
 
 let cSettings: [CSetting]? = [
     .unsafeFlags([
-        "-I\(depsWindowsPath)\\include",
         disableDeprecatedDeclarationsWarning,
         disableInconsistentDllImportWarning
     ])
 ]
-let linkerSettings: [LinkerSetting]? = [
-    .unsafeFlags([
-        "-L\(depsWindowsPath)\\lib"
-    ])
-]
+let linkerSettings: [LinkerSetting]? = []
+
 
 let libtommathTarget = Target.target(name: "libtommath", cSettings: [
     .unsafeFlags([
