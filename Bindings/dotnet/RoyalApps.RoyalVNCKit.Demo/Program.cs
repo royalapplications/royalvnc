@@ -9,13 +9,9 @@ static class Program
 {
     static int Main(string[] args)
     {
-        string hostname;
-        if (args.Length > 0) hostname = args[0];
-        else
-        {
-            Write("Enter hostname: ");
-            hostname = ReadLine()!;
-        }
+        string hostname = args.Length > 0
+            ? args[0]
+            : PromptAndReadInput("Enter hostname: ");
 
         if (string.IsNullOrWhiteSpace(hostname))
         {
@@ -72,25 +68,19 @@ static class Program
         };
         
         WriteLine($"authenticationRequested: {type}");
-        
+
         if (request.RequiresUsername)
-        {
-            Write("Enter username: ");
-            request.Username = ReadLine();
-        }
-        
+            request.Username = PromptAndReadInput("Enter username: ");
+
         if (request.RequiresPassword)
-        {
-            Write("Enter password: ");
-            request.Password = ReadConsolePassword();
-        }
+            request.Password = PromptAndReadPassword("Enter password: ");
 
         return true;
     }
     
     static void OnConnectionStateChanged(VncConnection connection, VncConnectionState state) =>
         WriteLine(state.DisplayErrorToUser
-            ? $"connectionStateChanged: {state.Status}; error: '{state.ErrorDescription}'; is auth error: {(state.IsAuthenticationError ? "YES" : "no")}"
+            ? $"connectionStateChanged: {state.Status} ({(state.IsAuthenticationError ? "authentication" : "")} error: {state.ErrorDescription})"
             : $"connectionStateChanged: {state.Status}");
 
     static void OnFramebufferCreated(VncConnection connection, VncFramebuffer framebuffer) =>
@@ -102,8 +92,15 @@ static class Program
     static void OnFramebufferRegionUpdated(VncConnection connection, VncFramebuffer _, VncFramebufferRegion region) =>
         WriteLine($"framebufferRegionUpdated: {region.Width:N0}x{region.Height:N0} at {region.X:N0}, {region.Y:N0}");
 
-    static string ReadConsolePassword()
+    static string PromptAndReadInput(string prompt)
     {
+        Write(prompt);
+        return ReadLine()!;
+    }
+    
+    static string PromptAndReadPassword(string prompt)
+    {
+        Write(prompt);
         var sb = new StringBuilder();
         while (true)
         {
