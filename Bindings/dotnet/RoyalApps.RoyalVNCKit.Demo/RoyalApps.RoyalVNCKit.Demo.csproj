@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <PublishAot>true</PublishAot>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Native arch">
+    <_NativeArch Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'ARM64'">aarch64</_NativeArch>
+    <_NativeArch Condition="'$(_NativeArch)' == ''">x86_64</_NativeArch>
+    
+    <_NativeCfg Condition="'$(Configuration)' == 'Release'">release</_NativeCfg>
+    <_NativeCfg Condition="'$(_NativeCfg)' == ''">debug</_NativeCfg>
+    
+    <_SwiftBuildDir>$([MSBuild]::NormalizeDirectory('$(MSBuildThisFileDirectory)..\..\..\.build'))</_SwiftBuildDir>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+    <_NativeLibrary>$(_SwiftBuildDir)$(_NativeArch)-unknown-linux-gnu\$(_NativeCfg)\libRoyalVNCKit.so</_NativeLibrary>
+  </PropertyGroup>
+  <PropertyGroup Label="macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+    <_SwiftArch Condition="'$(_NativeArch)' == 'aarch64'">arm64</_SwiftArch>
+    <_SwiftArch Condition="'$(_SwiftArch)' == ''">$(_NativeArch)</_SwiftArch>
+    <_NativeLibrary>$(_SwiftBuildDir)$(_SwiftArch)-apple-macosx\$(_NativeCfg)\libRoyalVNCKit.dylib</_NativeLibrary>
+  </PropertyGroup>
+  <PropertyGroup Label="Windows" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <_NativeLibrary>$(_SwiftBuildDir)$(_NativeArch)-unknown-windows-msvc\$(_NativeCfg)\RoyalVNCKit.dll</_NativeLibrary>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(_NativeLibrary)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Link>%(Filename)%(Extension)</Link>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RoyalApps.RoyalVNCKit\RoyalApps.RoyalVNCKit.csproj" />
+  </ItemGroup>
+</Project>
