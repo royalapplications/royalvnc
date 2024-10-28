@@ -185,8 +185,7 @@ void delegate_authenticate(rvnc_connection_t connection,
             free(password);
         }
     } else if (requiresPassword) {
-        printf("Enter password: ");
-        char* password = readLine();
+        char* password = readPassword("Enter password: ");
         
         if (password) {
             rvnc_authentication_request_complete_with_password(authenticationRequest,
