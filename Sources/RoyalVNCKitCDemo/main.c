@@ -138,10 +138,10 @@ void delegate_authenticate(rvnc_connection_t connection,
     bool requiresPassword = rvnc_authentication_type_requires_password(authenticationType);
     
     if (requiresUsername) {
-        printf("Username: ");
+        printf("Enter username: ");
         char* username = getLine();
         
-        printf("Password: ");
+        printf("Enter password: ");
         char* password = getLine();
 
         if (username &&
@@ -161,7 +161,7 @@ void delegate_authenticate(rvnc_connection_t connection,
             free(password);
         }
     } else if (requiresPassword) {
-        printf("Password: ");
+        printf("Enter password: ");
         char* password = getLine();
         
         if (password) {
