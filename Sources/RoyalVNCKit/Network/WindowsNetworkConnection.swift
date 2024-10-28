@@ -173,12 +173,18 @@ extension WindowsNetworkConnection: NetworkConnectionReading {
             queue.async {
                 var buffer = [UInt8](repeating: 0, count: bufferSize)
         
-                let bytesRead = recv(
-                    socket,
-                    &buffer,
-                    .init(bufferSize),
-                    0
-                )
+                let bytesRead: Int32 = buffer.withUnsafeMutableBytes { bufferPtr in
+                    guard let bufferPtrAddr = bufferPtr.baseAddress else {
+                        return 0
+                    }
+
+                    return recv(
+                        socket,
+                        bufferPtrAddr,
+                        .init(bufferSize),
+                        0
+                    )
+                }
 
                 // Handle connection closure
                 if bytesRead == 0 {
@@ -229,13 +235,19 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
 		return try await withCheckedThrowingContinuation { continuation in
             queue.async {
                 let bytesToSend = [UInt8](data)
-                
-                let bytesSent = send(
-                    socket,
-                    bytesToSend,
-                    .init(bytesToSend.count),
-                    0
-                )
+
+                let bytesSent: Int32 = bytesToSend.withUnsafeBytes { bytesToSendPtr in
+                    guard let bytesToSendPtrAddr = bytesToSendPtr.baseAddress else {
+                        return -1
+                    }
+
+                    return send(
+                        socket,
+                        bytesToSendPtrAddr,
+                        .init(bytesToSend.count),
+                        0
+                    )
+                }
                 
                 if bytesSent < 0 {
                     continuation.resume(throwing: WinsockError.sendFailed)

@@ -118,7 +118,7 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: UInt16.self)
+            $0.loadUnaligned(as: UInt16.self)
         }
         
         let value = Endianness.current == .little
@@ -137,7 +137,7 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: Int16.self)
+            $0.loadUnaligned(as: Int16.self)
         }
         
         let value = Endianness.current == .little
@@ -156,7 +156,7 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: UInt32.self)
+            $0.loadUnaligned(as: UInt32.self)
         }
         
         let value = Endianness.current == .little
@@ -175,7 +175,7 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: Int32.self)
+            $0.loadUnaligned(as: Int32.self)
         }
         
         let value = Endianness.current == .little
