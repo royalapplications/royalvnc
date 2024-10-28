@@ -21,7 +21,7 @@ public sealed unsafe class VncSettings: IDisposable
     
     internal void* Instance { get; private set; }
 
-    VncSettings(void* instance)
+    internal VncSettings(void* instance)
     {
         ArgumentNullException.ThrowIfNull(instance);
         Instance = instance;
@@ -31,14 +31,14 @@ public sealed unsafe class VncSettings: IDisposable
     {
         ArgumentNullException.ThrowIfNull(settings);
         Instance = RoyalVNCKit.rvnc_settings_create(
-            (byte)(settings.IsDebugLoggingEnabled ? 1 : 0),
+            settings.IsDebugLoggingEnabled.ToNativeBool(),
             settings.Hostname,
             settings.Port,
-            (byte)(settings.IsShared ? 1 : 0),
-            (byte)(settings.IsScalingEnabled ? 1 : 0),
-            (byte)(settings.UseDisplayLink ? 1 : 0),
+            settings.IsShared.ToNativeBool(),
+            settings.IsScalingEnabled.ToNativeBool(),
+            settings.UseDisplayLink.ToNativeBool(),
             settings.InputMode,
-            (byte)(settings.IsClipboardRedirectionEnabled ? 1 : 0),
+            settings.IsClipboardRedirectionEnabled.ToNativeBool(),
             settings.ColorDepth
         );
     }

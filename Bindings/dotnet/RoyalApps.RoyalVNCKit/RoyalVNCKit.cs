@@ -157,10 +157,14 @@ static unsafe partial class RoyalVNCKit
     
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_cursor_pixel_data_destroy(void* pixelData);
+    
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ulong rvnc_cursor_pixel_data_size_get(void* cursor);
     
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void ConnectionStatusDidChangeDelegate(
+    internal delegate void ConnectionStateDidChangeDelegate(
         void* connection,
         void* context,
         void* connectionState
@@ -208,7 +212,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_connection_delegate_create(
-        ConnectionStatusDidChangeDelegate connectionStateDidChange,
+        ConnectionStateDidChangeDelegate connectionStateDidChange,
         AuthenticateDelegate authenticate,
         DidCreateFramebufferDelegate didCreateFramebuffer,
         DidResizeFramebufferDelegate didResizeFramebuffer,
@@ -279,7 +283,15 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_up(void* connection, double x, double y);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_connection_right_mouse_up(void* connection, double x, double y);
     
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_connection_middle_mouse_up(void* connection, double x, double y);
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_wheel_up(void* connection, double x, double y);
@@ -296,12 +308,12 @@ static unsafe partial class RoyalVNCKit
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_wheel_right(void* connection, double x, double y);
 
-    // NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `X11KeySymbols` struct.
+    // NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `KeySymbol` enum.
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_key_down(void* connection, uint key);
+    internal static partial void rvnc_connection_key_down(void* connection, KeySymbol key);
     
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_key_up(void* connection, uint key);    
+    internal static partial void rvnc_connection_key_up(void* connection, KeySymbol key);    
 }
