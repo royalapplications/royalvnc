@@ -248,8 +248,24 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
 #pragma mark - Main
 
 int main(int argc, char *argv[]) {
+    // Get hostname either from args or stdin
+    const char* hostname;
+    
+    if (argc >= 2) {
+        hostname = argv[1];
+    } else {
+        printf("Enter hostname: ");
+        
+        hostname = getLine();
+    }
+    
+    if (strlen(hostname) <= 0) {
+        printf("No hostname given\n");
+        
+        exit(1);
+    }
+    
     // Declare settings
-    const char* hostname = "localhost";
     const uint16_t port = 5900;
     const bool isShared = true;
     const bool isScalingEnabled = false;

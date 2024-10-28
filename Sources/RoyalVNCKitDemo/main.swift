@@ -6,6 +6,7 @@ import Foundation
 
 import RoyalVNCKit
 
+// Get hostname either from args or stdin
 let args = CommandLine.arguments
 let hostname: String
 
@@ -22,6 +23,7 @@ guard !hostname.isEmpty else {
     exit(1)
 }
 
+// Create settings
 let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
                                       hostname: hostname,
                                       port: 5900,
@@ -33,16 +35,25 @@ let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
                                       colorDepth: .depth24Bit,
                                       frameEncodings: .default)
 
+// Create connection
 let connection = VNCConnection(settings: settings)
 
+// Create connection delegate
 let connectionDelegate = ConnectionDelegate()
+
+// Set connection delegate in connection
 connection.delegate = connectionDelegate
 
-print("Connecting...")
-
+// Connect
 connection.connect()
 
-// Start an endless loop
+// Run loop until connection is disconnected
 while true {
+    let connectionStatus = connection.connectionState.status
+    
+    if connectionStatus == .disconnected {
+        break
+    }
+    
     platformSleep(forTimeInterval: 0.5)
 }
