@@ -41,12 +41,21 @@ func readPassword(prompt: String) -> String? {
     let password = String(cString: passwordC)
     
     return password
+#elseif canImport(Glibc)
+    guard let passwordC = getpass(prompt) else {
+        return nil
+    }
+
+    let password = String(cString: passwordC)
+    
+    return password
 #else
-    // TODO: Implement password input for other platforms
+    // TODO: Implement password input for Windows
+
     print(prompt, terminator: "")
     
     let password = readLine(strippingNewline: true)
-    
+
     return password
 #endif
 }
