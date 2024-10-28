@@ -137,6 +137,7 @@ extern int rvnc_cursor_bits_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
 extern int rvnc_cursor_bytes_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
 extern int rvnc_cursor_bytes_per_row_get(rvnc_cursor_t _Nonnull cursor);
 extern void* _Nullable rvnc_cursor_pixel_data_get_copy(rvnc_cursor_t _Nonnull cursor);
+extern void rvnc_cursor_pixel_data_destroy(void* _Nonnull pixelData);
 extern uint64_t rvnc_cursor_pixel_data_size_get(rvnc_cursor_t _Nonnull cursor);
 
 

@@ -240,7 +240,7 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
            pixelDataSize);
     
     if (pixelData) {
-        free(pixelData);
+        rvnc_cursor_pixel_data_destroy(pixelData);
     }
 }
 

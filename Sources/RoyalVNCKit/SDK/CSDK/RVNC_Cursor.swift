@@ -116,6 +116,13 @@ public func rvnc_cursor_pixel_data_get_copy(_ cursor: rvnc_cursor_t) -> UnsafeMu
     return dataC.baseAddress
 }
 
+@_cdecl("rvnc_cursor_pixel_data_destroy")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_cursor_pixel_data_destroy(_ pixelData: UnsafeMutableRawPointer) {
+    pixelData.deallocate()
+}
+
 @_cdecl("rvnc_cursor_pixel_data_size_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
