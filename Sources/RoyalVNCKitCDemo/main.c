@@ -2,13 +2,13 @@
 #include <string.h>
 
 #ifndef _WIN32
-    #include <unistd.h>
+#include <unistd.h>
 #else // _WIN32
-    // resolve:
-    // Sources\RoyalVNCKitCDemo\main.c:301:9: error: call to undeclared function 'usleep'; ISO C99 and later do not support implicit function declarations
-    // Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
-    // note: convert from microseconds to milliseconds and call the builtin `_sleep` function
-    #define usleep(us) _sleep((us)/1000)
+// resolve:
+// Sources\RoyalVNCKitCDemo\main.c:301:9: error: call to undeclared function 'usleep'; ISO C99 and later do not support implicit function declarations
+// Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
+// note: convert from microseconds to milliseconds and call the builtin `_sleep` function
+#define usleep(us) _sleep((us)/1000)
 #endif // _WIN32
 
 #include <RoyalVNCKitC.h>
@@ -22,8 +22,8 @@ typedef struct Context {
 
 #pragma mark - Helpers
 
-char* getLine(void) {
-    int maxLength = sizeof(char) * 1024;
+char* readLine(void) {
+    int maxLength = sizeof(char) * 4096;
     char* str = malloc(maxLength);
     
     if (fgets(str, maxLength, stdin)) {
@@ -36,6 +36,32 @@ char* getLine(void) {
     }
     
     return str;
+}
+
+char* readPassword(const char* prompt) {
+#ifndef _WIN32
+    char* password = getpass(prompt);
+    
+    if (!password) {
+        return NULL;
+    }
+    
+    size_t len = strlen(password);
+    char* result = malloc(len + 1);
+    
+    if (!result) {
+        return NULL;
+    }
+    
+    strcpy(result, password);
+
+    return result;
+#else
+    // TODO: Implement password input for Windows
+    printf("%s", prompt);
+    
+    return readLine();
+#endif
 }
 
 char* connectionStatusToString(RVNC_CONNECTION_STATUS connectionStatus) {
@@ -139,11 +165,8 @@ void delegate_authenticate(rvnc_connection_t connection,
     
     if (requiresUsername) {
         printf("Enter username: ");
-        char* username = getLine();
-        
-        printf("Enter password: ");
-        // TODO: Use readpassphrase where available and an alternative elsewhere
-        char* password = getLine();
+        char* username = readLine();
+        char* password = readPassword("Enter password: ");
 
         if (username &&
             password) {
@@ -163,7 +186,7 @@ void delegate_authenticate(rvnc_connection_t connection,
         }
     } else if (requiresPassword) {
         printf("Enter password: ");
-        char* password = getLine();
+        char* password = readLine();
         
         if (password) {
             rvnc_authentication_request_complete_with_password(authenticationRequest,
@@ -257,7 +280,7 @@ int main(int argc, char *argv[]) {
     } else {
         printf("Enter hostname: ");
         
-        hostname = getLine();
+        hostname = readLine();
     }
     
     if (strlen(hostname) <= 0) {
