@@ -41,31 +41,28 @@ class ConnectionDelegate: VNCConnectionDelegate {
         
         connection.logger.logDebug("connection credentialFor: \(authenticationTypeString)")
         
-        func readUsername() -> String? {
+        func readUser() -> String? {
             print("Enter username: ", terminator: "")
             let username = readLine(strippingNewline: true)
             
             return username
         }
         
-        func readPassword() -> String? {
-            print("Enter password: ", terminator: "")
-            
-            // TODO: Hide while typing
-            let password = readLine(strippingNewline: true)
+        func readPW() -> String? {
+            let password = readPassword(prompt: "Enter password: ")
             
             return password
         }
         
         if authenticationType.requiresUsername,
            authenticationType.requiresPassword {
-            guard let username = readUsername() else {
+            guard let username = readUser() else {
                 completion(nil)
                 
                 return
             }
             
-            guard let password = readPassword() else {
+            guard let password = readPW() else {
                 completion(nil)
                 
                 return
@@ -74,7 +71,7 @@ class ConnectionDelegate: VNCConnectionDelegate {
             completion(VNCUsernamePasswordCredential(username: username,
                                                      password: password))
         } else if authenticationType.requiresPassword {
-            guard let password = readPassword() else {
+            guard let password = readPW() else {
                 completion(nil)
                 
                 return

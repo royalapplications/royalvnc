@@ -4,12 +4,12 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if canImport(WinSDK)
-import WinSDK
-#endif
-
-#if canImport(Glibc)
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
 import Glibc
+#elseif canImport(WinSDK)
+import WinSDK
 #endif
 
 func platformSleep(forTimeInterval timeInterval: TimeInterval) {
@@ -23,5 +23,30 @@ func platformSleep(forTimeInterval timeInterval: TimeInterval) {
     usleep(timeIntervalMicroseconds)
 #else
     Thread.sleep(forTimeInterval: timeInterval)
+#endif
+}
+
+func readPassword(prompt: String) -> String? {
+#if canImport(Darwin)
+    var buffer = [CChar](repeating: 0,
+                         count: 4096)
+    
+    guard let passwordC = readpassphrase(prompt,
+                                         &buffer,
+                                         buffer.count,
+                                         0) else {
+        return nil
+    }
+    
+    let password = String(cString: passwordC)
+    
+    return password
+#else
+    // TODO: Implement password input for other platforms
+    print(prompt, terminator: "")
+    
+    let password = readLine(strippingNewline: true)
+    
+    return password
 #endif
 }

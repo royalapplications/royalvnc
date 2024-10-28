@@ -31,6 +31,9 @@ guard !hostname.isEmpty else {
     exit(1)
 }
 
+// Create logger
+let logger = VNCPrintLogger()
+
 // Create settings
 let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
                                       hostname: hostname,
@@ -44,7 +47,8 @@ let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
                                       frameEncodings: .default)
 
 // Create connection
-let connection = VNCConnection(settings: settings)
+let connection = VNCConnection(settings: settings,
+                               logger: logger)
 
 // Create connection delegate
 let connectionDelegate = ConnectionDelegate()

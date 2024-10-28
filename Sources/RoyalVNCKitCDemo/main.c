@@ -142,6 +142,7 @@ void delegate_authenticate(rvnc_connection_t connection,
         char* username = getLine();
         
         printf("Enter password: ");
+        // TODO: Use readpassphrase where available and an alternative elsewhere
         char* password = getLine();
 
         if (username &&
