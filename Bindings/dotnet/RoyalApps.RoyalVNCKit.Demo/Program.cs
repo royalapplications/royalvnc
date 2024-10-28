@@ -1,6 +1,7 @@
 using System;
 using System.Text;
 using System.Threading;
+using static System.Console;
 
 namespace RoyalApps.RoyalVNCKit.Demo;
 
@@ -12,13 +13,13 @@ static class Program
         if (args.Length > 0) hostname = args[0];
         else
         {
-            Console.Write("Enter hostname: ");
-            hostname = Console.ReadLine()!;
+            Write("Enter hostname: ");
+            hostname = ReadLine()!;
         }
 
         if (string.IsNullOrWhiteSpace(hostname))
         {
-            Console.Error.WriteLine("No hostname given");
+            Error.WriteLine("No hostname given -- exiting");
             return 1;
         }
 
@@ -28,6 +29,7 @@ static class Program
             Port = 5900,
             IsDebugLoggingEnabled = true,
             IsShared = true,
+            IsScalingEnabled = false,
             UseDisplayLink = false,
             InputMode = InputMode.None,
             IsClipboardRedirectionEnabled = false,
@@ -50,7 +52,6 @@ static class Program
         while (true)
         {
             var status = connection.Status;
-            
             if (status is ConnectionStatus.Disconnected)
                 break;
             
@@ -60,81 +61,70 @@ static class Program
         return 0;
     }
 
-    static bool OnAuthenticationRequested(
-        VncConnection connection,
-        AuthenticationRequest request
-    )
+    static bool OnAuthenticationRequested(VncConnection connection, AuthenticationRequest request)
     {
-        Console.WriteLine($"authenticationRequested: {request.AuthenticationType switch {
+        string type = request.AuthenticationType switch
+        {
             AuthenticationType.Vnc => "VNC",
             AuthenticationType.AppleRemoteDesktop => "Apple Remote Desktop",
             AuthenticationType.UltraVncMSLogonII => "UltraVNC MS Logon II",
             _ => $"Unknown({request.AuthenticationType:D})"
-        }}");
+        };
+        
+        WriteLine($"authenticationRequested: {type}");
         
         if (request.RequiresUsername)
         {
-            Console.Write("Enter username: ");
-            request.Username = Console.ReadLine();
+            Write("Enter username: ");
+            request.Username = ReadLine();
         }
         
         if (request.RequiresPassword)
         {
-            Console.Write("Enter password: ");
+            Write("Enter password: ");
             request.Password = ReadConsolePassword();
         }
 
         return true;
     }
     
-    static void OnConnectionStateChanged(
-        VncConnection connection,
-        VncConnectionState state
-    ) =>
-        Console.WriteLine(state.DisplayErrorToUser
-            ? $"connectionStateChanged: {state.Status}; error: '{state.ErrorDescription}; is auth error: {(state.IsAuthenticationError ? "YES" : "no")}"
+    static void OnConnectionStateChanged(VncConnection connection, VncConnectionState state) =>
+        WriteLine(state.DisplayErrorToUser
+            ? $"connectionStateChanged: {state.Status}; error: '{state.ErrorDescription}'; is auth error: {(state.IsAuthenticationError ? "YES" : "no")}"
             : $"connectionStateChanged: {state.Status}");
 
-    static void OnFramebufferCreated(
-        VncConnection connection,
-        VncFramebuffer framebuffer
-    ) =>
-        Console.WriteLine($"framebufferCreated: {framebuffer.Width:N0}x{framebuffer.Height:N0} ({framebuffer.PixelData.Length:N0} bytes)");
+    static void OnFramebufferCreated(VncConnection connection, VncFramebuffer framebuffer) =>
+        WriteLine($"framebufferCreated: {framebuffer.Width:N0}x{framebuffer.Height:N0} ({framebuffer.PixelData.Length:N0} bytes)");
 
-    static void OnFramebufferResized(
-        VncConnection connection,
-        VncFramebuffer framebuffer
-    ) =>
-        Console.WriteLine($"framebufferResized: {framebuffer.Width:N0}x{framebuffer.Height:N0} ({framebuffer.PixelData.Length:N0} bytes)");
+    static void OnFramebufferResized(VncConnection connection, VncFramebuffer framebuffer) =>
+        WriteLine($"framebufferResized: {framebuffer.Width:N0}x{framebuffer.Height:N0} ({framebuffer.PixelData.Length:N0} bytes)");
 
-    static void OnFramebufferRegionUpdated(
-        VncConnection connection,
-        VncFramebuffer _,
-        VncFramebufferRegion region
-    ) =>
-        Console.WriteLine($"framebufferRegionUpdated: {region.Width:N0}x{region.Height:N0} at {region.X:N0}, {region.Y:N0}");
+    static void OnFramebufferRegionUpdated(VncConnection connection, VncFramebuffer _, VncFramebufferRegion region) =>
+        WriteLine($"framebufferRegionUpdated: {region.Width:N0}x{region.Height:N0} at {region.X:N0}, {region.Y:N0}");
 
     static string ReadConsolePassword()
     {
         var sb = new StringBuilder();
         while (true)
         {
-            var info = Console.ReadKey(true);
+            var info = ReadKey(true);
             if (info.Key is ConsoleKey.Enter)
             {
-                Console.WriteLine();
+                WriteLine();
                 break;
             }
+            
             if (info.Key is ConsoleKey.Backspace)
             {
                 if (sb.Length > 0)
                 {
-                    Console.Write("\b\0\b");
+                    Write("\b\0\b");
                     sb.Length--;
                 }
                 continue;
             }
-            Console.Write("*");
+            
+            Write("*");
             sb.Append(info.KeyChar);
         }
         return sb.ToString();
