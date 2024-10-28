@@ -5,10 +5,7 @@ namespace RoyalApps.RoyalVNCKit;
 
 public delegate void VncConnectionStateChangedHandler(
     VncConnection connection,
-    ConnectionStatus newStatus,
-    string? errorDescription,
-    bool isAuthenticationError,
-    bool displayErrorToUser
+    VncConnectionState state
 );
 
 public delegate bool VncAuthenticationRequestedHandler(
@@ -115,18 +112,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
             return;
 
         var state = new VncConnectionState(connectionState);
-        var status = state.Status;
-        var errorDescription = state.ErrorDescription;
-        var isAuthenticationError = state.IsAuthenticationError;
-        var displayErrorToUser = state.DisplayErrorToUser;
-        
-        handler.Invoke(
-            vncConnection,
-            status,
-            errorDescription,
-            isAuthenticationError,
-            displayErrorToUser
-        );
+        handler.Invoke(vncConnection, state);
     }
 
     static readonly RoyalVNCKit.AuthenticateDelegate AuthenticateHandler = Authenticate;
