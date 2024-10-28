@@ -9,9 +9,6 @@
     // Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
     // note: convert from microseconds to milliseconds and call the builtin `_sleep` function
     #define usleep(us) _sleep((us)/1000)
-
-    // resolve: Sources\RoyalVNCKitCDemo\main.c:20:5: warning: 'scanf' is deprecated: This function or variable may be unsafe. Consider using scanf_s instead.
-    #define scanf scanf_s
 #endif // _WIN32
 
 #include <RoyalVNCKitC.h>
@@ -146,7 +143,7 @@ void delegate_authenticate(rvnc_connection_t connection,
         
         printf("Password: ");
         char* password = getLine();
-        
+
         if (username &&
             password) {
             rvnc_authentication_request_complete_with_username_password(authenticationRequest,
