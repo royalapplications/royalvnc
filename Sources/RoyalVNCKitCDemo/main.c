@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #ifndef _WIN32
     #include <unistd.h>
@@ -25,8 +26,17 @@ typedef struct Context {
 #pragma mark - Helpers
 
 char* getLine(void) {
-    char* str = malloc(sizeof(char) * 1024);
-    scanf(" %[^\n]s", str);
+    int maxLength = sizeof(char) * 1024;
+    char* str = malloc(maxLength);
+    
+    if (fgets(str, maxLength, stdin)) {
+        size_t len = strlen(str);
+        
+        if (len > 0 &&
+            str[len - 1] == '\n') {
+            str[--len] = '\0';
+        }
+    }
     
     return str;
 }
