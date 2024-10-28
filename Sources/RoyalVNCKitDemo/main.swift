@@ -4,6 +4,14 @@ import FoundationEssentials
 import Foundation
 #endif
 
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(WinSDK)
+import WinSDK
+#endif
+
 import RoyalVNCKit
 
 // Get hostname either from args or stdin
