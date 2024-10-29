@@ -60,7 +60,7 @@ func readPassword(prompt: String) -> String? {
     var hi = INVALID_HANDLE_VALUE
     var ho = INVALID_HANDLE_VALUE
 
-    func cleanUp() {
+    defer {
         if let wbuf {
             RtlSecureZeroMemory(wbuf, .init(wbuf_len))
             HeapFree(GetProcessHeap(), 0, wbuf)
@@ -78,8 +78,6 @@ func readPassword(prompt: String) -> String? {
     hi = CreateFileA("CONIN$", access, 0, nil, .init(OPEN_EXISTING), 0, nil)
 
     guard GetConsoleMode(hi, &orig) else {
-        cleanUp()
-
         return nil
     }
 
@@ -89,8 +87,6 @@ func readPassword(prompt: String) -> String? {
     mode &= ~(.init(ENABLE_ECHO_INPUT))
 
     guard SetConsoleMode(hi, mode) else {
-        cleanUp()
-
         return nil
     }
 
@@ -98,8 +94,6 @@ func readPassword(prompt: String) -> String? {
     ho = CreateFileA("CONOUT$", .init(GENERIC_WRITE), 0, nil, .init(OPEN_EXISTING), 0, nil)
 
     guard WriteConsoleA(ho, prompt, .init(strlen(prompt)), nil, nil) else {
-        cleanUp()
-
         return nil
     }
 
@@ -108,8 +102,6 @@ func readPassword(prompt: String) -> String? {
     wbuf = HeapAlloc(GetProcessHeap(), 0, wbuf_len)
 
     guard let wbuf else {
-        cleanUp()
-
         return nil
     }
 
@@ -117,14 +109,10 @@ func readPassword(prompt: String) -> String? {
     var nread: DWORD = 0
 
     guard ReadConsoleW(hi, wbuf, DWORD(len) - 1 + 2, &nread, nil) else {
-        cleanUp()
-
         return nil
     }
 
     guard nread >= 2 else {
-        cleanUp()
-
         return nil
     }
 
@@ -133,16 +121,12 @@ func readPassword(prompt: String) -> String? {
 
     if wbufAsWchar[Int(nread)-2] != UInt16("\r".utf16.first!) ||
        wbufAsWchar[Int(nread)-1] != UInt16("\n".utf16.first!) {
-        cleanUp()
-
         return nil
     }
 
     wbufAsWchar[Int(nread)-2] = 0 // truncate "\r\n"
 
     guard let buf = malloc(MemoryLayout<CChar>.stride * len) else {
-        cleanUp()
-
         return nil
     }
 
