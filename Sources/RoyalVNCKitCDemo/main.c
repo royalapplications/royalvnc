@@ -5,6 +5,8 @@
 #ifndef _WIN32
 #include <unistd.h>
 #else // _WIN32
+#include <windows.h>
+
 // resolve:
 // Sources\RoyalVNCKitCDemo\main.c:301:9: error: call to undeclared function 'usleep'; ISO C99 and later do not support implicit function declarations
 // Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
@@ -58,10 +60,55 @@ char* readPassword(const char* prompt) {
 
     return result;
 #else
-    // TODO: Implement password input for Windows
-    printf("%s", prompt);
-    
-    return readLine();
+    int len = 4096;
+    char* buf = malloc(sizeof(char) * len);
+
+    /* Resources that will be cleaned up */
+    int pwlen = 0;
+    DWORD orig = 0;
+    WCHAR *wbuf = 0;
+    SIZE_T wbuf_len = 0;
+    HANDLE hi, ho = INVALID_HANDLE_VALUE;
+
+    /* Set up input console handle */
+    DWORD access = GENERIC_READ | GENERIC_WRITE;
+    hi = CreateFileA("CONIN$", access, 0, 0, OPEN_EXISTING, 0, 0);
+    if (!GetConsoleMode(hi, &orig)) goto done;
+    DWORD mode = orig;
+    mode |= ENABLE_PROCESSED_INPUT;
+    mode |= ENABLE_LINE_INPUT;
+    mode &= ~ENABLE_ECHO_INPUT;
+    if (!SetConsoleMode(hi, mode)) goto done;
+
+    /* Set up output console handle */
+    ho = CreateFileA("CONOUT$", GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
+    if (!WriteConsoleA(ho, prompt, strlen(prompt), 0, 0)) goto done;
+
+    /* Allocate a wide character buffer the size of the output */
+    wbuf_len = (len - 1 + 2) * sizeof(WCHAR);
+    wbuf = HeapAlloc(GetProcessHeap(), 0, wbuf_len);
+    if (!wbuf) goto done;
+
+    /* Read and convert to UTF-8 */
+    DWORD nread;
+    if (!ReadConsoleW(hi, wbuf, len - 1 + 2, &nread, 0)) goto done;
+    if (nread < 2) goto done;
+    if (wbuf[nread-2] != '\r' || wbuf[nread-1] != '\n') goto done;
+    wbuf[nread-2] = 0;  // truncate "\r\n"
+    pwlen = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, 0, 0);
+
+done:
+    if (wbuf) {
+        SecureZeroMemory(wbuf, wbuf_len);
+        HeapFree(GetProcessHeap(), 0, wbuf);
+    }
+    /* Exploit that operations on INVALID_HANDLE_VALUE are no-ops */
+    WriteConsoleA(ho, "\n", 1, 0, 0);
+    SetConsoleMode(hi, orig);
+    CloseHandle(ho);
+    CloseHandle(hi);
+
+    return buf;
 #endif
 }
 
