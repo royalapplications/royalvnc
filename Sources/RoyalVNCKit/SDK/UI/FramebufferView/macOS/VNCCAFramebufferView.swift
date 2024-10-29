@@ -290,7 +290,7 @@ extension VNCCAFramebufferView {
 	func handleMouseMoved(with event: NSEvent) {
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.mouseMove(position)
+        connection?.mouseMove(x: position.x, y: position.y)
 	}
 	
 	func handleMouseDown(with event: NSEvent) {
@@ -299,37 +299,37 @@ extension VNCCAFramebufferView {
 		
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.mouseDown(position)
+        connection?.mouseButtonDown(.left, x: position.x, y: position.y)
 	}
 	
 	func handleMouseDragged(with event: NSEvent) {
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.mouseDown(position)
+        connection?.mouseButtonDown(.left, x: position.x, y: position.y)
 	}
 	
 	func handleMouseUp(with event: NSEvent) {
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.mouseUp(position)
+        connection?.mouseButtonUp(.left, x: position.x, y: position.y)
 	}
 	
 	func handleRightMouseDown(with event: NSEvent) {
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.rightMouseDown(position)
+        connection?.mouseButtonDown(.right, x: position.x, y: position.y)
 	}
 	
 	func handleRightMouseDragged(with event: NSEvent) {
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.rightMouseDown(position)
+        connection?.mouseButtonDown(.right, x: position.x, y: position.y)
 	}
 	
 	func handleRightMouseUp(with event: NSEvent) {
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.mouseUp(position)
+        connection?.mouseButtonUp(.right, x: position.x, y: position.y)
 	}
 	
 	func handleOtherMouseDown(with event: NSEvent) {
@@ -337,7 +337,7 @@ extension VNCCAFramebufferView {
 		
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.middleMouseDown(position)
+        connection?.mouseButtonDown(.middle, x: position.x, y: position.y)
 	}
 	
 	func handleOtherMouseDragged(with event: NSEvent) {
@@ -345,7 +345,7 @@ extension VNCCAFramebufferView {
 		
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.middleMouseDown(position)
+        connection?.mouseButtonDown(.middle, x: position.x, y: position.y)
 	}
 	
 	func handleOtherMouseUp(with event: NSEvent) {
@@ -353,7 +353,7 @@ extension VNCCAFramebufferView {
 		
 		guard let position = scaledContentRelativePosition(of: event) else { return }
 		
-		connection?.mouseUp(position)
+        connection?.mouseButtonUp(.middle, x: position.x, y: position.y)
 	}
 	
 	func handleScrollWheel(with event: NSEvent) {

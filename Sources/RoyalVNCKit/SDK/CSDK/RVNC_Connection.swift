@@ -137,6 +137,7 @@ public func rvnc_connection_settings_get_copy(_ connection: rvnc_connection_t) -
     return connectionSettingsC
 }
 
+// MARK: - Mouse Input
 @_cdecl("rvnc_connection_mouse_move")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
@@ -148,67 +149,28 @@ public func rvnc_connection_mouse_move(_ connection: rvnc_connection_t, _ x: Dou
 @_cdecl("rvnc_connection_mouse_down")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_down(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
+public func rvnc_connection_mouse_down(_ connection: rvnc_connection_t, _ button: RVNC_MOUSEBUTTON, _ x: Double, _ y: Double) {
     VNCConnection.fromPointer(connection)
-        .mouseDown(x: x, y: y)
-}
-
-@_cdecl("rvnc_connection_right_mouse_down")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_right_mouse_down(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
-    VNCConnection.fromPointer(connection)
-        .rightMouseDown(x: x, y: y)
-}
-
-@_cdecl("rvnc_connection_middle_mouse_down")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_middle_mouse_down(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
-    VNCConnection.fromPointer(connection)
-        .middleMouseDown(x: x, y: y)
+        .mouseButtonDown(button.swiftVNCMouseButton, x: x, y: y)
 }
 
 @_cdecl("rvnc_connection_mouse_up")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_up(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
+public func rvnc_connection_mouse_up(_ connection: rvnc_connection_t, _ button: RVNC_MOUSEBUTTON, _ x: Double, _ y: Double) {
     VNCConnection.fromPointer(connection)
-        .mouseUp(x: x, y: y)
+        .mouseButtonUp(button.swiftVNCMouseButton, x: x, y: y)
 }
 
-@_cdecl("rvnc_connection_mouse_wheel_up")
+@_cdecl("rvnc_connection_mouse_wheel")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_wheel_up(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
+public func rvnc_connection_mouse_wheel(_ connection: rvnc_connection_t, _ wheel: RVNC_MOUSEWHEEL, _ x: Double, _ y: Double, _ steps: UInt32) {
     VNCConnection.fromPointer(connection)
-        .mouseWheelUp(x: x, y: y)
+        .mouseWheel(wheel.swiftVNCMouseWheel, x: x, y: y, steps: steps)
 }
 
-@_cdecl("rvnc_connection_mouse_wheel_down")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_mouse_wheel_down(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
-    VNCConnection.fromPointer(connection)
-        .mouseWheelDown(x: x, y: y)
-}
-
-@_cdecl("rvnc_connection_mouse_wheel_left")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_mouse_wheel_left(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
-    VNCConnection.fromPointer(connection)
-        .mouseWheelLeft(x: x, y: y)
-}
-
-@_cdecl("rvnc_connection_mouse_wheel_right")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_mouse_wheel_right(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
-    VNCConnection.fromPointer(connection)
-        .mouseWheelRight(x: x, y: y)
-}
-
+// MARK: - Keyboard Input
 @_cdecl("rvnc_connection_key_down")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)

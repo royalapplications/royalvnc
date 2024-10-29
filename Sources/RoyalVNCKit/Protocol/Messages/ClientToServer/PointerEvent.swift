@@ -33,7 +33,7 @@ extension VNCProtocol.PointerEvent {
 		return data
 	}
 	
-	init(buttons: VNCProtocol.MouseButton,
+	init(buttons: VNCProtocol.MousePointerButton,
 		 position: VNCProtocol.MousePosition) {
 		self.buttonMask = buttons.rawValue
 		

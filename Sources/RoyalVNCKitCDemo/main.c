@@ -242,14 +242,14 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
     uint16_t height = rvnc_cursor_size_height_get(cursor);
     uint16_t hotspotX = rvnc_cursor_hotspot_x_get(cursor);
     uint16_t hotspotY = rvnc_cursor_hotspot_y_get(cursor);
-    int bitsPerComponent = rvnc_cursor_bits_per_component_get(cursor);
-    int bitsPerPixel = rvnc_cursor_bits_per_pixel_get(cursor);
-    int bytesPerPixel = rvnc_cursor_bytes_per_pixel_get(cursor);
-    int bytesPerRow = rvnc_cursor_bytes_per_row_get(cursor);
+    int64_t bitsPerComponent = rvnc_cursor_bits_per_component_get(cursor);
+    int64_t bitsPerPixel = rvnc_cursor_bits_per_pixel_get(cursor);
+    int64_t bytesPerPixel = rvnc_cursor_bytes_per_pixel_get(cursor);
+    int64_t bytesPerRow = rvnc_cursor_bytes_per_row_get(cursor);
     void* pixelData = rvnc_cursor_pixel_data_get_copy(cursor);
     uint64_t pixelDataSize = rvnc_cursor_pixel_data_size_get(cursor);
     
-    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %i; bitsPerPixel: %i; bytesPerPixel: %i; bytesPerRow: %i; pixelData: %p; pixelDataSize: %llu\n",
+    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %lli; bitsPerPixel: %lli; bytesPerPixel: %lli; bytesPerRow: %lli; pixelData: %p; pixelDataSize: %llu\n",
            isEmpty ? "Yes" : "No",
            width,
            height,

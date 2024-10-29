@@ -64,6 +64,8 @@ public class VNCConnection: NSObjectOrAnyObject {
 	let clipboardMonitor: VNCClipboardMonitor
 	
 	var clientToServerMessageQueue = Queue<VNCSendableMessage>()
+    
+    var mouseButtonState: VNCProtocol.MousePointerButton = [ ]
 	
     lazy var connection: some NetworkConnection = {
         let connectionSettings = NetworkConnectionSettings(connectionTimeout: 15,

@@ -24,15 +24,15 @@ extension VNCFramebufferView {
 		guard let connection = self.connection else { return }
 		
 		if scrollDelta.x < 0 {
-			connection.mouseWheelRight(mousePosition)
+            connection.mouseWheel(.right, x: mousePosition.x, y: mousePosition.y, steps: 1)
 		} else if scrollDelta.x > 0 {
-			connection.mouseWheelLeft(mousePosition)
+            connection.mouseWheel(.left, x: mousePosition.x, y: mousePosition.y, steps: 1)
 		}
 		
 		if scrollDelta.y < 0 {
-			connection.mouseWheelDown(mousePosition)
+            connection.mouseWheel(.down, x: mousePosition.x, y: mousePosition.y, steps: 1)
 		} else if scrollDelta.y > 0 {
-			connection.mouseWheelUp(mousePosition)
+            connection.mouseWheel(.up, x: mousePosition.x, y: mousePosition.y, steps: 1)
 		}
 	}
 	
@@ -48,11 +48,11 @@ extension VNCFramebufferView {
 		if abs(accumulatedScrollDeltaX) >= scrollStep {
 			while abs(accumulatedScrollDeltaX) >= scrollStep {
 				if accumulatedScrollDeltaX < 0 {
-					connection?.mouseWheelRight(mousePosition)
+                    connection?.mouseWheel(.right, x: mousePosition.x, y: mousePosition.y, steps: 1)
 					
 					accumulatedScrollDeltaX += scrollStep
 				} else if accumulatedScrollDeltaX > 0 {
-					connection?.mouseWheelLeft(mousePosition)
+                    connection?.mouseWheel(.left, x: mousePosition.x, y: mousePosition.y, steps: 1)
 					
 					accumulatedScrollDeltaX -= scrollStep
 				}
@@ -64,11 +64,11 @@ extension VNCFramebufferView {
 		if abs(accumulatedScrollDeltaY) >= scrollStep {
 			while abs(accumulatedScrollDeltaY) >= scrollStep {
 				if accumulatedScrollDeltaY < 0 {
-					connection?.mouseWheelDown(mousePosition)
+                    connection?.mouseWheel(.down, x: mousePosition.x, y: mousePosition.y, steps: 1)
 					
 					accumulatedScrollDeltaY += scrollStep
 				} else if accumulatedScrollDeltaY > 0 {
-					connection?.mouseWheelUp(mousePosition)
+                    connection?.mouseWheel(.up, x: mousePosition.x, y: mousePosition.y, steps: 1)
 					
 					accumulatedScrollDeltaY -= scrollStep
 				}
