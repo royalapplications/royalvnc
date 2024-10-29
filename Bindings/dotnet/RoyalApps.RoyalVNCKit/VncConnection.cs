@@ -105,47 +105,23 @@ public sealed unsafe class VncConnection: IDisposable
     public void SendMouseButtonDown(double x, double y, MouseButton button)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
-        
-        switch (button)
-        {
-        case MouseButton.Left:
-            RoyalVNCKit.rvnc_connection_mouse_down(_instance, x, y);
-            return;
 
-        case MouseButton.Right:
-            RoyalVNCKit.rvnc_connection_right_mouse_down(_instance, x, y);
-            return;
-        
-        case MouseButton.Middle:
-            RoyalVNCKit.rvnc_connection_middle_mouse_down(_instance, x, y);
-            return;
-        
-        default:
+        if (!Enum.IsDefined(button)) {
             throw new ArgumentOutOfRangeException(nameof(button));
         }
+        
+        RoyalVNCKit.rvnc_connection_mouse_down(_instance, button, x, y);
     }
     
     public void SendMouseButtonUp(double x, double y, MouseButton button)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
     
-        switch (button)
-        {
-        case MouseButton.Left:
-            RoyalVNCKit.rvnc_connection_mouse_up(_instance, x, y);
-            return;
-
-        case MouseButton.Right:
-            RoyalVNCKit.rvnc_connection_right_mouse_up(_instance, x, y);
-            return;
-        
-        case MouseButton.Middle:
-            RoyalVNCKit.rvnc_connection_middle_mouse_up(_instance, x, y);
-            return;
-        
-        default:
+        if (!Enum.IsDefined(button)) {
             throw new ArgumentOutOfRangeException(nameof(button));
         }
+        
+        RoyalVNCKit.rvnc_connection_mouse_up(_instance, button, x, y);
     }
     
     public void SendMouseMove(double x, double y)
@@ -158,9 +134,12 @@ public sealed unsafe class VncConnection: IDisposable
     public void SendMouseScroll(double x, double y, double scrollWheelDeltaX, double scrollWheelDeltaY)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
-
-        //TODO: RoyalVNCKit.rvnc_connection_mouse_wheel_down();
-        throw new NotImplementedException("TODO");
+        
+        // TODO
+        MouseWheel direction = MouseWheel.Down;
+        uint steps = 1;
+        
+        RoyalVNCKit.rvnc_connection_mouse_wheel(_instance, direction, x, y, steps);
     }
 
     public void Dispose()

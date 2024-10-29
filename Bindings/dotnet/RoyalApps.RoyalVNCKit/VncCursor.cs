@@ -20,10 +20,10 @@ public sealed unsafe class VncCursor : IDisposable
     public ushort Height => RoyalVNCKit.rvnc_cursor_size_height_get(_instance);
     public ushort HotspotX => RoyalVNCKit.rvnc_cursor_hotspot_x_get(_instance);
     public ushort HotspotY => RoyalVNCKit.rvnc_cursor_hotspot_y_get(_instance);
-    public int BitsPerComponent => RoyalVNCKit.rvnc_cursor_bits_per_component_get(_instance);
-    public int BitsPerPixel => RoyalVNCKit.rvnc_cursor_bits_per_pixel_get(_instance);
-    public int BytesPerPixel => RoyalVNCKit.rvnc_cursor_bytes_per_pixel_get(_instance);
-    public int BytesPerRow => RoyalVNCKit.rvnc_cursor_bytes_per_row_get(_instance);
+    public long BitsPerComponent => RoyalVNCKit.rvnc_cursor_bits_per_component_get(_instance);
+    public long BitsPerPixel => RoyalVNCKit.rvnc_cursor_bits_per_pixel_get(_instance);
+    public long BytesPerPixel => RoyalVNCKit.rvnc_cursor_bytes_per_pixel_get(_instance);
+    public long BytesPerRow => RoyalVNCKit.rvnc_cursor_bytes_per_row_get(_instance);
     
     public ReadOnlySpan<byte> PixelData
     {

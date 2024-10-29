@@ -1,9 +1,10 @@
 namespace RoyalApps.RoyalVNCKit;
 
 // keep in sync with Sources/RoyalVNCKitC/include/RoyalVNCKitC.h
-public enum MouseButton : byte
+public enum MouseWheel : byte
 {
     Left = 0,
-    Middle = 1,
-    Right = 2
+    Right = 1,
+    Up = 2,
+    Down = 3
 }
