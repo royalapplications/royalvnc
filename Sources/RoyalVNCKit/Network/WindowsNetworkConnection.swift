@@ -5,7 +5,6 @@ import FoundationEssentials
 import Foundation
 #endif
 
-import ucrt
 import WinSDK
 import Dispatch
 

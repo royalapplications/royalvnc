@@ -28,12 +28,11 @@ class Spinlock {
 }
 #endif
 
-#if canImport(ucrt)
+#if canImport(WinSDK)
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #endif
 
-import ucrt
 import WinSDK
 
 class Spinlock {
