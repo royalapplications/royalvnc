@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -203,7 +204,7 @@ void delegate_authenticate(rvnc_connection_t connection,
 void delegate_didCreateFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
-    printf("delegate_didCreateFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %lu; Pixel Data Pointer: %p\n",
+    printf("delegate_didCreateFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %" PRIu64 "; Pixel Data Pointer: %p\n",
            rvnc_framebuffer_size_width_get(framebuffer),
            rvnc_framebuffer_size_height_get(framebuffer),
            rvnc_framebuffer_pixel_data_size_get(framebuffer),
@@ -213,7 +214,7 @@ void delegate_didCreateFramebuffer(rvnc_connection_t connection,
 void delegate_didResizeFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
-    printf("delegate_didResizeFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %lu; Pixel Data Pointer: %p\n",
+    printf("delegate_didResizeFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %" PRIu64 "; Pixel Data Pointer: %p\n",
            rvnc_framebuffer_size_width_get(framebuffer),
            rvnc_framebuffer_size_height_get(framebuffer),
            rvnc_framebuffer_pixel_data_size_get(framebuffer),
@@ -249,7 +250,7 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
     void* pixelData = rvnc_cursor_pixel_data_get_copy(cursor);
     uint64_t pixelDataSize = rvnc_cursor_pixel_data_size_get(cursor);
     
-    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %li; bitsPerPixel: %li; bytesPerPixel: %li; bytesPerRow: %li; pixelData: %p; pixelDataSize: %lu\n",
+    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %" PRId64 "; bitsPerPixel: %" PRId64 "; bytesPerPixel: %" PRId64 "; bytesPerRow: %" PRId64 "; pixelData: %p; pixelDataSize: %" PRIu64 "\n",
            isEmpty ? "Yes" : "No",
            width,
            height,
