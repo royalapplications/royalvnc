@@ -64,7 +64,7 @@ jobs:
       NUGET_BASE_VERSION: "0.0"
       SCRIPT_EXT: "${{ matrix.env.OS == 'windows' && 'ps1' || 'sh' }}"
       ROYALVNC_BUILD_DEBUG: 0
-      SWIFT_VERSION: "6.0.1"
+      SWIFT_VERSION: "6.0.2"
 
     steps:
     - name: checkout
