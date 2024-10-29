@@ -91,7 +91,7 @@ func connection(_ connection: VNCConnection,
 }
 ```
 - For a headless client, this is all that's needed to establish the connection and get notified about updates to it.
-- To send input to the remote host, use one of the `VNCConnection`'s input APIs like `keyDown(_:)`, `keyUp(_:)`, `mouseDown(_:)`, `mouseUp(_:)`, etc.
+- To send input to the remote host, use one of the `VNCConnection`'s input APIs like `keyDown(_:)`, `keyUp(_:)`, `mouseButtonDown(_:x:y:)`, `mouseButtonUp(_:x:y:)`, etc.
 ```swift
 // Convert the string "abc" into VNCKeyCode's
 let keyCodes = VNCKeyCode.keyCodesFrom(characters: "abc")
@@ -107,8 +107,8 @@ connection.keyDown(.return)
 connection.keyUp(.return)
 
 // Press Left Mouse Button at x: 10, y: 15
-connection.mouseDown(.init(x: 10, y: 15))
-connection.mouseUp(.init(x: 10, y: 15))
+connection.mouseButtonDown(.left, x: 10, y: 15)
+connection.mouseButtonUp(.left, x: 10, y: 15)
 ```
 - If you want to close the connection, call `VNCConnection.disconnect()`. Note that this is a non-blocking/asynchronous method and likely will only complete some time after you call it. Don't assume the connection has been fully teared down immediately after the call to `disconnect()`. Instead, wait for `connection(_:stateDidChange:)` to be called with a status of `VNCConnection.Status.disconnected`. Once that has happened, you're not(!) supposed to (re-)use the connection anymore and discard your strong reference to it.
 ```swift
