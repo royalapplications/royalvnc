@@ -1,4 +1,3 @@
-#if os(Linux) || os(Windows)
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -9,6 +8,8 @@ import Foundation
 import Glibc
 #elseif canImport(WinSDK)
 import WinSDK
+#elseif canImport(Darwin)
+import Darwin
 #endif
 
 final class Socket {
@@ -35,21 +36,24 @@ final class Socket {
     }
 
     let addressInfo: AddressInfo
+    
 
-#if canImport(Glibc)
-    let nativeSocket: Int32
+#if canImport(Glibc) || canImport(Darwin)
+    typealias NativeSocket = Int32
 #elseif canImport(WinSDK)
-    let nativeSocket: SOCKET
+    typealias NativeSocket = SOCKET
 #endif
+    
+    private let nativeSocket: NativeSocket
 
     init(addressInfo: AddressInfo) throws(Errors) {
         let nativeSocket = socket(
-            addressInfo.addrInfo.pointee.ai_family,
-            addressInfo.addrInfo.pointee.ai_socktype,
-            addressInfo.addrInfo.pointee.ai_protocol
+            addressInfo.family,
+            addressInfo.socktype,
+            addressInfo.protocol
         )
 
-#if canImport(Glibc)
+#if canImport(Glibc) || canImport(Darwin)
         guard nativeSocket >= 0 else {
             throw .socketCreationFailed(underlyingErrorCode: nil)
         }
@@ -71,14 +75,20 @@ final class Socket {
 #if canImport(Glibc)
         connectResult = Glibc.connect(
             nativeSocket,
-            addressInfo.addrInfo.pointee.ai_addr,
-            addressInfo.addrInfo.pointee.ai_addrlen
+            addressInfo.addr,
+            addressInfo.addrlen
+        )
+#elseif canImport(Darwin)
+        connectResult = Darwin.connect(
+            nativeSocket,
+            addressInfo.addr,
+            addressInfo.addrlen
         )
 #elseif canImport(WinSDK)
         connectResult = WinSDK.connect(
             nativeSocket,
-            addressInfo.addrInfo.pointee.ai_addr,
-            .init(addressInfo.addrInfo.pointee.ai_addrlen)
+            addressInfo.addr,
+            .init(addressInfo.addrlen)
         )
 #endif
 
@@ -123,6 +133,13 @@ final class Socket {
                 .init(bufferCount),
                 0
             )
+#elseif canImport(Darwin)
+            let ret = Darwin.send(
+                nativeSocket,
+                bufferPtrAddr,
+                .init(bufferCount),
+                0
+            )
 #elseif canImport(WinSDK)
             let ret = WinSDK.send(
                 nativeSocket,
@@ -139,11 +156,10 @@ final class Socket {
     }
 
     deinit {
-#if canImport(Glibc)
+#if canImport(Glibc) || canImport(Darwin)
         close(nativeSocket)
 #elseif canImport(WinSDK)
         closesocket(nativeSocket)
 #endif
     }
 }
-#endif

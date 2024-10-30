@@ -1,14 +1,7 @@
-#if os(Linux) || os(Windows)
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
-#endif
-
-#if canImport(Glibc)
-import Glibc
-#elseif canImport(WinSDK)
-import WinSDK
 #endif
 
 import Dispatch
@@ -31,14 +24,14 @@ final class SocketNetworkConnection: NetworkConnection {
     }
 
     init(settings: NetworkConnectionSettings) {
-#if canImport(WinSDK)
+#if os(Windows)
         do {
-            try Self.intializeWinsock()
+            try Winsock.intializeWinsock()
         } catch {
             fatalError("Initializing Winsock failed: \(error.humanReadableDescription)")
         }
 #endif
-
+        
         self.settings = settings
     }
     
@@ -83,30 +76,6 @@ final class SocketNetworkConnection: NetworkConnection {
         }
     }
 }
-
-// MARK: - Winsock Initialization
-#if canImport(WinSDK)
-private extension SocketNetworkConnection {
-    static func intializeWinsock() throws {
-        try intializeWinsock(2, 2)
-    }
-    
-    static func intializeWinsock(_ versionA: UInt8, _ versionB: UInt8) throws {
-        func makeWord(_ a: UInt8, _ b: UInt8) -> UInt16 {
-            return UInt16(a) | (UInt16(b) << 8)
-        }
-        
-        let wVersionRequested = makeWord(versionA, versionB)
-        
-        var lpWSAData = WSADATA()
-        let status = WSAStartup(wVersionRequested, &lpWSAData)
-        
-        guard status == 0 else {
-            throw Errors.winsockInitError(underlyingErrorCode: status)
-        }
-    }
-}
-#endif
 
 // MARK: - Reading
 extension SocketNetworkConnection: NetworkConnectionReading {
@@ -191,7 +160,6 @@ private extension SocketNetworkConnection {
     enum Errors: LocalizedError {
         case sendFailed
         case connectionClosed
-        case winsockInitError(underlyingErrorCode: Int32)
 
         var errorDescription: String? {
             switch self {
@@ -199,10 +167,7 @@ private extension SocketNetworkConnection {
                     "Send failed"
                 case .connectionClosed:
                     "Connection closed"
-                case .winsockInitError(let underlyingErrorCode):
-                    "WSAStartup failed (\(underlyingErrorCode))"
             }
         }
     }
 }
-#endif

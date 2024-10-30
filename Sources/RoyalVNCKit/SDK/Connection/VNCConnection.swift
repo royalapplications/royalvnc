@@ -74,7 +74,7 @@ public final class VNCConnection: NSObjectOrAnyObject {
         
 #if canImport(Network)
         let connection = NWConnection(settings: connectionSettings)
-#elseif canImport(Glibc) || canImport(WinSDK)
+#else
 		let connection = SocketNetworkConnection(settings: connectionSettings)
 #endif
         

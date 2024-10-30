@@ -1,4 +1,3 @@
-#if os(Linux) || os(Windows)
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -9,6 +8,8 @@ import Foundation
 import Glibc
 #elseif canImport(WinSDK)
 import WinSDK
+#elseif canImport(Darwin)
+import Darwin
 #endif
 
 final class AddressInfo {
@@ -26,7 +27,7 @@ final class AddressInfo {
         }
     }
 
-    let addrInfo: UnsafeMutablePointer<addrinfo>
+    private let addrInfo: UnsafeMutablePointer<addrinfo>
 
     init(host: String,
          port: UInt16) throws(Errors) {
@@ -35,6 +36,8 @@ final class AddressInfo {
 #if canImport(Glibc)
         let socktype = Int32(sockstream.rawValue)
 #elseif canImport(WinSDK)
+        let socktype = sockstream
+#elseif canImport(Darwin)
         let socktype = sockstream
 #endif
 
@@ -68,4 +71,14 @@ final class AddressInfo {
         freeaddrinfo(addrInfo)
     }
 }
-#endif
+
+extension AddressInfo {
+    var flags: Int32 { addrInfo.pointee.ai_flags }
+    var family: Int32 { addrInfo.pointee.ai_family }
+    var socktype: Int32 { addrInfo.pointee.ai_socktype }
+    var `protocol`: Int32 { addrInfo.pointee.ai_protocol }
+    var addrlen: socklen_t { addrInfo.pointee.ai_addrlen }
+    var canonname: UnsafeMutablePointer<CChar>? { addrInfo.pointee.ai_canonname }
+    var addr: UnsafeMutablePointer<sockaddr>? { addrInfo.pointee.ai_addr }
+    var next: UnsafeMutablePointer<addrinfo>? { addrInfo.pointee.ai_next }
+}
