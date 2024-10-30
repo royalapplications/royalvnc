@@ -52,8 +52,9 @@ extension MyConnectionController: VNCConnectionDelegate {
     }
     
     func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: CGRect) {
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16) {
         // TODO: Update the image in your framebuffer view
     }
     
@@ -143,7 +144,7 @@ func connection(_ connection: VNCConnection,
                 didUpdateFramebuffer framebuffer: VNCFramebuffer,
                 x: UInt16, y: UInt16,
                 width: UInt16, height: UInt16) {
-    // TODO: Only update updatedRegion part of the image
+    // TODO: Only invalidate the part of the image that was updated, indicated by the x, y, width and height parameters 
     self.view.layer?.contents = framebuffer.cgImage
 }
 ```
