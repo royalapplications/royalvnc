@@ -95,12 +95,14 @@ final class Socket {
                 return 0
             }
 
-            return recv(
+            let ret = recv(
                 nativeSocket,
                 bufferPtrAddr,
                 .init(bufferSize),
                 0
             )
+
+            return .init(ret)
         }
 
         return .init(bytesRead)
