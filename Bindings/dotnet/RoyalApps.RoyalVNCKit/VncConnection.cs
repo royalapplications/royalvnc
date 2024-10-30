@@ -102,7 +102,7 @@ public sealed unsafe class VncConnection: IDisposable
         RoyalVNCKit.rvnc_connection_key_up(_instance, key);
     }
     
-    public void SendMouseButtonDown(double x, double y, MouseButton button)
+    public void SendMouseButtonDown(ushort x, ushort y, MouseButton button)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
 
@@ -113,7 +113,7 @@ public sealed unsafe class VncConnection: IDisposable
         RoyalVNCKit.rvnc_connection_mouse_down(_instance, button, x, y);
     }
     
-    public void SendMouseButtonUp(double x, double y, MouseButton button)
+    public void SendMouseButtonUp(ushort x, ushort y, MouseButton button)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
     
@@ -124,14 +124,14 @@ public sealed unsafe class VncConnection: IDisposable
         RoyalVNCKit.rvnc_connection_mouse_up(_instance, button, x, y);
     }
     
-    public void SendMouseMove(double x, double y)
+    public void SendMouseMove(ushort x, ushort y)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
     
         RoyalVNCKit.rvnc_connection_mouse_move(_instance, x, y);
     }
     
-    public void SendMouseScroll(double x, double y, double scrollWheelDeltaX, double scrollWheelDeltaY)
+    public void SendMouseScroll(ushort x, ushort y, double scrollWheelDeltaX, double scrollWheelDeltaY)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
         

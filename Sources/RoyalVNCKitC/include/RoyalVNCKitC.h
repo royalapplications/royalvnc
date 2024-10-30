@@ -212,10 +212,10 @@ extern rvnc_context_t _Nullable rvnc_connection_context_get(rvnc_connection_t _N
 extern rvnc_connection_state_t _Nonnull rvnc_connection_state_get_copy(rvnc_connection_t _Nonnull connection);
 extern rvnc_settings_t _Nonnull rvnc_connection_settings_get_copy(rvnc_connection_t _Nonnull connection);
 
-extern void rvnc_connection_mouse_move(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_down(rvnc_connection_t _Nonnull connection, RVNC_MOUSEBUTTON button, double x, double y);
-extern void rvnc_connection_mouse_up(rvnc_connection_t _Nonnull connection, RVNC_MOUSEBUTTON button, double x, double y);
-extern void rvnc_connection_mouse_wheel(rvnc_connection_t _Nonnull connection, RVNC_MOUSEWHEEL wheel, double x, double y, uint32_t steps);
+extern void rvnc_connection_mouse_move(rvnc_connection_t _Nonnull connection, uint16_t x, uint16_t y);
+extern void rvnc_connection_mouse_down(rvnc_connection_t _Nonnull connection, RVNC_MOUSEBUTTON button, uint16_t x, uint16_t y);
+extern void rvnc_connection_mouse_up(rvnc_connection_t _Nonnull connection, RVNC_MOUSEBUTTON button, uint16_t x, uint16_t y);
+extern void rvnc_connection_mouse_wheel(rvnc_connection_t _Nonnull connection, RVNC_MOUSEWHEEL wheel, uint16_t x, uint16_t y, uint32_t steps);
 
 // NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `X11KeySymbols` struct.
 extern void rvnc_connection_key_down(rvnc_connection_t _Nonnull connection, uint32_t key);

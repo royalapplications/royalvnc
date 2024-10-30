@@ -266,19 +266,19 @@ static unsafe partial class RoyalVNCKit
 
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_mouse_move(void* connection, double x, double y);
+    internal static partial void rvnc_connection_mouse_move(void* connection, ushort x, ushort y);
     
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_mouse_down(void* connection, MouseButton button, double x, double y);
+    internal static partial void rvnc_connection_mouse_down(void* connection, MouseButton button, ushort x, ushort y);
     
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_mouse_up(void* connection, MouseButton button, double x, double y);
+    internal static partial void rvnc_connection_mouse_up(void* connection, MouseButton button, ushort x, ushort y);
 
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_mouse_wheel(void* connection, MouseWheel wheel, double x, double y, uint steps);
+    internal static partial void rvnc_connection_mouse_wheel(void* connection, MouseWheel wheel, ushort x, ushort y, uint steps);
     
     // NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `KeySymbol` enum.
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]

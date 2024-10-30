@@ -44,13 +44,13 @@ public extension VNCConnection {
 
 // MARK: - Mouse Input
 public extension VNCConnection {
-    func mouseMove(x: Double, y: Double) {
+    func mouseMove(x: UInt16, y: UInt16) {
         enqueueMouseEvent(nonNormalizedX: x,
                           nonNormalizedY: y)
     }
     
     func mouseButtonDown(_ button: VNCMouseButton,
-                         x: Double, y: Double) {
+                         x: UInt16, y: UInt16) {
         updateMouseButtonState(button: button,
                                isDown: true)
         
@@ -59,7 +59,7 @@ public extension VNCConnection {
     }
     
     func mouseButtonUp(_ button: VNCMouseButton,
-                       x: Double, y: Double) {
+                       x: UInt16, y: UInt16) {
         updateMouseButtonState(button: button,
                                isDown: false)
         
@@ -68,7 +68,7 @@ public extension VNCConnection {
     }
     
     func mouseWheel(_ wheel: VNCMouseWheel,
-                    x: Double, y: Double,
+                    x: UInt16, y: UInt16,
                     steps: UInt32) {
         for _ in 0..<steps {
             updateMouseButtonState(wheel: wheel,

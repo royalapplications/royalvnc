@@ -141,7 +141,7 @@ public func rvnc_connection_settings_get_copy(_ connection: rvnc_connection_t) -
 @_cdecl("rvnc_connection_mouse_move")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_move(_ connection: rvnc_connection_t, _ x: Double, _ y: Double) {
+public func rvnc_connection_mouse_move(_ connection: rvnc_connection_t, _ x: UInt16, _ y: UInt16) {
     VNCConnection.fromPointer(connection)
         .mouseMove(x: x, y: y)
 }
@@ -149,7 +149,7 @@ public func rvnc_connection_mouse_move(_ connection: rvnc_connection_t, _ x: Dou
 @_cdecl("rvnc_connection_mouse_down")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_down(_ connection: rvnc_connection_t, _ button: RVNC_MOUSEBUTTON, _ x: Double, _ y: Double) {
+public func rvnc_connection_mouse_down(_ connection: rvnc_connection_t, _ button: RVNC_MOUSEBUTTON, _ x: UInt16, _ y: UInt16) {
     VNCConnection.fromPointer(connection)
         .mouseButtonDown(button.swiftVNCMouseButton, x: x, y: y)
 }
@@ -157,7 +157,7 @@ public func rvnc_connection_mouse_down(_ connection: rvnc_connection_t, _ button
 @_cdecl("rvnc_connection_mouse_up")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_up(_ connection: rvnc_connection_t, _ button: RVNC_MOUSEBUTTON, _ x: Double, _ y: Double) {
+public func rvnc_connection_mouse_up(_ connection: rvnc_connection_t, _ button: RVNC_MOUSEBUTTON, _ x: UInt16, _ y: UInt16) {
     VNCConnection.fromPointer(connection)
         .mouseButtonUp(button.swiftVNCMouseButton, x: x, y: y)
 }
@@ -165,7 +165,7 @@ public func rvnc_connection_mouse_up(_ connection: rvnc_connection_t, _ button: 
 @_cdecl("rvnc_connection_mouse_wheel")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_connection_mouse_wheel(_ connection: rvnc_connection_t, _ wheel: RVNC_MOUSEWHEEL, _ x: Double, _ y: Double, _ steps: UInt32) {
+public func rvnc_connection_mouse_wheel(_ connection: rvnc_connection_t, _ wheel: RVNC_MOUSEWHEEL, _ x: UInt16, _ y: UInt16, _ steps: UInt32) {
     VNCConnection.fromPointer(connection)
         .mouseWheel(wheel.swiftVNCMouseWheel, x: x, y: y, steps: steps)
 }

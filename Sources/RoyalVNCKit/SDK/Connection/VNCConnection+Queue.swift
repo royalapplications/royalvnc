@@ -25,8 +25,8 @@ extension VNCConnection {
 		enqueueClientToServerMessage(keyEvent)
 	}
     
-    func enqueueMouseEvent(nonNormalizedX: Double,
-                           nonNormalizedY: Double) {
+    func enqueueMouseEvent(nonNormalizedX: UInt16,
+                           nonNormalizedY: UInt16) {
         guard settings.inputMode != .none else { return }
         
         let normalizedPosition = normalizedMousePosition(x: nonNormalizedX,
@@ -37,8 +37,8 @@ extension VNCConnection {
     }
     
     func enqueueMouseEvent(buttons: VNCProtocol.MousePointerButton,
-                           nonNormalizedX: Double,
-                           nonNormalizedY: Double) {
+                           nonNormalizedX: UInt16,
+                           nonNormalizedY: UInt16) {
         guard settings.inputMode != .none else { return }
         
         let normalizedPosition = normalizedMousePosition(x: nonNormalizedX,
@@ -68,28 +68,24 @@ extension VNCConnection {
 		clientToServerMessageQueue.enqueue(message)
 	}
     
-    func normalizedMousePosition(x: Double,
-                                 y: Double) -> VNCProtocol.MousePosition {
-        var normalizedX = Int(x)
-        var normalizedY = Int(y)
+    func normalizedMousePosition(x: UInt16,
+                                 y: UInt16) -> VNCProtocol.MousePosition {
+        var normalizedX = x
+        var normalizedY = y
         
-        let framebufferWidth = Int(framebuffer?.size.width ?? 0)
-        let framebufferHeight = Int(framebuffer?.size.height ?? 0)
+        let framebufferWidth = framebuffer?.size.width ?? 0
+        let framebufferHeight = framebuffer?.size.height ?? 0
         
-        if normalizedY < 0 {
-            normalizedY = 0
-        } else if normalizedY > framebufferHeight {
+        if normalizedY > framebufferHeight {
             normalizedY = framebufferHeight
         }
         
-        if normalizedX < 0 {
-            normalizedX = 0
-        } else if normalizedX > framebufferWidth {
+        if normalizedX > framebufferWidth {
             normalizedX = framebufferWidth
         }
         
-        let normalizedPosition = VNCProtocol.MousePosition(x: .init(normalizedX),
-                                                           y: .init(normalizedY))
+        let normalizedPosition = VNCProtocol.MousePosition(x: normalizedX,
+                                                           y: normalizedY)
         
         return normalizedPosition
     }
