@@ -136,13 +136,7 @@ extension LinuxNetworkConnection: NetworkConnectionWriting {
 		return try await withCheckedThrowingContinuation { continuation in
             queue.async {
                 let bytesToSend = [UInt8](data)
-                
-                let bytesSent = send(
-                    socket.nativeSocket,
-                    bytesToSend,
-                    bytesToSend.count,
-                    0
-                )
+                let bytesSent = socket.send(buffer: bytesToSend)
                 
                 if bytesSent < 0 {
                     continuation.resume(throwing: SocketError.sendFailed)

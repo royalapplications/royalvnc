@@ -87,10 +87,10 @@ final class Socket {
         }
     }
 
-    func receive(buffer: inout [UInt8]) -> Int32 {
+    func receive(buffer: inout [UInt8]) -> Int {
         let bufferSize = buffer.count
 
-        let bytesRead = buffer.withUnsafeMutableBytes { bufferPtr in
+        let bytesRead: Int = buffer.withUnsafeMutableBytes { bufferPtr in
             guard let bufferPtrAddr = bufferPtr.baseAddress else {
                 return 0
             }
@@ -105,7 +105,37 @@ final class Socket {
             return .init(ret)
         }
 
-        return .init(bytesRead)
+        return bytesRead
+    }
+
+    func send(buffer: [UInt8]) -> Int {
+        let bufferCount = buffer.count
+
+        let bytesSent: Int = buffer.withUnsafeBytes { bufferPtr in
+            guard let bufferPtrAddr = bufferPtr.baseAddress else {
+                return -1
+            }
+
+#if canImport(Glibc)
+            let ret = Glibc.send(
+                nativeSocket,
+                bufferPtrAddr,
+                .init(bufferCount),
+                0
+            )
+#elseif canImport(WinSDK)
+            let ret = WinSDK.send(
+                nativeSocket,
+                bufferPtrAddr,
+                .init(bufferCount),
+                0
+            )
+#endif
+
+            return .init(ret)
+        }
+
+        return bytesSent
     }
 
     deinit {

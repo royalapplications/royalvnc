@@ -193,7 +193,6 @@ private extension WindowsNetworkConnection {
         case noQueue
         case connectionClosed
         case initError(statusValue: Int32)
-        case winsockError(code: Int32)
 
         var errorDescription: String? {
             switch self {
@@ -207,8 +206,6 @@ private extension WindowsNetworkConnection {
                     "Connection closed"
                 case .initError(let statusValue):
                     "WSAStartup failed with \(statusValue)"
-                case .winsockError(let code):
-                    "Winsock error \(code)"            
             }
         }
     }
