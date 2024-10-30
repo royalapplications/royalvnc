@@ -44,11 +44,17 @@ public extension VNCConnection {
 
 // MARK: - Mouse Input
 public extension VNCConnection {
+#if canImport(ObjectiveC)
+    @objc
+#endif
     func mouseMove(x: UInt16, y: UInt16) {
         enqueueMouseEvent(nonNormalizedX: x,
                           nonNormalizedY: y)
     }
-    
+
+#if canImport(ObjectiveC)
+    @objc
+#endif
     func mouseButtonDown(_ button: VNCMouseButton,
                          x: UInt16, y: UInt16) {
         updateMouseButtonState(button: button,
@@ -58,6 +64,9 @@ public extension VNCConnection {
                           nonNormalizedY: y)
     }
     
+#if canImport(ObjectiveC)
+    @objc
+#endif
     func mouseButtonUp(_ button: VNCMouseButton,
                        x: UInt16, y: UInt16) {
         updateMouseButtonState(button: button,
@@ -67,6 +76,9 @@ public extension VNCConnection {
                           nonNormalizedY: y)
     }
     
+#if canImport(ObjectiveC)
+    @objc
+#endif
     func mouseWheel(_ wheel: VNCMouseWheel,
                     x: UInt16, y: UInt16,
                     steps: UInt32) {
