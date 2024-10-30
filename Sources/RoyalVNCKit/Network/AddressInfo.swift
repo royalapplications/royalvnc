@@ -73,11 +73,17 @@ final class AddressInfo {
 }
 
 extension AddressInfo {
+#if canImport(Glibc) || canImport(Darwin)
+    typealias Socklen = socklen_t
+#elseif canImport(WinSDK)
+    typealias Socklen = Int
+#endif
+
     var flags: Int32 { addrInfo.pointee.ai_flags }
     var family: Int32 { addrInfo.pointee.ai_family }
     var socktype: Int32 { addrInfo.pointee.ai_socktype }
     var `protocol`: Int32 { addrInfo.pointee.ai_protocol }
-    var addrlen: socklen_t { addrInfo.pointee.ai_addrlen }
+    var addrlen: Socklen { addrInfo.pointee.ai_addrlen }
     var canonname: UnsafeMutablePointer<CChar>? { addrInfo.pointee.ai_canonname }
     var addr: UnsafeMutablePointer<sockaddr>? { addrInfo.pointee.ai_addr }
     var next: UnsafeMutablePointer<addrinfo>? { addrInfo.pointee.ai_next }
