@@ -12,7 +12,7 @@ import Dispatch
 final class WindowsNetworkConnection: NetworkConnection {
     let settings: NetworkConnectionSettings
 
-    private var socket: SOCKET?
+    private var socket: Socket?
     private var queue: DispatchQueue?
 
     private(set) var statusUpdateHandler: NetworkConnectionStatusUpdateHandler?
@@ -76,21 +76,18 @@ final class WindowsNetworkConnection: NetworkConnection {
                 return
             }
 
-            let socket = WinSDK.socket(
-                addressInfo.addrInfo.pointee.ai_family,
-                addressInfo.addrInfo.pointee.ai_socktype,
-                addressInfo.addrInfo.pointee.ai_protocol
-            )
+            let socket: Socket
 
-            guard socket != INVALID_SOCKET else {
-                let lastError = WSAGetLastError()
-                self.status = .failed(WinsockError.winsockError(code: lastError))
+            do {
+                socket = try .init(addressInfo: addressInfo)
+            } catch {
+                self.status = .failed(error)
 
                 return
             }
 
             let connectResult = connect(
-                socket,
+                socket.nativeSocket,
                 addressInfo.addrInfo.pointee.ai_addr,
                 .init(addressInfo.addrInfo.pointee.ai_addrlen)
             )
@@ -134,7 +131,7 @@ extension WindowsNetworkConnection: NetworkConnectionReading {
         }
 
         guard let socket else {
-            throw WinsockError.socketCreationFailed
+            throw Socket.Errors.socketCreationFailed(underlyingErrorCode: nil)
         }
 
         let bufferSize = maximumLength
@@ -149,7 +146,7 @@ extension WindowsNetworkConnection: NetworkConnectionReading {
                     }
 
                     return recv(
-                        socket,
+                        socket.nativeSocket,
                         bufferPtrAddr,
                         .init(bufferSize),
                         0
@@ -199,7 +196,7 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
         }
 
         guard let socket else {
-            throw WinsockError.socketCreationFailed
+            throw Socket.Errors.socketCreationFailed(underlyingErrorCode: nil)
         }
 
 		return try await withCheckedThrowingContinuation { continuation in
@@ -212,7 +209,7 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
                     }
 
                     return send(
-                        socket,
+                        socket.nativeSocket,
                         bytesToSendPtrAddr,
                         .init(bytesToSend.count),
                         0
@@ -232,7 +229,6 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
 private extension WindowsNetworkConnection {
     // MARK: - Enum for Socket Errors
     enum WinsockError: LocalizedError {
-        case socketCreationFailed
         case connectionFailed(code: Int32)
         case sendFailed
         case receiveFailed
@@ -243,8 +239,6 @@ private extension WindowsNetworkConnection {
 
         var errorDescription: String? {
             switch self {
-                case .socketCreationFailed:
-                    "Socket creation failed"
                 case .connectionFailed(let code):
                     "Connection failed: \(code)"
                 case .sendFailed:

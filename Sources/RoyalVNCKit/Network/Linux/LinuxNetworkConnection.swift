@@ -12,7 +12,7 @@ import Dispatch
 final class LinuxNetworkConnection: NetworkConnection {
     let settings: NetworkConnectionSettings
 
-    private var socketFD: Int32?
+    private var socket: Socket?
     private var queue: DispatchQueue?
 
     private(set) var statusUpdateHandler: NetworkConnectionStatusUpdateHandler?
@@ -25,12 +25,6 @@ final class LinuxNetworkConnection: NetworkConnection {
 
     init(settings: NetworkConnectionSettings) {
         self.settings = settings
-    }
-
-    deinit {
-        guard let socketFD else { return }
-
-        close(socketFD)
     }
     
     func setStatusUpdateHandler(_ statusUpdateHandler: NetworkConnectionStatusUpdateHandler?) {
@@ -69,20 +63,18 @@ final class LinuxNetworkConnection: NetworkConnection {
                 return
             }
 
-            let socketFD = socket(
-                addressInfo.addrInfo.pointee.ai_family,
-                addressInfo.addrInfo.pointee.ai_socktype,
-                addressInfo.addrInfo.pointee.ai_protocol
-            )
+            let socket: Socket
 
-            guard socketFD >= 0 else {
-                self.status = .failed(SocketError.socketCreationFailed)
+            do {
+                socket = try .init(addressInfo: addressInfo)
+            } catch {
+                self.status = .failed(error)
 
                 return
             }
 
             let connectResult = connect(
-                socketFD,
+                socket.nativeSocket,
                 addressInfo.addrInfo.pointee.ai_addr,
                 addressInfo.addrInfo.pointee.ai_addrlen
             )
@@ -93,7 +85,7 @@ final class LinuxNetworkConnection: NetworkConnection {
                 return
             }
 
-            self.socketFD = socketFD
+            self.socket = socket
             self.status = .ready
         }
     }
@@ -106,8 +98,8 @@ extension LinuxNetworkConnection: NetworkConnectionReading {
             throw SocketError.noQueue
         }
 
-        guard let socketFD else {
-            throw SocketError.socketCreationFailed
+        guard let socket else {
+            throw Socket.Errors.socketCreationFailed(underlyingErrorCode: nil)
         }
 
         let bufferSize = maximumLength
@@ -117,7 +109,7 @@ extension LinuxNetworkConnection: NetworkConnectionReading {
                 var buffer = [UInt8](repeating: 0, count: bufferSize)
         
                 let bytesRead = recv(
-                    socketFD,
+                    socket.nativeSocket,
                     &buffer,
                     bufferSize,
                     0
@@ -165,8 +157,8 @@ extension LinuxNetworkConnection: NetworkConnectionWriting {
             throw SocketError.noQueue
         }
 
-        guard let socketFD else {
-            throw SocketError.socketCreationFailed
+        guard let socket else {
+            throw Socket.Errors.socketCreationFailed(underlyingErrorCode: nil)
         }
 
 		return try await withCheckedThrowingContinuation { continuation in
@@ -174,7 +166,7 @@ extension LinuxNetworkConnection: NetworkConnectionWriting {
                 let bytesToSend = [UInt8](data)
                 
                 let bytesSent = send(
-                    socketFD,
+                    socket.nativeSocket,
                     bytesToSend,
                     bytesToSend.count,
                     0
@@ -193,7 +185,6 @@ extension LinuxNetworkConnection: NetworkConnectionWriting {
 private extension LinuxNetworkConnection {
     // MARK: - Enum for Socket Errors
     enum SocketError: LocalizedError {
-        case socketCreationFailed
         case connectionFailed(code: Int32)
         case sendFailed
         case receiveFailed
@@ -202,8 +193,6 @@ private extension LinuxNetworkConnection {
 
         var errorDescription: String? {
             switch self {
-                case .socketCreationFailed:
-                    "Socket creation failed"
                 case .connectionFailed(let code):
                     "Connection failed: \(code)"
                 case .sendFailed:
