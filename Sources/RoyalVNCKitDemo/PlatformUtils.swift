@@ -53,7 +53,6 @@ func readPassword(prompt: String) -> String? {
     let len = 4096
 
     /* Resources that will be cleaned up */
-    var pwlen: Int32 = 0
     var orig: DWORD = 0
     var wbuf: UnsafeMutableRawPointer?
     var wbuf_len: SIZE_T = 0
@@ -134,7 +133,7 @@ func readPassword(prompt: String) -> String? {
         free(buf)
     }
 
-    pwlen = WideCharToMultiByte(.init(CP_UTF8), 0, .init(OpaquePointer(wbuf)), -1, buf, .init(len), nil, nil);
+    WideCharToMultiByte(.init(CP_UTF8), 0, .init(OpaquePointer(wbuf)), -1, buf, .init(len), nil, nil);
 
     let bufAsCCharPtr = UnsafeMutablePointer<CChar>(OpaquePointer(buf))
     let passwordBuf = String(cString: bufAsCCharPtr)
