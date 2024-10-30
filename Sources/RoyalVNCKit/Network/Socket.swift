@@ -13,35 +13,12 @@ import Darwin
 #endif
 
 final class Socket {
-    enum Errors: LocalizedError {
-        case socketCreationFailed(underlyingErrorCode: Int32?)
-        case connectFailed(underlyingErrorCode: Int32)
-
-        var errorDescription: String? {
-            switch self {
-                case .socketCreationFailed(let underlyingErrorCode):
-                    let underlyingErrorCodeStr: String
-
-                    if let underlyingErrorCode {
-                        underlyingErrorCodeStr = "\(underlyingErrorCode)"
-                    } else {
-                        underlyingErrorCodeStr = "N/A"
-                    }
-                    
-                    return "Socket creation failed (\(underlyingErrorCodeStr))"
-                case .connectFailed(let underlyingErrorCode):
-                    return "Connect failed (\(underlyingErrorCode))"
-            }
-        }
-    }
-
     let addressInfo: AddressInfo
-    
 
 #if canImport(Glibc) || canImport(Darwin)
-    typealias NativeSocket = Int32
+    private typealias NativeSocket = Int32
 #elseif canImport(WinSDK)
-    typealias NativeSocket = SOCKET
+    private typealias NativeSocket = SOCKET
 #endif
     
     private let nativeSocket: NativeSocket
@@ -161,5 +138,30 @@ final class Socket {
 #elseif canImport(WinSDK)
         closesocket(nativeSocket)
 #endif
+    }
+}
+
+// MARK: - Errors
+extension Socket {
+    enum Errors: LocalizedError {
+        case socketCreationFailed(underlyingErrorCode: Int32?)
+        case connectFailed(underlyingErrorCode: Int32)
+
+        var errorDescription: String? {
+            switch self {
+                case .socketCreationFailed(let underlyingErrorCode):
+                    let underlyingErrorCodeStr: String
+
+                    if let underlyingErrorCode {
+                        underlyingErrorCodeStr = "\(underlyingErrorCode)"
+                    } else {
+                        underlyingErrorCodeStr = "N/A"
+                    }
+                    
+                    return "Socket creation failed (\(underlyingErrorCodeStr))"
+                case .connectFailed(let underlyingErrorCode):
+                    return "Connect failed (\(underlyingErrorCode))"
+            }
+        }
     }
 }

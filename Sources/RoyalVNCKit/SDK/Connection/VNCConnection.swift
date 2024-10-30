@@ -72,6 +72,7 @@ public final class VNCConnection: NSObjectOrAnyObject {
                                                            host: settings.hostname,
                                                            port: settings.port)
         
+        // NOTE: To test SocketNetworkConnection on Darwin (macOS, iOS, etc.), comment out the the #if
 #if canImport(Network)
         let connection = NWConnection(settings: connectionSettings)
 #else

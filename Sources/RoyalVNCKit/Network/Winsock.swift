@@ -30,7 +30,6 @@ struct Winsock {
 
 // MARK: - Errors
 extension Winsock {
-    // MARK: - Enum for Socket Errors
     enum Errors: LocalizedError {
         case winsockInitError(underlyingErrorCode: Int32)
 

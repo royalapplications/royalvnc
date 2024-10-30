@@ -13,20 +13,6 @@ import Darwin
 #endif
 
 final class AddressInfo {
-    enum Errors: LocalizedError {
-        case dnsResolutionFailed
-        case addressInfoEmpty
-
-        var errorDescription: String? {
-            switch self {
-                case .dnsResolutionFailed:
-                    "DNS resolution failed"
-                case .addressInfoEmpty:
-                    "Address info is empty"
-            }
-        }
-    }
-
     private let addrInfo: UnsafeMutablePointer<addrinfo>
 
     init(host: String,
@@ -72,6 +58,7 @@ final class AddressInfo {
     }
 }
 
+// MARK: - Property Accessors
 extension AddressInfo {
 #if canImport(Glibc) || canImport(Darwin)
     typealias Socklen = socklen_t
@@ -87,4 +74,21 @@ extension AddressInfo {
     var canonname: UnsafeMutablePointer<CChar>? { addrInfo.pointee.ai_canonname }
     var addr: UnsafeMutablePointer<sockaddr>? { addrInfo.pointee.ai_addr }
     var next: UnsafeMutablePointer<addrinfo>? { addrInfo.pointee.ai_next }
+}
+
+// MARK: - Errors
+extension AddressInfo {
+    enum Errors: LocalizedError {
+        case dnsResolutionFailed
+        case addressInfoEmpty
+
+        var errorDescription: String? {
+            switch self {
+                case .dnsResolutionFailed:
+                    "DNS resolution failed"
+                case .addressInfoEmpty:
+                    "Address info is empty"
+            }
+        }
+    }
 }
