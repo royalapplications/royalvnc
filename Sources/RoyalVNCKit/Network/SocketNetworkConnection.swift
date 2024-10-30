@@ -18,7 +18,9 @@ final class SocketNetworkConnection: NetworkConnection {
     let settings: NetworkConnectionSettings
 
     private var socket: Socket?
-    private var queue: DispatchQueue?
+
+    // This will be replaced when calling start. Calling any other method before start (which would use this placeholder queue) is a programmer error.
+    private var queue = DispatchQueue(label: "PLACEHOLDER")
 
     private(set) var statusUpdateHandler: NetworkConnectionStatusUpdateHandler?
 
@@ -110,9 +112,7 @@ private extension SocketNetworkConnection {
 extension SocketNetworkConnection: NetworkConnectionReading {
 	func read(minimumLength: Int,
               maximumLength: Int) async throws -> Data {
-        guard let queue else {
-            throw Errors.noQueue
-        }
+        let queue = self.queue
 
         guard let socket else {
             throw Socket.Errors.socketCreationFailed(underlyingErrorCode: nil)
@@ -164,9 +164,7 @@ extension SocketNetworkConnection: NetworkConnectionReading {
 // MARK: - Writing
 extension SocketNetworkConnection: NetworkConnectionWriting {
 	func write(data: Data) async throws {
-        guard let queue else {
-            throw Errors.noQueue
-        }
+        let queue = self.queue
 
         guard let socket else {
             throw Socket.Errors.socketCreationFailed(underlyingErrorCode: nil)
@@ -192,7 +190,6 @@ private extension SocketNetworkConnection {
     // MARK: - Enum for Socket Errors
     enum Errors: LocalizedError {
         case sendFailed
-        case noQueue
         case connectionClosed
         case winsockInitError(underlyingErrorCode: Int32)
 
@@ -200,8 +197,6 @@ private extension SocketNetworkConnection {
             switch self {
                 case .sendFailed:
                     "Send failed"
-                case .noQueue:
-                    "No Dispatch Queue"
                 case .connectionClosed:
                     "Connection closed"
                 case .winsockInitError(let underlyingErrorCode):
