@@ -31,13 +31,6 @@ final class WindowsNetworkConnection: NetworkConnection {
         } catch {
             fatalError("Initializing Winsock failed: \(error.humanReadableDescription)")
         }
-
-    }
-
-    deinit {
-        guard let socket else { return }
-
-        closesocket(socket)
     }
     
     func setStatusUpdateHandler(_ statusUpdateHandler: NetworkConnectionStatusUpdateHandler?) {
