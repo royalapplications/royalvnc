@@ -58,41 +58,19 @@ final class WindowsNetworkConnection: NetworkConnection {
         queue.async { [weak self] in
             guard let self else { return }
 
-            let addressInfo: AddressInfo
-
             do {
-                addressInfo = try .init(host: settings.host,
-                                        port: settings.port)
+                let addressInfo = try AddressInfo(host: settings.host,
+                                                               port: settings.port)
+
+                let socket = try Socket(addressInfo: addressInfo)
+
+                try socket.connect()
+
+                self.socket = socket
+                self.status = .ready
             } catch {
                 self.status = .failed(error)
-
-                return
             }
-
-            let socket: Socket
-
-            do {
-                socket = try .init(addressInfo: addressInfo)
-            } catch {
-                self.status = .failed(error)
-
-                return
-            }
-
-            let connectResult = connect(
-                socket.nativeSocket,
-                addressInfo.addrInfo.pointee.ai_addr,
-                .init(addressInfo.addrInfo.pointee.ai_addrlen)
-            )
-
-            guard connectResult >= 0 else {
-                self.status = .failed(WinsockError.connectionFailed(code: connectResult))
-                
-                return
-            }
-
-            self.socket = socket
-            self.status = .ready
         }
     }
 
@@ -222,7 +200,6 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
 private extension WindowsNetworkConnection {
     // MARK: - Enum for Socket Errors
     enum WinsockError: LocalizedError {
-        case connectionFailed(code: Int32)
         case sendFailed
         case receiveFailed
         case noQueue
@@ -232,8 +209,6 @@ private extension WindowsNetworkConnection {
 
         var errorDescription: String? {
             switch self {
-                case .connectionFailed(let code):
-                    "Connection failed: \(code)"
                 case .sendFailed:
                     "Send failed"
                 case .receiveFailed:

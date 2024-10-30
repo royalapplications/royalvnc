@@ -14,6 +14,7 @@ import WinSDK
 final class Socket {
     enum Errors: LocalizedError {
         case socketCreationFailed(underlyingErrorCode: Int32?)
+        case connectFailed(underlyingErrorCode: Int32)
 
         var errorDescription: String? {
             switch self {
@@ -27,14 +28,18 @@ final class Socket {
                     }
                     
                     return "Socket creation failed (\(underlyingErrorCodeStr))"
+                case .connectFailed(let underlyingErrorCode):
+                    return "Connect failed (\(underlyingErrorCode))"
             }
         }
     }
 
+    let addressInfo: AddressInfo
+
 #if canImport(Glibc)
-        let nativeSocket: Int32
+    let nativeSocket: Int32
 #elseif canImport(WinSDK)
-        let nativeSocket: SOCKET
+    let nativeSocket: SOCKET
 #endif
 
     init(addressInfo: AddressInfo) throws(Errors) {
@@ -56,7 +61,30 @@ final class Socket {
         }
 #endif
 
+        self.addressInfo = addressInfo
         self.nativeSocket = nativeSocket
+    }
+
+    func connect() throws(Errors) {
+        let connectResult: Int32
+
+#if canImport(Glibc)
+        connectResult = Glibc.connect(
+            nativeSocket,
+            addressInfo.addrInfo.pointee.ai_addr,
+            addressInfo.addrInfo.pointee.ai_addrlen
+        )
+#elseif canImport(WinSDK)
+        connectResult = WinSDK.connect(
+            nativeSocket,
+            addressInfo.addrInfo.pointee.ai_addr,
+            .init(addressInfo.addrInfo.pointee.ai_addrlen)
+        )
+#endif
+
+        guard connectResult >= 0 else {
+            throw .connectFailed(underlyingErrorCode: connectResult)
+        }
     }
 
     deinit {
