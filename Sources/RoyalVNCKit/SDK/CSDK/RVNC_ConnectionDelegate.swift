@@ -32,7 +32,7 @@ public func rvnc_connection_delegate_create(
     _ authenticate: rvnc_connection_delegate_authenticate,
     _ didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
     _ didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer,
-    _ framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region,
+    _ didUpdateFramebuffer: rvnc_connection_delegate_did_update_framebuffer,
     _ didUpdateCursor: rvnc_connection_delegate_did_update_cursor
 ) -> rvnc_connection_delegate_t {
     let delegate = VNCConnectionDelegate_C(
@@ -40,7 +40,7 @@ public func rvnc_connection_delegate_create(
         authenticate: authenticate,
         didCreateFramebuffer: didCreateFramebuffer,
         didResizeFramebuffer: didResizeFramebuffer,
-        framebufferDidUpdateRegion: framebufferDidUpdateRegion,
+        didUpdateFramebuffer: didUpdateFramebuffer,
         didUpdateCursor: didUpdateCursor
     )
     
@@ -59,7 +59,7 @@ final class VNCConnectionDelegate_C {
     let authenticate: rvnc_connection_delegate_authenticate
     let didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer
     let didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer
-    let framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region
+    let didUpdateFramebuffer: rvnc_connection_delegate_did_update_framebuffer
     let didUpdateCursor: rvnc_connection_delegate_did_update_cursor
     
     init(
@@ -67,14 +67,14 @@ final class VNCConnectionDelegate_C {
         authenticate: rvnc_connection_delegate_authenticate,
         didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
         didResizeFramebuffer: rvnc_connection_delegate_did_resize_framebuffer,
-        framebufferDidUpdateRegion: rvnc_connection_delegate_framebuffer_did_update_region,
+        didUpdateFramebuffer: rvnc_connection_delegate_did_update_framebuffer,
         didUpdateCursor: rvnc_connection_delegate_did_update_cursor
     ) {
         self.connectionStateDidChange = connectionStateDidChange
         self.authenticate = authenticate
         self.didCreateFramebuffer = didCreateFramebuffer
         self.didResizeFramebuffer = didResizeFramebuffer
-        self.framebufferDidUpdateRegion = framebufferDidUpdateRegion
+        self.didUpdateFramebuffer = didUpdateFramebuffer
         self.didUpdateCursor = didUpdateCursor
     }
 }
@@ -122,35 +122,20 @@ extension VNCConnectionDelegate_C: VNCConnectionDelegate {
         )
     }
     
-#if !os(Linux) && !os(Windows)
     func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: CGRect) {
-        self.framebufferDidUpdateRegion(
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16) {
+        self.didUpdateFramebuffer(
             connection.unretainedPointer(),
             .init(OpaquePointer(connection.context)),
             framebuffer.unretainedPointer(),
-            .init(updatedRegion.origin.x),
-            .init(updatedRegion.origin.y),
-            .init(updatedRegion.width),
-            .init(updatedRegion.height)
+            x,
+            y,
+            width,
+            height
         )
     }
-#else
-    func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: VNCRegion) {
-        self.framebufferDidUpdateRegion(
-            connection.unretainedPointer(),
-            .init(OpaquePointer(connection.context)),
-            framebuffer.unretainedPointer(),
-            updatedRegion.x,
-            updatedRegion.y,
-            updatedRegion.width,
-            updatedRegion.height
-        )
-    }
-#endif
     
     func connection(_ connection: VNCConnection,
                     didUpdateCursor cursor: VNCCursor) {

@@ -28,7 +28,7 @@ public delegate void VncFramebufferResizedHandler(
     VncFramebuffer framebuffer
 );
 
-public delegate void VncFramebufferRegionUpdatedHandler(
+public delegate void VncFramebufferUpdatedHandler(
     VncConnection connection,
     VncFramebuffer framebuffer,
     VncFramebufferRegion region
@@ -44,7 +44,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
     public VncCursorUpdatedHandler? CursorUpdated { get; set; }
     public VncFramebufferCreatedHandler? FramebufferCreated { get; set; }
     public VncFramebufferResizedHandler? FramebufferResized { get; set; }
-    public VncFramebufferRegionUpdatedHandler? FramebufferRegionUpdated { get; set; }
+    public VncFramebufferUpdatedHandler? FramebufferUpdated { get; set; }
     
     VncConnectionDelegate(void* instance)
     {
@@ -58,7 +58,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
             authenticate: AuthenticateHandler,
             didCreateFramebuffer: DidCreateFramebufferHandler,
             didResizeFramebuffer: DidResizeFramebufferHandler,
-            framebufferDidUpdateRegion: DidUpdateFramebufferRegionHandler,
+            didUpdateFramebuffer: DidUpdateFramebufferHandler,
             didUpdateCursor: DidUpdateCursorHandler
         )
     )
@@ -192,8 +192,8 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         handler.Invoke(vncConnection, vncFramebuffer);
     }
         
-    static readonly RoyalVNCKit.DidUpdateFramebufferRegionDelegate DidUpdateFramebufferRegionHandler = DidUpdateFramebufferRegion;
-    static void DidUpdateFramebufferRegion(
+    static readonly RoyalVNCKit.DidUpdateFramebufferDelegate DidUpdateFramebufferHandler = DidUpdateFramebuffer;
+    static void DidUpdateFramebuffer(
         void* connection,
         void* context,
         void* framebuffer,
@@ -204,7 +204,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
     )
     {
         if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
-            || vncConnectionDelegate is not { FramebufferRegionUpdated: { } handler })
+            || vncConnectionDelegate is not { FramebufferUpdated: { } handler })
             return;
 
         var vncFramebuffer = new VncFramebuffer(framebuffer);

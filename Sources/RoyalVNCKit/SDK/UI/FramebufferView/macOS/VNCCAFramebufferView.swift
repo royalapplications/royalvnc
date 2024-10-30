@@ -242,8 +242,9 @@ public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
 
 extension VNCCAFramebufferView {
 	public func connection(_ connection: VNCConnection,
-						   framebuffer: VNCFramebuffer,
-						   didUpdateRegion updatedRegion: CGRect) {
+                           didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                           x: UInt16, y: UInt16,
+                           width: UInt16, height: UInt16) {
 		// NOTE: If we ever take the updatedRegion into consideration, we will likely need to flip the coordinates on macOS
 		
 		guard !settings.useDisplayLink,

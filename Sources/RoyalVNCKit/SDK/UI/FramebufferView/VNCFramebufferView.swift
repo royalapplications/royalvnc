@@ -48,9 +48,10 @@ public protocol VNCFramebufferView: AnyObject {
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func connection(_ connection: VNCConnection,
-					framebuffer: VNCFramebuffer,
-					didUpdateRegion updatedRegion: CGRect)
+    func connection(_ connection: VNCConnection,
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16)
 	
 #if canImport(ObjectiveC)
     @objc

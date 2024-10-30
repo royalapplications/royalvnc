@@ -40,7 +40,7 @@ static class Program
         connectionDelegate.ConnectionStateChanged = OnConnectionStateChanged;
         connectionDelegate.FramebufferCreated = OnFramebufferCreated;
         connectionDelegate.FramebufferResized = OnFramebufferResized;
-        connectionDelegate.FramebufferRegionUpdated = OnFramebufferRegionUpdated;
+        connectionDelegate.FramebufferUpdated = OnFramebufferUpdated;
         
         connection.Delegate = connectionDelegate;
         connection.Connect();
@@ -89,8 +89,8 @@ static class Program
     static void OnFramebufferResized(VncConnection connection, VncFramebuffer framebuffer) =>
         WriteLine($"framebufferResized: {framebuffer.Width:N0}x{framebuffer.Height:N0} ({framebuffer.PixelData.Length:N0} bytes)");
 
-    static void OnFramebufferRegionUpdated(VncConnection connection, VncFramebuffer _, VncFramebufferRegion region) =>
-        WriteLine($"framebufferRegionUpdated: {region.Width:N0}x{region.Height:N0} at {region.X:N0}, {region.Y:N0}");
+    static void OnFramebufferUpdated(VncConnection connection, VncFramebuffer _, VncFramebufferRegion region) =>
+        WriteLine($"framebufferUpdated: {region.Width:N0}x{region.Height:N0} at {region.X:N0}, {region.Y:N0}");
 
     static string PromptAndReadInput(string prompt)
     {

@@ -1,5 +1,3 @@
-// swiftlint:disable identifier_name
-
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -96,5 +94,3 @@ extension VNCProtocol.UltraVNCMSLogonIIAuthentication.DiffieHellmanKeyAgreement 
 		}
 	}
 }
-
-// swiftlint:enable identifier_name

@@ -192,7 +192,7 @@ static unsafe partial class RoyalVNCKit
     );
 
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-    internal delegate void DidUpdateFramebufferRegionDelegate(
+    internal delegate void DidUpdateFramebufferDelegate(
         void* connection,
         void* context,
         void* framebuffer,
@@ -216,7 +216,7 @@ static unsafe partial class RoyalVNCKit
         AuthenticateDelegate authenticate,
         DidCreateFramebufferDelegate didCreateFramebuffer,
         DidResizeFramebufferDelegate didResizeFramebuffer,
-        DidUpdateFramebufferRegionDelegate framebufferDidUpdateRegion,
+        DidUpdateFramebufferDelegate didUpdateFramebuffer,
         DidUpdateCursorDelegate didUpdateCursor
     );
 

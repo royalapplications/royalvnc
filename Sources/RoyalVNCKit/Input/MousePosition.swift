@@ -1,5 +1,3 @@
-// swiftlint:disable identifier_name
-
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -12,5 +10,3 @@ extension VNCProtocol {
 		let y: UInt16
 	}
 }
-
-// swiftlint:enable identifier_name

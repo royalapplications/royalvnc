@@ -1,5 +1,3 @@
-// swiftlint:disable identifier_name
-
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -46,5 +44,3 @@ extension VNCRegion: CustomStringConvertible {
 		"\(location); \(size)"
 	}
 }
-
-// swiftlint:enable identifier_name

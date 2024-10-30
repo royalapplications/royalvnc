@@ -268,14 +268,14 @@ void delegate_didResizeFramebuffer(rvnc_connection_t connection,
            rvnc_framebuffer_pixel_data_get(framebuffer));
 }
 
-void delegate_framebufferDidUpdateRegion(rvnc_connection_t connection,
-                                         const rvnc_context_t context,
-                                         rvnc_framebuffer_t framebuffer,
-                                         uint16_t x,
-                                         uint16_t y,
-                                         uint16_t width,
-                                         uint16_t height) {
-    printf("delegate_framebufferDidUpdateRegion - x: %i; y: %i; width: %i; height: %i\n",
+void delegate_didUpdateFramebuffer(rvnc_connection_t connection,
+                                   const rvnc_context_t context,
+                                   rvnc_framebuffer_t framebuffer,
+                                   uint16_t x,
+                                   uint16_t y,
+                                   uint16_t width,
+                                   uint16_t height) {
+    printf("delegate_didUpdateFramebuffer - x: %i; y: %i; width: %i; height: %i\n",
            x,
            y,
            width,
@@ -374,7 +374,7 @@ int main(int argc, char *argv[]) {
                                                                                     delegate_authenticate,
                                                                                     delegate_didCreateFramebuffer,
                                                                                     delegate_didResizeFramebuffer,
-                                                                                    delegate_framebufferDidUpdateRegion,
+                                                                                    delegate_didUpdateFramebuffer,
                                                                                     delegate_didUpdateCursor);
     
     // Set connection delegate in connection

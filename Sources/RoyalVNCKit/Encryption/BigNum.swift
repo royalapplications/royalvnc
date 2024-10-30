@@ -1,5 +1,3 @@
-// swiftlint:disable identifier_name
-
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -103,5 +101,3 @@ extension BigNum {
 		return data
 	}
 }
-
-// swiftlint:enable identifier_name

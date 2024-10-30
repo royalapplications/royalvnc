@@ -93,19 +93,12 @@ final class ConnectionDelegate: VNCConnectionDelegate {
         connection.logger.logDebug("connection didResizeFramebuffer")
     }
     
-#if os(Linux) || os(Windows)
     func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: VNCRegion) {
-        connection.logger.logDebug("connection framebuffer didUpdateRegion")
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16) {
+        connection.logger.logDebug("connection didUpdateFramebuffer")
     }
-#else
-    func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: CGRect) {
-        connection.logger.logDebug("connection framebuffer didUpdateRegion")
-    }
-#endif
     
     func connection(_ connection: VNCConnection,
                     didUpdateCursor cursor: VNCCursor) {
