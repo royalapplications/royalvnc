@@ -110,19 +110,7 @@ extension WindowsNetworkConnection: NetworkConnectionReading {
 		return try await withCheckedThrowingContinuation { continuation in
             queue.async {
                 var buffer = [UInt8](repeating: 0, count: bufferSize)
-        
-                let bytesRead: Int32 = buffer.withUnsafeMutableBytes { bufferPtr in
-                    guard let bufferPtrAddr = bufferPtr.baseAddress else {
-                        return 0
-                    }
-
-                    return recv(
-                        socket.nativeSocket,
-                        bufferPtrAddr,
-                        .init(bufferSize),
-                        0
-                    )
-                }
+                let bytesRead = socket.receive(buffer: &buffer)
 
                 // Handle connection closure
                 if bytesRead == 0 {

@@ -87,6 +87,25 @@ final class Socket {
         }
     }
 
+    func receive(buffer: inout [UInt8]) -> Int32 {
+        let bufferSize = buffer.count
+
+        let bytesRead = buffer.withUnsafeMutableBytes { bufferPtr in
+            guard let bufferPtrAddr = bufferPtr.baseAddress else {
+                return 0
+            }
+
+            return recv(
+                nativeSocket,
+                bufferPtrAddr,
+                .init(bufferSize),
+                0
+            )
+        }
+
+        return .init(bytesRead)
+    }
+
     deinit {
 #if canImport(Glibc)
         close(nativeSocket)

@@ -85,13 +85,7 @@ extension LinuxNetworkConnection: NetworkConnectionReading {
 		return try await withCheckedThrowingContinuation { continuation in
             queue.async {
                 var buffer = [UInt8](repeating: 0, count: bufferSize)
-        
-                let bytesRead = recv(
-                    socket.nativeSocket,
-                    &buffer,
-                    bufferSize,
-                    0
-                )
+                let bytesRead = socket.receive(buffer: &buffer)
 
                 // Handle connection closure
                 if bytesRead == 0 {
@@ -112,7 +106,7 @@ extension LinuxNetworkConnection: NetworkConnectionReading {
                 }
 
                 // Slice the buffer to get only the received data
-                let receivedData = Array(buffer.prefix(bytesRead))
+                let receivedData = Array(buffer.prefix(.init(bytesRead)))
                 let receivedLength = receivedData.count
 
                 // Validate received data length
