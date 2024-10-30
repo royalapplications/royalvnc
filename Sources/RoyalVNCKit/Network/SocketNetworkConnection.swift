@@ -31,7 +31,7 @@ final class SocketNetworkConnection: NetworkConnection {
     init(settings: NetworkConnectionSettings) {
 #if canImport(WinSDK)
         do {
-            try intializeWinsock()
+            try Self.intializeWinsock()
         } catch {
             fatalError("Initializing Winsock failed: \(error.humanReadableDescription)")
         }
@@ -85,11 +85,11 @@ final class SocketNetworkConnection: NetworkConnection {
 // MARK: - Winsock Initialization
 #if canImport(WinSDK)
 private extension SocketNetworkConnection {
-    func intializeWinsock() throws {
+    static func intializeWinsock() throws {
         try intializeWinsock(2, 2)
     }
     
-    func intializeWinsock(_ versionA: UInt8, _ versionB: UInt8) throws {
+    static func intializeWinsock(_ versionA: UInt8, _ versionB: UInt8) throws {
         func makeWord(_ a: UInt8, _ b: UInt8) -> UInt16 {
             return UInt16(a) | (UInt16(b) << 8)
         }
@@ -100,7 +100,7 @@ private extension SocketNetworkConnection {
         let status = WSAStartup(wVersionRequested, &lpWSAData)
         
         guard status == 0 else {
-            throw WinsockError.initError(statusValue: status)
+            throw Errors.winsockInitError(underlyingErrorCode: status)
         }
     }
 }
@@ -111,7 +111,7 @@ extension SocketNetworkConnection: NetworkConnectionReading {
 	func read(minimumLength: Int,
               maximumLength: Int) async throws -> Data {
         guard let queue else {
-            throw SocketError.noQueue
+            throw Errors.noQueue
         }
 
         guard let socket else {
@@ -128,7 +128,7 @@ extension SocketNetworkConnection: NetworkConnectionReading {
                 // Handle connection closure
                 if bytesRead == 0 {
                     // TODO
-                    continuation.resume(throwing: SocketError.connectionClosed)
+                    continuation.resume(throwing: Errors.connectionClosed)
 
                     return
                 }
@@ -165,7 +165,7 @@ extension SocketNetworkConnection: NetworkConnectionReading {
 extension SocketNetworkConnection: NetworkConnectionWriting {
 	func write(data: Data) async throws {
         guard let queue else {
-            throw SocketError.noQueue
+            throw Errors.noQueue
         }
 
         guard let socket else {
@@ -178,7 +178,7 @@ extension SocketNetworkConnection: NetworkConnectionWriting {
                 let bytesSent = socket.send(buffer: bytesToSend)
                 
                 if bytesSent < 0 {
-                    continuation.resume(throwing: SocketError.sendFailed)
+                    continuation.resume(throwing: Errors.sendFailed)
                 } else {
                     continuation.resume()
                 }
@@ -190,9 +190,8 @@ extension SocketNetworkConnection: NetworkConnectionWriting {
 // MARK: - Errors
 private extension SocketNetworkConnection {
     // MARK: - Enum for Socket Errors
-    enum SocketError: LocalizedError {
+    enum Errors: LocalizedError {
         case sendFailed
-        case receiveFailed
         case noQueue
         case connectionClosed
         case winsockInitError(underlyingErrorCode: Int32)
@@ -201,8 +200,6 @@ private extension SocketNetworkConnection {
             switch self {
                 case .sendFailed:
                     "Send failed"
-                case .receiveFailed:
-                    "Receive failed"
                 case .noQueue:
                     "No Dispatch Queue"
                 case .connectionClosed:
