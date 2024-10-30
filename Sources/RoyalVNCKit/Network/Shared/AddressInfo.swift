@@ -38,16 +38,10 @@ final class AddressInfo {
         let socktype = sockstream
 #endif
 
-        var hints = addrinfo(
-            ai_flags: AI_PASSIVE,
-            ai_family: AF_INET,
-            ai_socktype: socktype,
-            ai_protocol: 0,
-            ai_addrlen: 0,
-            ai_addr: nil,
-            ai_canonname: nil,
-            ai_next: nil
-        )
+        var hints = addrinfo()
+        hints.ai_flags = AI_PASSIVE
+        hints.ai_family = AF_INET
+        hints.ai_socktype = socktype
 
         var addrInfo: UnsafeMutablePointer<addrinfo>?
 
