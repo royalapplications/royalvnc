@@ -58,50 +58,21 @@ final class LinuxNetworkConnection: NetworkConnection {
         queue.async { [weak self] in
             guard let self else { return }
 
-            var hints = addrinfo(
-                ai_flags: AI_PASSIVE,
-                ai_family: AF_INET,
-                ai_socktype: .init(SOCK_STREAM.rawValue),
-                ai_protocol: 0,
-                ai_addrlen: 0,
-                ai_addr: nil,
-                ai_canonname: nil,
-                ai_next: nil
-            )
+            let addressInfo: AddressInfo
 
-            var addrinfoResult: UnsafeMutablePointer<addrinfo>?
-
-            let host = self.settings.host
-            let port = self.settings.port
-            
-            // Resolve the address
-            let getaddrinfoStatus = getaddrinfo(
-                host,
-                "\(port)",
-                &hints, 
-                &addrinfoResult
-            )
-            
-            guard getaddrinfoStatus == 0 else {
-                self.status = .failed(SocketError.dnsResolutionFailed)
+            do {
+                addressInfo = try .init(host: settings.host,
+                                        port: settings.port)
+            } catch {
+                self.status = .failed(error)
 
                 return
-            }
-
-            guard let addrinfoResult else {
-                self.status = .failed(SocketError.addressInfoEmpty)
-
-                return
-            }
-
-            defer {
-                freeaddrinfo(addrinfoResult)
             }
 
             let socketFD = socket(
-                addrinfoResult.pointee.ai_family,
-                addrinfoResult.pointee.ai_socktype,
-                addrinfoResult.pointee.ai_protocol
+                addressInfo.addrInfo.pointee.ai_family,
+                addressInfo.addrInfo.pointee.ai_socktype,
+                addressInfo.addrInfo.pointee.ai_protocol
             )
 
             guard socketFD >= 0 else {
@@ -112,8 +83,8 @@ final class LinuxNetworkConnection: NetworkConnection {
 
             let connectResult = connect(
                 socketFD,
-                addrinfoResult.pointee.ai_addr,
-                addrinfoResult.pointee.ai_addrlen
+                addressInfo.addrInfo.pointee.ai_addr,
+                addressInfo.addrInfo.pointee.ai_addrlen
             )
 
             guard connectResult >= 0 else {
@@ -226,8 +197,6 @@ private extension LinuxNetworkConnection {
         case connectionFailed(code: Int32)
         case sendFailed
         case receiveFailed
-        case dnsResolutionFailed
-        case addressInfoEmpty
         case noQueue
         case connectionClosed
 
@@ -241,10 +210,6 @@ private extension LinuxNetworkConnection {
                     "Send failed"
                 case .receiveFailed:
                     "Receive failed"
-                case .dnsResolutionFailed:
-                    "DNS resolution failed"
-                case .addressInfoEmpty:
-                    "Address info is empty"
                 case .noQueue:
                     "No Dispatch Queue"
                 case .connectionClosed:
