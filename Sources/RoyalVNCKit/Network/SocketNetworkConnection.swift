@@ -1,15 +1,20 @@
-#if os(Windows)
+#if os(Linux) || os(Windows)
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
 
+#if canImport(Glibc)
+import Glibc
+#elseif canImport(WinSDK)
 import WinSDK
+#endif
+
 import Dispatch
 
 // TODO: All of this is very hacky and NOT fully fleshed out!
-final class WindowsNetworkConnection: NetworkConnection {
+final class SocketNetworkConnection: NetworkConnection {
     let settings: NetworkConnectionSettings
 
     private var socket: Socket?
@@ -24,13 +29,15 @@ final class WindowsNetworkConnection: NetworkConnection {
     }
 
     init(settings: NetworkConnectionSettings) {
-        self.settings = settings
-
+#if canImport(WinSDK)
         do {
             try intializeWinsock()
         } catch {
             fatalError("Initializing Winsock failed: \(error.humanReadableDescription)")
         }
+#endif
+
+        self.settings = settings
     }
     
     func setStatusUpdateHandler(_ statusUpdateHandler: NetworkConnectionStatusUpdateHandler?) {
@@ -73,12 +80,16 @@ final class WindowsNetworkConnection: NetworkConnection {
             }
         }
     }
+}
 
-    private func intializeWinsock() throws {
+// MARK: - Winsock Initialization
+#if canImport(WinSDK)
+private extension SocketNetworkConnection {
+    func intializeWinsock() throws {
         try intializeWinsock(2, 2)
     }
     
-    private func intializeWinsock(_ versionA: UInt8, _ versionB: UInt8) throws {
+    func intializeWinsock(_ versionA: UInt8, _ versionB: UInt8) throws {
         func makeWord(_ a: UInt8, _ b: UInt8) -> UInt16 {
             return UInt16(a) | (UInt16(b) << 8)
         }
@@ -93,12 +104,14 @@ final class WindowsNetworkConnection: NetworkConnection {
         }
     }
 }
+#endif
 
-extension WindowsNetworkConnection: NetworkConnectionReading {
+// MARK: - Reading
+extension SocketNetworkConnection: NetworkConnectionReading {
 	func read(minimumLength: Int,
               maximumLength: Int) async throws -> Data {
         guard let queue else {
-            throw WinsockError.noQueue
+            throw SocketError.noQueue
         }
 
         guard let socket else {
@@ -115,7 +128,7 @@ extension WindowsNetworkConnection: NetworkConnectionReading {
                 // Handle connection closure
                 if bytesRead == 0 {
                     // TODO
-                    continuation.resume(throwing: WinsockError.connectionClosed)
+                    continuation.resume(throwing: SocketError.connectionClosed)
 
                     return
                 }
@@ -148,10 +161,11 @@ extension WindowsNetworkConnection: NetworkConnectionReading {
 	}
 }
 
-extension WindowsNetworkConnection: NetworkConnectionWriting {
+// MARK: - Writing
+extension SocketNetworkConnection: NetworkConnectionWriting {
 	func write(data: Data) async throws {
         guard let queue else {
-            throw WinsockError.noQueue
+            throw SocketError.noQueue
         }
 
         guard let socket else {
@@ -164,7 +178,7 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
                 let bytesSent = socket.send(buffer: bytesToSend)
                 
                 if bytesSent < 0 {
-                    continuation.resume(throwing: WinsockError.sendFailed)
+                    continuation.resume(throwing: SocketError.sendFailed)
                 } else {
                     continuation.resume()
                 }
@@ -173,14 +187,15 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
 	}
 }
 
-private extension WindowsNetworkConnection {
+// MARK: - Errors
+private extension SocketNetworkConnection {
     // MARK: - Enum for Socket Errors
-    enum WinsockError: LocalizedError {
+    enum SocketError: LocalizedError {
         case sendFailed
         case receiveFailed
         case noQueue
         case connectionClosed
-        case initError(statusValue: Int32)
+        case winsockInitError(underlyingErrorCode: Int32)
 
         var errorDescription: String? {
             switch self {
@@ -192,8 +207,8 @@ private extension WindowsNetworkConnection {
                     "No Dispatch Queue"
                 case .connectionClosed:
                     "Connection closed"
-                case .initError(let statusValue):
-                    "WSAStartup failed with \(statusValue)"
+                case .winsockInitError(let underlyingErrorCode):
+                    "WSAStartup failed (\(underlyingErrorCode))"
             }
         }
     }

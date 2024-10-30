@@ -74,10 +74,8 @@ public final class VNCConnection: NSObjectOrAnyObject {
         
 #if canImport(Network)
         let connection = NWConnection(settings: connectionSettings)
-#elseif canImport(Glibc)
-		let connection = LinuxNetworkConnection(settings: connectionSettings)
-#else
-		let connection = WindowsNetworkConnection(settings: connectionSettings)
+#elseif canImport(Glibc) || canImport(WinSDK)
+		let connection = SocketNetworkConnection(settings: connectionSettings)
 #endif
         
         connection.setStatusUpdateHandler(connectionStatusDidChange)
