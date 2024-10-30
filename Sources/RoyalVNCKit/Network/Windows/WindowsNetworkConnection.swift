@@ -161,19 +161,7 @@ extension WindowsNetworkConnection: NetworkConnectionWriting {
 		return try await withCheckedThrowingContinuation { continuation in
             queue.async {
                 let bytesToSend = [UInt8](data)
-
-                let bytesSent: Int32 = bytesToSend.withUnsafeBytes { bytesToSendPtr in
-                    guard let bytesToSendPtrAddr = bytesToSendPtr.baseAddress else {
-                        return -1
-                    }
-
-                    return send(
-                        socket.nativeSocket,
-                        bytesToSendPtrAddr,
-                        .init(bytesToSend.count),
-                        0
-                    )
-                }
+                let bytesSent = socket.send(buffer: bytesToSend)
                 
                 if bytesSent < 0 {
                     continuation.resume(throwing: WinsockError.sendFailed)
