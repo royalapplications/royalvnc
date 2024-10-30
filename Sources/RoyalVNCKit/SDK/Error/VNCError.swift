@@ -75,7 +75,7 @@ extension VNCError {
 #if canImport(ObjectiveC)
 @objc(VNCErrorUtils)
 // swiftlint:disable:next type_name
-public class _ObjC_VNCErrorUtils: NSObject {
+public final class _ObjC_VNCErrorUtils: NSObject {
     @objc
 	public static func shouldDisplayErrorToUser(_ error: Error) -> Bool {
 		guard let vncError = error as? VNCError else {

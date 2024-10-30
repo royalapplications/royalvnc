@@ -1,7 +1,7 @@
 #if !canImport(FoundationEssentials)
 import Foundation
 
-public class VNCNSLogLogger: VNCLogger {
+public final class VNCNSLogLogger: VNCLogger {
     public var isDebugLoggingEnabled = false
     
     public init() { }

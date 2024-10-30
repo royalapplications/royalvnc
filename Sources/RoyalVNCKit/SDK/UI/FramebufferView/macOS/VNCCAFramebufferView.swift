@@ -4,7 +4,7 @@ import AppKit
 import Carbon
 
 @objc(VNCCAFramebufferView)
-public class VNCCAFramebufferView: NSView, VNCFramebufferView {
+public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
     @objc
 	public private(set) weak var connection: VNCConnection?
 	

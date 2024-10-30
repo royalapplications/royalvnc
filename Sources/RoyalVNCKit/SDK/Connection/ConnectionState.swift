@@ -18,7 +18,7 @@ public extension VNCConnection {
 #if canImport(ObjectiveC)
 	@objc(VNCConnectionState)
 #endif
-	class ConnectionState: NSObjectOrAnyObject {
+    final class ConnectionState: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
 		@objc
 #endif

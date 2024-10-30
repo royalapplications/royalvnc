@@ -8,7 +8,7 @@ import Foundation
 
 @_implementationOnly import libtommath
 
-class BigNum {
+final class BigNum {
 	private let num: UnsafeMutablePointer<BIGNUM>
 	private let backingDataPointer: UnsafeMutablePointer<UInt8>?
 	

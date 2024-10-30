@@ -29,7 +29,7 @@ enum ZlibFlush: Int32 {
 	case trees = 6 // Z_TREES
 }
 
-class ZlibInflateStream {
+final class ZlibInflateStream {
 	private let streamPtr: UnsafeMutablePointer<z_stream>
 	
 	init() throws {

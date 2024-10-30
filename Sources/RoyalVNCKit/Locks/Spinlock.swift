@@ -7,7 +7,7 @@ import Foundation
 
 import Glibc
 
-class Spinlock {
+final class Spinlock {
     private var spinlock = pthread_spinlock_t()
 
     init() {
@@ -35,7 +35,7 @@ import FoundationEssentials
 
 import WinSDK
 
-class Spinlock {
+final class Spinlock {
     private var spinlock = CRITICAL_SECTION()
 
     init() {

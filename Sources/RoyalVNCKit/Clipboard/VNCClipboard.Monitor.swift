@@ -12,7 +12,7 @@ import AppKit
 import UIKit
 #endif
 
-class VNCClipboardMonitor {
+final class VNCClipboardMonitor {
 	let clipboard: VNCClipboard
 	let monitoringInterval: TimeInterval
 	let tolerance: TimeInterval

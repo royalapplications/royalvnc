@@ -6,7 +6,7 @@ import Foundation
 
 import RoyalVNCKit
 
-class ConnectionDelegate: VNCConnectionDelegate {
+final class ConnectionDelegate: VNCConnectionDelegate {
     func connection(_ connection: VNCConnection,
                     stateDidChange connectionState: VNCConnection.ConnectionState) {
         let connectionStateString: String

@@ -54,7 +54,7 @@ public func rvnc_connection_delegate_destroy(_ connectionDelegate: rvnc_connecti
     VNCConnectionDelegate_C.autoreleasePointer(connectionDelegate)
 }
 
-class VNCConnectionDelegate_C {
+final class VNCConnectionDelegate_C {
     let connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change
     let authenticate: rvnc_connection_delegate_authenticate
     let didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer

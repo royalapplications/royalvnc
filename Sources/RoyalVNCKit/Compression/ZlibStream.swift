@@ -6,7 +6,7 @@ import Foundation
 
 @_implementationOnly import Z
 
-class ZlibStream {
+final class ZlibStream {
 	private let stream: ZlibInflateStream
     
 	enum ZlibStreamError: Error {
