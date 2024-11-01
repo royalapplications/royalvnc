@@ -54,7 +54,7 @@ jobs:
 
     defaults:
       run:
-        shell: "${{ matrix.env.OS == 'windows' && 'pwsh' || 'bash' }}"
+        shell: "${{ matrix.env.OS == 'windows' && 'cmd' || 'bash' }}"
 
     env:
       DOTNET_NOLOGO: 1
