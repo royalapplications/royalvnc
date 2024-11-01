@@ -10,7 +10,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{213EC7C9-62EC-4390-8845-C965A18AAD86}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.rsp = Directory.Build.rsp
-		nuget-pack.ps1 = nuget-pack.ps1
+		nuget-pack-dotnet.ps1 = nuget-pack-dotnet.ps1
+		nuget-pack-native.ps1 = nuget-pack-native.ps1
 		nuget-test-aot.ps1 = nuget-test-aot.ps1
 		nuget-utils.ps1 = nuget-utils.ps1
 		RoyalApps_1024.png = RoyalApps_1024.png
