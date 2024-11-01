@@ -25,7 +25,7 @@ extension VNCConnectionDelegate_C {
 }
 
 @_cdecl("rvnc_connection_delegate_create")
-@_spi(FreeRDPKitC)
+@_spi(RoyalVNCKitC)
 @available(*, unavailable)
 public func rvnc_connection_delegate_create(
     _ connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change,
@@ -48,7 +48,7 @@ public func rvnc_connection_delegate_create(
 }
 
 @_cdecl("rvnc_connection_delegate_destroy")
-@_spi(FreeRDPKitC)
+@_spi(RoyalVNCKitC)
 @available(*, unavailable)
 public func rvnc_connection_delegate_destroy(_ connectionDelegate: rvnc_connection_delegate_t) {
     VNCConnectionDelegate_C.autoreleasePointer(connectionDelegate)
