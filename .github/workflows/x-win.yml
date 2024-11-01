@@ -134,7 +134,7 @@ jobs:
         retention-days: 5
         if-no-files-found: "error"
         path: |
-          Bindings/dotnet/RoyalApps.RoyalVNCKit.native/bin/Release/RoyalApps.RoyalVNCKit.native.*.nupkg
+          Bindings/dotnet/RoyalApps.RoyalVNCKit.native/bin/Release/RoyalApps.*.nupkg
 
     - name: publish NuGet package
       if: "success() && matrix.env.NUGET_PACK_DOTNET_LIB == '1'"
