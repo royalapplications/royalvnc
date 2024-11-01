@@ -1,7 +1,7 @@
 namespace RoyalApps.RoyalVNCKit;
 
 // keep in sync with Sources/RoyalVNCKitC/include/RoyalVNCKitC.h
-public enum MouseWheel : byte
+public enum MouseWheel
 {
     Left = 0,
     Right = 1,
