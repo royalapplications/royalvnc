@@ -19,7 +19,7 @@ exec { dotnet build --configuration $CONFIGURATION $DEMO_DIR }
 $NATIVE_DIR = Join-Path $REPO_ROOT 'Bindings/dotnet/RoyalApps.RoyalVNCKit.native' -Resolve
 $NUSPEC_FILE = Join-Path $NATIVE_DIR 'native.nuspec' -Resolve
 
-if ($HOST_OS -eq "win") {
+if ($HOST_OS -eq 'windows') {
     $NUSPEC_FILE = Join-Path $NATIVE_DIR 'windows.nuspec' -Resolve
 
     $SWIFT_CRT_PATH = (Get-Command swiftCRT.dll -ErrorAction Stop).Source
@@ -29,7 +29,7 @@ if ($HOST_OS -eq "win") {
     $NUGET_SWIFT_RT_VERSION = $env:NUGET_SWIFT_RT_VERSION
     if (-not $NUGET_SWIFT_RT_VERSION) {
         [string]$version = (& swift --version)
-        if ($version -imatch 'Swift version (\d+\.\d+(\.d+)?)') {
+        if ($version -imatch 'Swift version (\d+\.\d+(\.\d+)?)') {
             $NUGET_SWIFT_RT_VERSION = $Matches.1
             Write-Host "Auto-detected NUGET_SWIFT_RT_VERSION: ${NUGET_SWIFT_RT_VERSION}"
         }
