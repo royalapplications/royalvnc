@@ -8,7 +8,7 @@ $PSStyle.OutputRendering = 'ANSI'
 . $PSScriptRoot/nuget-utils.ps1
 
 $CONFIGURATION = 'Release'
-if ($HOST_OS -eq 'windows') {
+if ($NUGET_RID -eq 'win-arm64') {
     # ref. https://github.com/swiftlang/swift/issues/77220
     $CONFIGURATION = 'Debug'
 }
