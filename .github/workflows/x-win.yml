@@ -36,7 +36,6 @@ jobs:
           #  env:
           #    OS: "linux"
           #    NUGET_RID: "linux-x64"
-          #    NUGET_PACK_DOTNET_LIB: "1"
 
           #- name: "MacOS ARM64"
           #  os: macos-14
@@ -49,6 +48,7 @@ jobs:
             env:
               OS: "windows"
               NUGET_RID: "win-x64"
+              NUGET_PACK_DOTNET_LIB: "1"
 
     runs-on: "${{ matrix.os }}"
 
@@ -62,7 +62,6 @@ jobs:
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
       VCPKG_DISABLE_METRICS: 1
       NUGET_BASE_VERSION: "0.0"
-      SCRIPT_EXT: "${{ matrix.env.OS == 'windows' && 'ps1' || 'sh' }}"
       ROYALVNC_BUILD_DEBUG: 0
       SWIFT_VERSION: "6.0.2"
 
@@ -92,11 +91,57 @@ jobs:
 
     - name: build RoyalVNCKit
       run: |
-        swift package clean --configuration "release"
-        swift build --configuration "release"
+        swift package clean --configuration release
+        swift build --configuration release
 
     # .NET bindings and NuGet package artifacts
 
     - name: build .NET bindings
       run: |
-        dotnet build "Bindings/dotnet/RoyalApps.RoyalVNCKit.sln" -c Release
+        dotnet build --configuration Release  Bindings/dotnet/RoyalApps.RoyalVNCKit.sln
+
+    - name: create native NuGet package
+      if: "success() && matrix.env.NUGET_RID != ''"
+      env:
+        NUGET_VERSION: "${{ env.NUGET_BASE_VERSION }}.${{ github.run_number }}"
+        NUGET_RID: "${{ matrix.env.NUGET_RID }}"
+        NUGET_GIT_COMMIT: "${{ github.sha }}"
+        NUGET_SWIFT_RT_VERSION: "${{ env.SWIFT_VERSION }}"
+      run: |
+        pwsh Bindings/dotnet/nuget-pack-native.ps1
+
+    - name: test AOT build and interop
+      if: "success() && matrix.env.NUGET_RID != ''"
+      env:
+        NUGET_VERSION: "${{ env.NUGET_BASE_VERSION }}.${{ github.run_number }}"
+        NUGET_RID: "${{ matrix.env.NUGET_RID }}"
+      run: |
+        pwsh Bindings/dotnet/nuget-test-aot.ps1
+
+    - name: create NuGet package
+      if: "success() && matrix.env.NUGET_PACK_DOTNET_LIB == '1'"
+      env:
+        NUGET_VERSION: "${{ env.NUGET_BASE_VERSION }}.${{ github.run_number }}"
+        NUGET_GIT_COMMIT: "${{ github.sha }}"
+      run: |
+        pwsh Bindings/dotnet/nuget-pack-dotnet.ps1
+
+    - name: publish native NuGet packages
+      if: "success() && matrix.env.NUGET_RID != ''"
+      uses: actions/upload-artifact@v4
+      with:
+        name: "RoyalApps.RoyalVNCKit.native.${{ matrix.env.NUGET_RID }}"
+        retention-days: 5
+        if-no-files-found: "error"
+        path: |
+          Bindings/dotnet/RoyalApps.RoyalVNCKit.native/bin/Release/RoyalApps.RoyalVNCKit.native.*.nupkg
+
+    - name: publish NuGet package
+      if: "success() && matrix.env.NUGET_PACK_DOTNET_LIB == '1'"
+      uses: actions/upload-artifact@v4
+      with:
+        name: "RoyalApps.RoyalVNCKit"
+        retention-days: 5
+        if-no-files-found: "error"
+        path: |
+          Bindings/dotnet/RoyalApps.RoyalVNCKit/bin/Release/RoyalApps.RoyalVNCKit.*.nupkg

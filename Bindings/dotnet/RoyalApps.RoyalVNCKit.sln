@@ -7,6 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyalApps.RoyalVNCKit", "Ro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoyalApps.RoyalVNCKit.Demo", "RoyalApps.RoyalVNCKit.Demo\RoyalApps.RoyalVNCKit.Demo.csproj", "{AF2ABA10-FE25-4011-A3CE-99987445778D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution", "Solution", "{213EC7C9-62EC-4390-8845-C965A18AAD86}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.rsp = Directory.Build.rsp
+		nuget-pack.ps1 = nuget-pack.ps1
+		nuget-test-aot.ps1 = nuget-test-aot.ps1
+		nuget-utils.ps1 = nuget-utils.ps1
+		RoyalApps_1024.png = RoyalApps_1024.png
+		RoyalApps.RoyalVNCKit.native\native.nuspec = RoyalApps.RoyalVNCKit.native\native.nuspec
+		RoyalApps.RoyalVNCKit.native\windows.nuspec = RoyalApps.RoyalVNCKit.native\windows.nuspec
+		RoyalApps.RoyalVNCKit.native\windows.SwiftRuntime.nuspec = RoyalApps.RoyalVNCKit.native\windows.SwiftRuntime.nuspec
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
