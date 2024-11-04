@@ -46,6 +46,13 @@ jobs:
               NUGET_RID: "win-x64"
               NUGET_PACK_DOTNET_LIB: "1"
 
+          - name: "Windows ARM64"
+            os: windows-11-arm64-gh
+            env:
+              OS: "windows"
+              NUGET_RID: "win-arm64"
+              NUGET_PACK_DOTNET_LIB: "1"
+
     runs-on: "${{ matrix.os }}"
 
     defaults:
