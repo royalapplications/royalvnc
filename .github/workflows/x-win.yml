@@ -19,10 +19,7 @@ jobs:
       matrix:
         include:
           - name: "Ubuntu ARM64"
-            os:
-              - ARM64
-              - linux
-              - Ubuntu
+            os: ubuntu-24-arm64-gh
             env:
               OS: "linux"
               NUGET_RID: "linux-arm64"
