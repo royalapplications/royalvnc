@@ -18,14 +18,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: "Ubuntu ARM64"
-            os:
-              - ARM64
-              - linux
-              - Ubuntu
-            env:
-              OS: "linux"
-              NUGET_RID: "linux-arm64"
+          #TODO(later)
+          #- name: "Ubuntu ARM64"
+          #  os:
+          #    - ARM64
+          #    - linux
+          #    - Ubuntu
+          #  env:
+          #    OS: "linux"
+          #    NUGET_RID: "linux-arm64"
 
           - name: "Ubuntu x64"
             os: ubuntu-latest
