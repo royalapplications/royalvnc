@@ -28,14 +28,14 @@ jobs:
           #    OS: "linux"
           #    NUGET_RID: "linux-arm64"
 
-          #- name: "Ubuntu x64"
-          #  os:
-          #    - X64
-          #    - linux
-          #    - Ubuntu
-          #  env:
-          #    OS: "linux"
-          #    NUGET_RID: "linux-x64"
+          - name: "Ubuntu x64"
+            os: ubuntu-latest
+            #  - X64
+            #  - linux
+            #  - Ubuntu
+            env:
+              OS: "linux"
+              NUGET_RID: "linux-x64"
 
           #- name: "MacOS ARM64"
           #  os: macos-14
