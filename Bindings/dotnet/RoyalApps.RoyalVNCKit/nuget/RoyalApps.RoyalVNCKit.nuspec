@@ -14,8 +14,8 @@
         <repository type="git" url="https://github.com/royalapplications/royalvnc.git" commit="$NUGET_GIT_COMMIT$" />
         <dependencies>
             <group targetFramework="net8.0">
-                <!-- TODO:
                 <dependency id="RoyalApps.RoyalVNCKit.native.linux-arm64" version="$NUGET_VERSION$" />
+                <!-- TODO:
                 <dependency id="RoyalApps.RoyalVNCKit.native.linux-x64" version="$NUGET_VERSION$" />
                 -->
                 <dependency id="RoyalApps.RoyalVNCKit.native.osx" version="$NUGET_VERSION$" />
