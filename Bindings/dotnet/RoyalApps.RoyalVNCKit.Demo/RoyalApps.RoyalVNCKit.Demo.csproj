@@ -26,9 +26,7 @@
     <_NativeLibrary>$(_SwiftBuildDir)$(_NativeArch)-unknown-linux-gnu\$(_NativeCfg)\libRoyalVNCKit.so</_NativeLibrary>
   </PropertyGroup>
   <PropertyGroup Label="macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-    <_SwiftArch Condition="'$(_NativeArch)' == 'aarch64'">arm64</_SwiftArch>
-    <_SwiftArch Condition="'$(_SwiftArch)' == ''">$(_NativeArch)</_SwiftArch>
-    <_NativeLibrary>$(_SwiftBuildDir)$(_SwiftArch)-apple-macosx\$(_NativeCfg)\libRoyalVNCKit.dylib</_NativeLibrary>
+    <_NativeLibrary>$(_SwiftBuildDir)universal-apple-macosx\$(_NativeCfg)\libRoyalVNCKit.dylib</_NativeLibrary>
   </PropertyGroup>
   <PropertyGroup Label="Windows" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <_NativeLibrary>$(_SwiftBuildDir)$(_NativeArch)-unknown-windows-msvc\$(_NativeCfg)\RoyalVNCKit.dll</_NativeLibrary>

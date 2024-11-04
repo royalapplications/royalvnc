@@ -89,7 +89,21 @@ jobs:
 
     # build RoyalVNCKit
 
+    - name: build RoyalVNCKit (Apple)
+      if: "success() && matrix.env.OS == 'apple'"
+      run: |
+        swift package clean --configuration release
+        swift build --configuration release --arch arm64
+        swift build --configuration release --arch x86_64
+
+        mkdir -p ./build/universal-apple-macosx/release
+        lipo -create \
+          .build/arm64-apple-macosx/release/libRoyalVNCKit.dylib \
+          .build/x86_64-apple-macosx/release/libRoyalVNCKit.dylib \
+          -output .build/universal-apple-macosx/release/libRoyalVNCKit.dylib
+
     - name: build RoyalVNCKit
+      if: "success() && matrix.env.OS != 'apple'"
       run: |
         swift package clean --configuration release
         swift build --configuration release
