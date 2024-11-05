@@ -43,11 +43,11 @@ jobs:
               NUGET_RID: "win-x64"
               NUGET_PACK_DOTNET_LIB: "1"
 
-          - name: "Windows ARM64"
-            os: windows-11-arm64-gh
-            env:
-              OS: "windows"
-              NUGET_RID: "win-arm64"
+          #- name: "Windows ARM64"
+          #  os: windows-11-arm64-gh
+          #  env:
+          #    OS: "windows"
+          #    NUGET_RID: "win-arm64"
 
     runs-on: "${{ matrix.os }}"
 
@@ -65,36 +65,27 @@ jobs:
       SWIFT_VERSION: "6.0.2"
 
     steps:
-    - name: test winget (win-arm64)
-      if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
-      shell: cmd
-      run: |
-        set
-        where winget
-        winget --version
-        exit 0
-
-    - name: setup tools (win-arm64)
-      if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
-      shell: powershell
-      run: |
-        # Install choco
-        Set-ExecutionPolicy Bypass -Scope Process -Force
-        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072  # Enable TLS1.2
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-        "C:\ProgramData\Chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
-
-        # Install pwsh
-        choco install -y --no-progress powershell-core
-        "C:\Program Files\PowerShell\7" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
-      
-        # Install git
-        choco install -y --no-progress git
-        "C:\Program Files\Git\cmd" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
-
-        # Install dotnet
-        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://dot.net/v1/dotnet-install.ps1'))
-        "C:\Program Files\dotnet" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+    #- name: setup tools (win-arm64)
+    #  if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
+    #  shell: powershell
+    #  run: |
+    #    # Install choco
+    #    Set-ExecutionPolicy Bypass -Scope Process -Force
+    #    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072  # Enable TLS1.2
+    #    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+    #    "C:\ProgramData\Chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+    #
+    #    # Install pwsh
+    #    choco install -y --no-progress powershell-core
+    #    "C:\Program Files\PowerShell\7" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+    #  
+    #    # Install git
+    #    choco install -y --no-progress git
+    #    "C:\Program Files\Git\cmd" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+    #
+    #    # Install dotnet
+    #    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://dot.net/v1/dotnet-install.ps1'))
+    #    "C:\Program Files\dotnet" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
 
     - name: checkout
       uses: actions/checkout@v4
@@ -106,9 +97,9 @@ jobs:
       run: |
         sudo xcode-select --switch /Applications/Xcode_16.0.app
 
-    #- name: setup VC++ environment (Windows)
-    #  if: "success() && matrix.env.OS == 'windows'"
-    #  uses: compnerd/gha-setup-vsdevenv@v6
+    - name: setup VC++ environment (Windows)
+      if: "success() && matrix.env.OS == 'windows'"
+      uses: compnerd/gha-setup-vsdevenv@v6
 
     - name: setup Swift (Windows)
       if: "success() && matrix.env.OS == 'windows'"
