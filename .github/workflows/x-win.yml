@@ -26,9 +26,6 @@ jobs:
 
           - name: "Ubuntu x64"
             os: ubuntu-latest
-            #  - X64
-            #  - linux
-            #  - Ubuntu
             env:
               OS: "linux"
               NUGET_RID: "linux-x64"
@@ -51,7 +48,6 @@ jobs:
             env:
               OS: "windows"
               NUGET_RID: "win-arm64"
-              NUGET_PACK_DOTNET_LIB: "1"
 
     runs-on: "${{ matrix.os }}"
 
@@ -69,6 +65,28 @@ jobs:
       SWIFT_VERSION: "6.0.2"
 
     steps:
+    - name: setup tools (win-arm64)
+      if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
+      shell: powershell
+      run: |
+        # Install choco
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072  # Enable TLS1.2
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        "C:\ProgramData\Chocolatey\bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+        # Install pwsh
+        choco install -y --no-progress powershell-core
+        "C:\Program Files\PowerShell\7" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      
+        # Install git
+        choco install -y --no-progress git
+        "C:\Program Files\Git\cmd" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+        # Install dotnet
+        Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://dot.net/v1/dotnet-install.ps1'))
+        "C:\Program Files\dotnet" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
     - name: checkout
       uses: actions/checkout@v4
 
