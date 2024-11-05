@@ -65,6 +65,15 @@ jobs:
       SWIFT_VERSION: "6.0.2"
 
     steps:
+    - name: test winget (win-arm64)
+      if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
+      shell: cmd
+      run: |
+        set
+        where winget
+        winget --version
+        exit 0
+
     - name: setup tools (win-arm64)
       if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
       shell: powershell
@@ -97,9 +106,9 @@ jobs:
       run: |
         sudo xcode-select --switch /Applications/Xcode_16.0.app
 
-    - name: setup VC++ environment (Windows)
-      if: "success() && matrix.env.OS == 'windows'"
-      uses: compnerd/gha-setup-vsdevenv@v6
+    #- name: setup VC++ environment (Windows)
+    #  if: "success() && matrix.env.OS == 'windows'"
+    #  uses: compnerd/gha-setup-vsdevenv@v6
 
     - name: setup Swift (Windows)
       if: "success() && matrix.env.OS == 'windows'"
