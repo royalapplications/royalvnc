@@ -6,7 +6,7 @@ protocol DisplayLinkDelegate: AnyObject {
 	func displayLinkDidUpdate(_ displayLink: DisplayLink)
 }
 
-class DisplayLink {
+final class DisplayLink {
 	private let displayLink: CVDisplayLink
 	
 	weak var delegate: DisplayLinkDelegate?

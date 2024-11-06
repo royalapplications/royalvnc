@@ -5,7 +5,7 @@ import AppKit
 #if canImport(ObjectiveC)
 @objc(VNCCenteringClipView)
 #endif
-public class VNCCenteringClipView: NSClipView {
+public final class VNCCenteringClipView: NSClipView {
 	public override func constrainBoundsRect(_ proposedBounds: NSRect) -> NSRect {
 		var rect = super.constrainBoundsRect(proposedBounds)
 		

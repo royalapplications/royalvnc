@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-class DataStream {
+final class DataStream {
 	let data: Data
 	private(set) var offset = 0
 	

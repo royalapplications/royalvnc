@@ -67,33 +67,29 @@ public func rvnc_cursor_hotspot_y_get(_ cursor: rvnc_cursor_t) -> UInt16 {
 @_cdecl("rvnc_cursor_bits_per_component_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_cursor_bits_per_component_get(_ cursor: rvnc_cursor_t) -> Int {
-    VNCCursor.fromPointer(cursor)
-        .bitsPerComponent
+public func rvnc_cursor_bits_per_component_get(_ cursor: rvnc_cursor_t) -> Int64 {
+    .init(VNCCursor.fromPointer(cursor).bitsPerComponent)
 }
 
 @_cdecl("rvnc_cursor_bits_per_pixel_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_cursor_bits_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int {
-    VNCCursor.fromPointer(cursor)
-        .bitsPerPixel
+public func rvnc_cursor_bits_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int64 {
+    .init(VNCCursor.fromPointer(cursor).bitsPerPixel)
 }
 
 @_cdecl("rvnc_cursor_bytes_per_pixel_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_cursor_bytes_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int {
-    VNCCursor.fromPointer(cursor)
-        .bytesPerPixel
+public func rvnc_cursor_bytes_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int64 {
+    .init(VNCCursor.fromPointer(cursor).bytesPerPixel)
 }
 
 @_cdecl("rvnc_cursor_bytes_per_row_get")
 @_spi(RoyalVNCKitC)
 @available(*, unavailable)
-public func rvnc_cursor_bytes_per_row_get(_ cursor: rvnc_cursor_t) -> Int {
-    VNCCursor.fromPointer(cursor)
-        .bytesPerRow
+public func rvnc_cursor_bytes_per_row_get(_ cursor: rvnc_cursor_t) -> Int64 {
+    .init(VNCCursor.fromPointer(cursor).bytesPerRow)
 }
 
 @_cdecl("rvnc_cursor_pixel_data_get_copy")
@@ -114,6 +110,13 @@ public func rvnc_cursor_pixel_data_get_copy(_ cursor: rvnc_cursor_t) -> UnsafeMu
     data.copyBytes(to: dataC)
     
     return dataC.baseAddress
+}
+
+@_cdecl("rvnc_cursor_pixel_data_destroy")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_cursor_pixel_data_destroy(_ pixelData: UnsafeMutableRawPointer) {
+    pixelData.deallocate()
 }
 
 @_cdecl("rvnc_cursor_pixel_data_size_get")

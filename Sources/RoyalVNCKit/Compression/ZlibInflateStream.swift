@@ -29,7 +29,7 @@ enum ZlibFlush: Int32 {
 	case trees = 6 // Z_TREES
 }
 
-class ZlibInflateStream {
+final class ZlibInflateStream {
 	private let streamPtr: UnsafeMutablePointer<z_stream>
 	
 	init() throws {
@@ -75,10 +75,10 @@ extension ZlibInflateStream {
 	/// total number of bytes output so far
 	var totalOut: UInt {
 		get {
-			streamPtr.pointee.total_out
+			.init(streamPtr.pointee.total_out)
 		}
 		set {
-			streamPtr.pointee.total_out = newValue
+			streamPtr.pointee.total_out = .init(newValue)
 		}
 	}
 	
@@ -95,10 +95,10 @@ extension ZlibInflateStream {
 	/// total number of input bytes read so far
 	var totalIn: UInt {
 		get {
-			streamPtr.pointee.total_in
+			.init(streamPtr.pointee.total_in)
 		}
 		set {
-			streamPtr.pointee.total_in = newValue
+			streamPtr.pointee.total_in = .init(newValue)
 		}
 	}
 	
@@ -140,10 +140,10 @@ extension ZlibInflateStream {
 	/// Adler-32 or CRC-32 value of the uncompressed data
 	var adler: UInt {
 		get {
-			streamPtr.pointee.adler
+			.init(streamPtr.pointee.adler)
 		}
 		set {
-			streamPtr.pointee.adler = newValue
+			streamPtr.pointee.adler = .init(newValue)
 		}
 	}
 }

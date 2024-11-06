@@ -1,5 +1,3 @@
-// swiftlint:disable identifier_name
-
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -34,5 +32,3 @@ extension VNCPoint: CustomStringConvertible {
 		"x: \(x), y: \(y)"
 	}
 }
-
-// swiftlint:enable identifier_name

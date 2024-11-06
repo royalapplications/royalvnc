@@ -6,7 +6,7 @@ import Foundation
 
 import RoyalVNCKit
 
-class ConnectionDelegate: VNCConnectionDelegate {
+final class ConnectionDelegate: VNCConnectionDelegate {
     func connection(_ connection: VNCConnection,
                     stateDidChange connectionState: VNCConnection.ConnectionState) {
         let connectionStateString: String
@@ -41,31 +41,28 @@ class ConnectionDelegate: VNCConnectionDelegate {
         
         connection.logger.logDebug("connection credentialFor: \(authenticationTypeString)")
         
-        func readUsername() -> String? {
+        func readUser() -> String? {
             print("Enter username: ", terminator: "")
             let username = readLine(strippingNewline: true)
             
             return username
         }
         
-        func readPassword() -> String? {
-            print("Enter password: ", terminator: "")
-            
-            // TODO: Hide while typing
-            let password = readLine(strippingNewline: true)
+        func readPW() -> String? {
+            let password = readPassword(prompt: "Enter password: ")
             
             return password
         }
         
         if authenticationType.requiresUsername,
            authenticationType.requiresPassword {
-            guard let username = readUsername() else {
+            guard let username = readUser() else {
                 completion(nil)
                 
                 return
             }
             
-            guard let password = readPassword() else {
+            guard let password = readPW() else {
                 completion(nil)
                 
                 return
@@ -74,7 +71,7 @@ class ConnectionDelegate: VNCConnectionDelegate {
             completion(VNCUsernamePasswordCredential(username: username,
                                                      password: password))
         } else if authenticationType.requiresPassword {
-            guard let password = readPassword() else {
+            guard let password = readPW() else {
                 completion(nil)
                 
                 return
@@ -96,19 +93,12 @@ class ConnectionDelegate: VNCConnectionDelegate {
         connection.logger.logDebug("connection didResizeFramebuffer")
     }
     
-#if os(Linux)
     func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: VNCRegion) {
-        connection.logger.logDebug("connection framebuffer didUpdateRegion")
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16) {
+        connection.logger.logDebug("connection didUpdateFramebuffer")
     }
-#else
-    func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: CGRect) {
-        connection.logger.logDebug("connection framebuffer didUpdateRegion")
-    }
-#endif
     
     func connection(_ connection: VNCConnection,
                     didUpdateCursor cursor: VNCCursor) {

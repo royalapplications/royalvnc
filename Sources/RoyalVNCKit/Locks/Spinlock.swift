@@ -7,7 +7,7 @@ import Foundation
 
 import Glibc
 
-class Spinlock {
+final class Spinlock {
     private var spinlock = pthread_spinlock_t()
 
     init() {
@@ -24,6 +24,38 @@ class Spinlock {
 
     func unlock() {
         pthread_spin_unlock(&spinlock)
+    }
+}
+#endif
+
+#if canImport(WinSDK)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#endif
+
+import WinSDK
+
+final class Spinlock {
+    private var spinlock = CRITICAL_SECTION()
+
+    init() {
+        // ref. https://learn.microsoft.com/en-us/windows/win32/Sync/using-critical-section-objects
+        let spinCount: DWORD = 0x00000400
+        guard InitializeCriticalSectionAndSpinCount(&spinlock, spinCount) else {
+            fatalError("Could not initialize critical section (Spinlock)")
+        }
+    }
+
+    deinit {
+        DeleteCriticalSection(&spinlock)
+    }
+
+    func lock() {
+        EnterCriticalSection(&spinlock)
+    }
+
+    func unlock() {
+        LeaveCriticalSection(&spinlock)
     }
 }
 #endif

@@ -43,6 +43,19 @@ typedef enum {
     RVNC_AUTHENTICATIONTYPE_ULTRAVNCMSLOGONII = 2
 } RVNC_AUTHENTICATIONTYPE;
 
+typedef enum {
+    RVNC_MOUSEBUTTON_LEFT = 0,
+    RVNC_MOUSEBUTTON_MIDDLE = 1,
+    RVNC_MOUSEBUTTON_RIGHT = 2
+} RVNC_MOUSEBUTTON;
+
+typedef enum {
+    RVNC_MOUSEWHEEL_LEFT = 0,
+    RVNC_MOUSEWHEEL_RIGHT = 1,
+    RVNC_MOUSEWHEEL_UP = 2,
+    RVNC_MOUSEWHEEL_DOWN = 3
+} RVNC_MOUSEWHEEL;
+
 
 #pragma mark - Types
 
@@ -132,11 +145,12 @@ extern uint16_t rvnc_cursor_size_width_get(rvnc_cursor_t _Nonnull cursor);
 extern uint16_t rvnc_cursor_size_height_get(rvnc_cursor_t _Nonnull cursor);
 extern uint16_t rvnc_cursor_hotspot_x_get(rvnc_cursor_t _Nonnull cursor);
 extern uint16_t rvnc_cursor_hotspot_y_get(rvnc_cursor_t _Nonnull cursor);
-extern int rvnc_cursor_bits_per_component_get(rvnc_cursor_t _Nonnull cursor);
-extern int rvnc_cursor_bits_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
-extern int rvnc_cursor_bytes_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
-extern int rvnc_cursor_bytes_per_row_get(rvnc_cursor_t _Nonnull cursor);
+extern int64_t rvnc_cursor_bits_per_component_get(rvnc_cursor_t _Nonnull cursor);
+extern int64_t rvnc_cursor_bits_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
+extern int64_t rvnc_cursor_bytes_per_pixel_get(rvnc_cursor_t _Nonnull cursor);
+extern int64_t rvnc_cursor_bytes_per_row_get(rvnc_cursor_t _Nonnull cursor);
 extern void* _Nullable rvnc_cursor_pixel_data_get_copy(rvnc_cursor_t _Nonnull cursor);
+extern void rvnc_cursor_pixel_data_destroy(void* _Nonnull pixelData);
 extern uint64_t rvnc_cursor_pixel_data_size_get(rvnc_cursor_t _Nonnull cursor);
 
 
@@ -158,13 +172,13 @@ typedef void (*rvnc_connection_delegate_did_resize_framebuffer)(rvnc_connection_
                                                                 const rvnc_context_t _Nullable /* context */,
                                                                 _Nonnull rvnc_framebuffer_t /* framebuffer */);
 
-typedef void (*rvnc_connection_delegate_framebuffer_did_update_region)(rvnc_connection_t _Nonnull /* connection */,
-                                                                       const rvnc_context_t _Nullable /* context */,
-                                                                       _Nonnull rvnc_framebuffer_t /* framebuffer */,
-                                                                       uint16_t /* x */,
-                                                                       uint16_t /* y */,
-                                                                       uint16_t /* width */,
-                                                                       uint16_t /* height */);
+typedef void (*rvnc_connection_delegate_did_update_framebuffer)(rvnc_connection_t _Nonnull /* connection */,
+                                                                const rvnc_context_t _Nullable /* context */,
+                                                                _Nonnull rvnc_framebuffer_t /* framebuffer */,
+                                                                uint16_t /* x */,
+                                                                uint16_t /* y */,
+                                                                uint16_t /* width */,
+                                                                uint16_t /* height */);
 
 typedef void (*rvnc_connection_delegate_did_update_cursor)(rvnc_connection_t _Nonnull /* connection */,
                                                            const rvnc_context_t _Nullable /* context */,
@@ -174,7 +188,7 @@ extern rvnc_connection_delegate_t _Nonnull rvnc_connection_delegate_create(rvnc_
                                                                            rvnc_connection_delegate_authenticate _Nonnull authenticate,
                                                                            rvnc_connection_delegate_did_create_framebuffer _Nonnull didCreateFramebuffer,
                                                                            rvnc_connection_delegate_did_resize_framebuffer _Nonnull didResizeFramebuffer,
-                                                                           rvnc_connection_delegate_framebuffer_did_update_region _Nonnull framebufferDidUpdateRegion,
+                                                                           rvnc_connection_delegate_did_update_framebuffer _Nonnull didUpdateFramebuffer,
                                                                            rvnc_connection_delegate_did_update_cursor _Nonnull didUpdateCursor);
 
 extern void rvnc_connection_delegate_destroy(rvnc_connection_delegate_t _Nonnull connectionDelegate);
@@ -198,15 +212,10 @@ extern rvnc_context_t _Nullable rvnc_connection_context_get(rvnc_connection_t _N
 extern rvnc_connection_state_t _Nonnull rvnc_connection_state_get_copy(rvnc_connection_t _Nonnull connection);
 extern rvnc_settings_t _Nonnull rvnc_connection_settings_get_copy(rvnc_connection_t _Nonnull connection);
 
-extern void rvnc_connection_mouse_move(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_down(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_right_mouse_down(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_middle_mouse_down(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_up(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_wheel_up(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_wheel_down(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_wheel_left(rvnc_connection_t _Nonnull connection, double x, double y);
-extern void rvnc_connection_mouse_wheel_right(rvnc_connection_t _Nonnull connection, double x, double y);
+extern void rvnc_connection_mouse_move(rvnc_connection_t _Nonnull connection, uint16_t x, uint16_t y);
+extern void rvnc_connection_mouse_down(rvnc_connection_t _Nonnull connection, RVNC_MOUSEBUTTON button, uint16_t x, uint16_t y);
+extern void rvnc_connection_mouse_up(rvnc_connection_t _Nonnull connection, RVNC_MOUSEBUTTON button, uint16_t x, uint16_t y);
+extern void rvnc_connection_mouse_wheel(rvnc_connection_t _Nonnull connection, RVNC_MOUSEWHEEL wheel, uint16_t x, uint16_t y, uint32_t steps);
 
 // NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `X11KeySymbols` struct.
 extern void rvnc_connection_key_down(rvnc_connection_t _Nonnull connection, uint32_t key);

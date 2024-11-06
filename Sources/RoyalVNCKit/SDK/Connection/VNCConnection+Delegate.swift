@@ -23,15 +23,10 @@ extension VNCConnection {
 	
 	func notifyDelegateAboutFramebuffer(_ framebuffer: VNCFramebuffer,
 										updatedRegion: VNCRegion) {
-#if !os(Linux) && !os(Windows)
-		delegate?.connection(self,
-							 framebuffer: framebuffer,
-							 didUpdateRegion: updatedRegion.cgRect)
-#else
-		delegate?.connection(self,
-							 framebuffer: framebuffer,
-							 didUpdateRegion: updatedRegion)
-#endif
+        delegate?.connection(self,
+                             didUpdateFramebuffer: framebuffer,
+                             x: updatedRegion.x, y: updatedRegion.y,
+                             width: updatedRegion.width, height: updatedRegion.height)
 	}
 	
 	func notifyDelegateAboutUpdatedCursor(_ cursor: VNCCursor) {

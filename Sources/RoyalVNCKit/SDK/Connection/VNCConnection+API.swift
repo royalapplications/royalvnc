@@ -44,148 +44,78 @@ public extension VNCConnection {
 
 // MARK: - Mouse Input
 public extension VNCConnection {
-#if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func mouseMove(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ ],
-						  nonNormalizedPosition: mousePosition)
-	}
-#endif
-    
-    func mouseMove(x: Double, y: Double) {
-        enqueueMouseEvent(buttons: [ ],
-                          nonNormalizedX: x,
+    func mouseMove(x: UInt16, y: UInt16) {
+        enqueueMouseEvent(nonNormalizedX: x,
                           nonNormalizedY: y)
     }
 
-#if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func mouseDown(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ .button1 ],
-						  nonNormalizedPosition: mousePosition)
-	}
-#endif
+    func mouseButtonDown(_ button: VNCMouseButton,
+                         x: UInt16, y: UInt16) {
+        updateMouseButtonState(button: button,
+                               isDown: true)
+        
+        enqueueMouseEvent(nonNormalizedX: x,
+                          nonNormalizedY: y)
+    }
     
-	func mouseDown(x: Double, y: Double) {
-		enqueueMouseEvent(buttons: [ .button1 ],
-						  nonNormalizedX: x,
-						  nonNormalizedY: y)
-	}
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    func mouseButtonUp(_ button: VNCMouseButton,
+                       x: UInt16, y: UInt16) {
+        updateMouseButtonState(button: button,
+                               isDown: false)
+        
+        enqueueMouseEvent(nonNormalizedX: x,
+                          nonNormalizedY: y)
+    }
+    
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    func mouseWheel(_ wheel: VNCMouseWheel,
+                    x: UInt16, y: UInt16,
+                    steps: UInt32) {
+        for _ in 0..<steps {
+            updateMouseButtonState(wheel: wheel,
+                                   isDown: true)
+            
+            enqueueMouseEvent(nonNormalizedX: x,
+                              nonNormalizedY: y)
+            
+            updateMouseButtonState(wheel: wheel,
+                                   isDown: false)
+        }
+    }
+}
 
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func rightMouseDown(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ .button3 ],
-						  nonNormalizedPosition: mousePosition)
-	}
-#endif
-	func rightMouseDown(x: Double, y: Double) {
-		enqueueMouseEvent(buttons: [ .button3 ],
-						  nonNormalizedX: x,
-						  nonNormalizedY: y)
-	}
-
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func middleMouseDown(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ .button2 ],
-						  nonNormalizedPosition: mousePosition)
-	}
-#endif
+extension VNCConnection {
+    func updateMouseButtonState(button: VNCMouseButton,
+                                isDown: Bool) {
+        updateMouseButtonState(mousePointerButton: button.mousePointerButton,
+                               isDown: isDown)
+    }
     
-	func middleMouseDown(x: Double, y: Double) {
-		enqueueMouseEvent(buttons: [ .button2 ],
-						  nonNormalizedX: x,
-						  nonNormalizedY: y)
-	}
-
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseUp(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ ],
-						  nonNormalizedPosition: mousePosition)
-	}
-#endif
+    func updateMouseButtonState(wheel: VNCMouseWheel,
+                                isDown: Bool) {
+        updateMouseButtonState(mousePointerButton: wheel.mousePointerButton,
+                               isDown: isDown)
+    }
     
-	func mouseUp(x: Double, y: Double) {
-		enqueueMouseEvent(buttons: [ ],
-						  nonNormalizedX: x,
-						  nonNormalizedY: y)
-	}
-
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelUp(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button4 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-#endif
-    
-	func mouseWheelUp(x: Double, y: Double) {
-		enqueueMousePressEvent(buttons: [ .button4 ],
-							   nonNormalizedX: x,
-							   nonNormalizedY: y)
-	}
-	
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelDown(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button5 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-#endif
-    
-	func mouseWheelDown(x: Double, y: Double) {
-		enqueueMousePressEvent(buttons: [ .button5 ],
-							   nonNormalizedX: x,
-							   nonNormalizedY: y)
-	}
-
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelLeft(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button6 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-#endif
-    
-	func mouseWheelLeft(x: Double, y: Double) {
-		enqueueMousePressEvent(buttons: [ .button6 ],
-							   nonNormalizedX: x,
-							   nonNormalizedY: y)
-	}
-
-#if canImport(CoreGraphics)
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelRight(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button7 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-#endif
-    
-	func mouseWheelRight(x: Double, y: Double) {
-		enqueueMousePressEvent(buttons: [ .button7 ],
-							   nonNormalizedX: x,
-							   nonNormalizedY: y)
-	}
+    func updateMouseButtonState(mousePointerButton: VNCProtocol.MousePointerButton,
+                                isDown: Bool) {
+        if isDown {
+            mouseButtonState.insert(mousePointerButton)
+        } else {
+            mouseButtonState.remove(mousePointerButton)
+        }
+    }
 }
 
 // MARK: - Keyboard Input

@@ -52,8 +52,9 @@ extension MyConnectionController: VNCConnectionDelegate {
     }
     
     func connection(_ connection: VNCConnection,
-                    framebuffer: VNCFramebuffer,
-                    didUpdateRegion updatedRegion: CGRect) {
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16) {
         // TODO: Update the image in your framebuffer view
     }
     
@@ -91,7 +92,7 @@ func connection(_ connection: VNCConnection,
 }
 ```
 - For a headless client, this is all that's needed to establish the connection and get notified about updates to it.
-- To send input to the remote host, use one of the `VNCConnection`'s input APIs like `keyDown(_:)`, `keyUp(_:)`, `mouseDown(_:)`, `mouseUp(_:)`, etc.
+- To send input to the remote host, use one of the `VNCConnection`'s input APIs like `keyDown(_:)`, `keyUp(_:)`, `mouseButtonDown(_:x:y:)`, `mouseButtonUp(_:x:y:)`, etc.
 ```swift
 // Convert the string "abc" into VNCKeyCode's
 let keyCodes = VNCKeyCode.keyCodesFrom(characters: "abc")
@@ -107,8 +108,8 @@ connection.keyDown(.return)
 connection.keyUp(.return)
 
 // Press Left Mouse Button at x: 10, y: 15
-connection.mouseDown(.init(x: 10, y: 15))
-connection.mouseUp(.init(x: 10, y: 15))
+connection.mouseButtonDown(.left, x: 10, y: 15)
+connection.mouseButtonUp(.left, x: 10, y: 15)
 ```
 - If you want to close the connection, call `VNCConnection.disconnect()`. Note that this is a non-blocking/asynchronous method and likely will only complete some time after you call it. Don't assume the connection has been fully teared down immediately after the call to `disconnect()`. Instead, wait for `connection(_:stateDidChange:)` to be called with a status of `VNCConnection.Status.disconnected`. Once that has happened, you're not(!) supposed to (re-)use the connection anymore and discard your strong reference to it.
 ```swift
@@ -132,19 +133,20 @@ func connection(_ connection: VNCConnection,
 
 ## Handling framebuffer updates
 - Now that you have a functioning headless VNC connection you will likely also want to allow the user to see and interact with the remote desktop.
-- To do so, you will have to implement additional `VNCConnectionDelegate` methods, namely `connection(_:didCreateFramebuffer:)`, `connection(_:didResizeFramebuffer:)`, `connection(_:framebuffer:didUpdateRegion:)` and `connection(_:didUpdateCursor:)`.
+- To do so, you will have to implement additional `VNCConnectionDelegate` methods, namely `connection(_:didCreateFramebuffer:)`, `connection(_:didResizeFramebuffer:)`, `connection(_:didUpdateFramebuffer:x:y:width:height:)` and `connection(_:didUpdateCursor:)`.
 - `connection(_:didCreateFramebuffer:)` and `connection(_:didResizeFramebuffer:)` are called when a framebuffer has been created or resized respectively. In both cases, you will need to (re-)create a view for the framebuffer and present it.
-- `connection(_:framebuffer:didUpdateRegion:)` is called whenever a specific region of the framebuffer has been updated. This allows you to optimize updates to your framebuffer view so that you can only render a subset of the full framebuffer's bounds.
+- `connection(_:didUpdateFramebuffer:x:y:width:height:)` is called whenever a specific region of the framebuffer has been updated. This allows you to optimize updates to your framebuffer view so that you can only render a subset of the full framebuffer's bounds.
 - Last but not least, `connection(_:didUpdateCursor:)` is called whenever the remote desktop requests that you show a local mouse cursor. Note that not all VNC servers support local cursors so in some cases this delegate method may never get called.
 - To retrieve an image of the remote desktop's framebuffer, you use `VNCFramebuffer.ciImage` or `VNCFramebuffer.cgImage`, depending on the context you'll render the image in.
 - Then it's up to you to display that image to the user. You can, for instance directly assign the `CGImage` to the `contents` property of an `CALayer` or use Metal to render the `CIImage`.
 ```swift
 func connection(_ connection: VNCConnection,
-                framebuffer: VNCFramebuffer,
-                didUpdateRegion updatedRegion: CGRect) {
-    // TODO: Only update updatedRegion part of the image
+                didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                x: UInt16, y: UInt16,
+                width: UInt16, height: UInt16) {
+    // TODO: Only invalidate the part of the image that was updated, indicated by the x, y, width and height parameters 
     self.view.layer?.contents = framebuffer.cgImage
 }
 ```
 - RoyalVNCKit also provides some ready-to-use views that handle this for you (and more, including input handling). For instance, `VNCCAFramebufferView` is an `NSView` subclass for macOS.
-    - Just initialize the view with a frame, framebuffer and connection, add it to your view hierarchy and then forward some of the connection's delegate methods to it, namely `connection(_:framebuffer:didUpdateRegion:)` and `connection(_:didUpdateCursor:)`.
+    - Just initialize the view with a frame, framebuffer and connection, add it to your view hierarchy and then forward some of the connection's delegate methods to it, namely `connection(_:didUpdateFramebuffer:x:y:width:height:)` and `connection(_:didUpdateCursor:)`.

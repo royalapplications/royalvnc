@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public class VNCPrintLogger: VNCLogger {
+public final class VNCPrintLogger: VNCLogger {
 	public var isDebugLoggingEnabled = false
     
     public init() { }

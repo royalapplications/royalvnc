@@ -10,7 +10,7 @@ import AppKit
 import UIKit
 #endif
 
-class VNCClipboard {
+final class VNCClipboard {
 #if os(macOS)
 	let pasteboard: NSPasteboard
 #elseif os(iOS)

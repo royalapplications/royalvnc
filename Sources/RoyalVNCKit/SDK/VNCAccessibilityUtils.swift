@@ -4,7 +4,7 @@ import AppKit
 import ApplicationServices
 
 @objc(VNCAccessibilityUtils)
-public class VNCAccessibilityUtils: NSObject {
+public final class VNCAccessibilityUtils: NSObject {
 	private static let accessibilityPreferencePaneURL = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!
 	
     @objc

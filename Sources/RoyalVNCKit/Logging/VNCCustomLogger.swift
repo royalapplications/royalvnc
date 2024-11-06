@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-public class VNCCustomLogger: VNCLogger {
+public final class VNCCustomLogger: VNCLogger {
     public typealias LogHandler = (_ message: String) -> Void
     
     public let logDebugHandler: LogHandler

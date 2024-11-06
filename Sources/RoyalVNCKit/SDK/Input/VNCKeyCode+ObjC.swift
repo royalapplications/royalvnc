@@ -5,7 +5,7 @@ import Foundation
 
 @objc(VNCKeyCode)
 // swiftlint:disable:next type_name
-public class _ObjC_VNCKeyCode: NSObject {
+public final class _ObjC_VNCKeyCode: NSObject {
 	// Must be kept in Sync with VNCKeyCode!
 	
     @objc

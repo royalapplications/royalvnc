@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if !os(Linux)
+#if !os(Linux) && !os(Windows)
 import CoreFoundation
 #endif
 
@@ -17,7 +17,7 @@ extension Endianness {
     static var current: Endianness = {
         let endianess: Endianness
         
-#if !os(Linux)
+#if !os(Linux) && !os(Windows)
         endianess = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
             ? .little
             : .big

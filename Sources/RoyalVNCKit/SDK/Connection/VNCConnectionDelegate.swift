@@ -33,18 +33,13 @@ public protocol VNCConnectionDelegate: AnyObject {
 	func connection(_ connection: VNCConnection,
 					didResizeFramebuffer framebuffer: VNCFramebuffer)
 
-#if !os(Linux) && !os(Windows)
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func connection(_ connection: VNCConnection,
-					framebuffer: VNCFramebuffer,
-					didUpdateRegion updatedRegion: CGRect)
-#else
-	func connection(_ connection: VNCConnection,
-					framebuffer: VNCFramebuffer,
-					didUpdateRegion updatedRegion: VNCRegion)
-#endif
+    func connection(_ connection: VNCConnection,
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16)
 
 #if canImport(ObjectiveC)
     @objc

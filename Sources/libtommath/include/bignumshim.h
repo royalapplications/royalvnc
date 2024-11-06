@@ -1,8 +1,8 @@
 #ifndef bignumshim_h
 #define bignumshim_h
 
-#import <stdlib.h>
-#import "tommath.h"
+#include <stdlib.h>
+#include "tommath.h"
 
 typedef mp_int BIGNUM;
 

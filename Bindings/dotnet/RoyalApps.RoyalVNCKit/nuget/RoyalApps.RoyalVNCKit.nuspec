@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+    <metadata minClientVersion="4.0">
+        <id>RoyalApps.RoyalVNCKit</id>
+        <version>$NUGET_VERSION$</version>
+        <authors>RoyalApps</authors>
+        <license type="expression">MIT</license>
+        <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+        <icon>RoyalApps_1024.png</icon>
+        <readme>README.md</readme>
+        <projectUrl>https://github.com/royalapplications/royalvnc</projectUrl>
+        <description>.NET wrapper for RoyalVNC with high-level API</description>
+        <tags>RoyalApps RoyalVNCKit VNC .NET</tags>
+        <repository type="git" url="https://github.com/royalapplications/royalvnc.git" commit="$NUGET_GIT_COMMIT$" />
+        <dependencies>
+            <group targetFramework="net8.0">
+                <dependency id="RoyalApps.RoyalVNCKit.native.linux-arm64" version="$NUGET_VERSION$" />
+                <dependency id="RoyalApps.RoyalVNCKit.native.linux-x64" version="$NUGET_VERSION$" />
+                <dependency id="RoyalApps.RoyalVNCKit.native.osx" version="$NUGET_VERSION$" />
+                <dependency id="RoyalApps.RoyalVNCKit.native.win-arm64" version="$NUGET_VERSION$" />
+                <dependency id="RoyalApps.RoyalVNCKit.native.win-x64" version="$NUGET_VERSION$" />
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="README.md" target="/README.md" />
+        <file src="..\RoyalApps_1024.png" target="/RoyalApps_1024.png" />
+        <file src="bin\Release\RoyalApps.RoyalVNCKit.dll" target="/lib/net8.0/RoyalApps.RoyalVNCKit.dll" />
+    </files>
+</package>

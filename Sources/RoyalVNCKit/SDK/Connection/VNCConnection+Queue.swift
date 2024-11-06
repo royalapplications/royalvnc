@@ -25,42 +25,20 @@ extension VNCConnection {
 		enqueueClientToServerMessage(keyEvent)
 	}
     
-#if canImport(CoreGraphics)
-    func enqueueMousePressEvent(buttons: VNCProtocol.MouseButton,
-                                nonNormalizedPosition: CGPoint) {
-        enqueueMousePressEvent(buttons: buttons,
-                               nonNormalizedX: nonNormalizedPosition.x,
-                               nonNormalizedY: nonNormalizedPosition.y)
-    }
-#endif
-    
-    func enqueueMousePressEvent(buttons: VNCProtocol.MouseButton,
-                                nonNormalizedX: Double,
-                                nonNormalizedY: Double) {
+    func enqueueMouseEvent(nonNormalizedX: UInt16,
+                           nonNormalizedY: UInt16) {
         guard settings.inputMode != .none else { return }
         
         let normalizedPosition = normalizedMousePosition(x: nonNormalizedX,
                                                          y: nonNormalizedY)
         
-        enqueueMouseEvent(buttons: buttons,
-                          position: normalizedPosition)
-        
-        enqueueMouseEvent(buttons: [ ],
+        enqueueMouseEvent(buttons: mouseButtonState,
                           position: normalizedPosition)
     }
-	
-#if canImport(CoreGraphics)
-	func enqueueMouseEvent(buttons: VNCProtocol.MouseButton,
-						   nonNormalizedPosition: CGPoint) {
-        enqueueMouseEvent(buttons: buttons,
-                          nonNormalizedX: nonNormalizedPosition.x,
-                          nonNormalizedY: nonNormalizedPosition.y)
-	}
-#endif
     
-    func enqueueMouseEvent(buttons: VNCProtocol.MouseButton,
-                           nonNormalizedX: Double,
-                           nonNormalizedY: Double) {
+    func enqueueMouseEvent(buttons: VNCProtocol.MousePointerButton,
+                           nonNormalizedX: UInt16,
+                           nonNormalizedY: UInt16) {
         guard settings.inputMode != .none else { return }
         
         let normalizedPosition = normalizedMousePosition(x: nonNormalizedX,
@@ -70,7 +48,7 @@ extension VNCConnection {
                           position: normalizedPosition)
     }
 	
-	func enqueueMouseEvent(buttons: VNCProtocol.MouseButton,
+	func enqueueMouseEvent(buttons: VNCProtocol.MousePointerButton,
 						   position: VNCProtocol.MousePosition) {
 		guard settings.inputMode != .none else { return }
 		
@@ -90,35 +68,24 @@ extension VNCConnection {
 		clientToServerMessageQueue.enqueue(message)
 	}
     
-#if canImport(CoreGraphics)
-	func normalizedMousePosition(cgPoint: CGPoint) -> VNCProtocol.MousePosition {
-        normalizedMousePosition(x: cgPoint.x,
-                                y: cgPoint.y)
-	}
-#endif
-    
-    func normalizedMousePosition(x: Double,
-                                 y: Double) -> VNCProtocol.MousePosition {
-        var normalizedX = Int(x)
-        var normalizedY = Int(y)
+    func normalizedMousePosition(x: UInt16,
+                                 y: UInt16) -> VNCProtocol.MousePosition {
+        var normalizedX = x
+        var normalizedY = y
         
-        let framebufferWidth = Int(framebuffer?.size.width ?? 0)
-        let framebufferHeight = Int(framebuffer?.size.height ?? 0)
+        let framebufferWidth = framebuffer?.size.width ?? 0
+        let framebufferHeight = framebuffer?.size.height ?? 0
         
-        if normalizedY < 0 {
-            normalizedY = 0
-        } else if normalizedY > framebufferHeight {
+        if normalizedY > framebufferHeight {
             normalizedY = framebufferHeight
         }
         
-        if normalizedX < 0 {
-            normalizedX = 0
-        } else if normalizedX > framebufferWidth {
+        if normalizedX > framebufferWidth {
             normalizedX = framebufferWidth
         }
         
-        let normalizedPosition = VNCProtocol.MousePosition(x: .init(normalizedX),
-                                                           y: .init(normalizedY))
+        let normalizedPosition = VNCProtocol.MousePosition(x: normalizedX,
+                                                           y: normalizedY)
         
         return normalizedPosition
     }

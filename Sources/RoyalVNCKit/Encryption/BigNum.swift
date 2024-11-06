@@ -1,5 +1,3 @@
-// swiftlint:disable identifier_name
-
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
@@ -8,7 +6,7 @@ import Foundation
 
 @_implementationOnly import libtommath
 
-class BigNum {
+final class BigNum {
 	private let num: UnsafeMutablePointer<BIGNUM>
 	private let backingDataPointer: UnsafeMutablePointer<UInt8>?
 	
@@ -103,5 +101,3 @@ extension BigNum {
 		return data
 	}
 }
-
-// swiftlint:enable identifier_name

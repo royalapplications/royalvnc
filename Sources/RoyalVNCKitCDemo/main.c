@@ -1,5 +1,18 @@
 #include <stdio.h>
+#include <string.h>
+#include <inttypes.h>
+
+#ifndef _WIN32
 #include <unistd.h>
+#else // _WIN32
+#include <windows.h>
+
+// resolve:
+// Sources\RoyalVNCKitCDemo\main.c:301:9: error: call to undeclared function 'usleep'; ISO C99 and later do not support implicit function declarations
+// Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
+// note: convert from microseconds to milliseconds and call the builtin `_sleep` function
+#define usleep(us) _sleep((us)/1000)
+#endif // _WIN32
 
 #include <RoyalVNCKitC.h>
 
@@ -12,11 +25,91 @@ typedef struct Context {
 
 #pragma mark - Helpers
 
-char* getLine(void) {
-    char* str = malloc(sizeof(char) * 1024);
-    scanf(" %[^\n]s", str);
+char* readLine(void) {
+    int maxLength = sizeof(char) * 4096;
+    char* str = malloc(maxLength);
+    
+    if (fgets(str, maxLength, stdin)) {
+        size_t len = strlen(str);
+        
+        if (len > 0 &&
+            str[len - 1] == '\n') {
+            str[--len] = '\0';
+        }
+    }
     
     return str;
+}
+
+char* readPassword(const char* prompt) {
+#ifndef _WIN32
+    char* password = getpass(prompt);
+    
+    if (!password) {
+        return NULL;
+    }
+    
+    size_t len = strlen(password);
+    char* result = malloc(len + 1);
+    
+    if (!result) {
+        return NULL;
+    }
+    
+    strcpy(result, password);
+
+    return result;
+#else
+    int len = 4096;
+    char* buf = malloc(sizeof(char) * len);
+
+    /* Resources that will be cleaned up */
+    int pwlen = 0;
+    DWORD orig = 0;
+    WCHAR *wbuf = 0;
+    SIZE_T wbuf_len = 0;
+    HANDLE hi, ho = INVALID_HANDLE_VALUE;
+
+    /* Set up input console handle */
+    DWORD access = GENERIC_READ | GENERIC_WRITE;
+    hi = CreateFileA("CONIN$", access, 0, 0, OPEN_EXISTING, 0, 0);
+    if (!GetConsoleMode(hi, &orig)) goto done;
+    DWORD mode = orig;
+    mode |= ENABLE_PROCESSED_INPUT;
+    mode |= ENABLE_LINE_INPUT;
+    mode &= ~ENABLE_ECHO_INPUT;
+    if (!SetConsoleMode(hi, mode)) goto done;
+
+    /* Set up output console handle */
+    ho = CreateFileA("CONOUT$", GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, 0);
+    if (!WriteConsoleA(ho, prompt, strlen(prompt), 0, 0)) goto done;
+
+    /* Allocate a wide character buffer the size of the output */
+    wbuf_len = (len - 1 + 2) * sizeof(WCHAR);
+    wbuf = HeapAlloc(GetProcessHeap(), 0, wbuf_len);
+    if (!wbuf) goto done;
+
+    /* Read and convert to UTF-8 */
+    DWORD nread;
+    if (!ReadConsoleW(hi, wbuf, len - 1 + 2, &nread, 0)) goto done;
+    if (nread < 2) goto done;
+    if (wbuf[nread-2] != '\r' || wbuf[nread-1] != '\n') goto done;
+    wbuf[nread-2] = 0;  // truncate "\r\n"
+    pwlen = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, 0, 0);
+
+done:
+    if (wbuf) {
+        SecureZeroMemory(wbuf, wbuf_len);
+        HeapFree(GetProcessHeap(), 0, wbuf);
+    }
+    /* Exploit that operations on INVALID_HANDLE_VALUE are no-ops */
+    WriteConsoleA(ho, "\n", 1, 0, 0);
+    SetConsoleMode(hi, orig);
+    CloseHandle(ho);
+    CloseHandle(hi);
+
+    return buf;
+#endif
 }
 
 char* connectionStatusToString(RVNC_CONNECTION_STATUS connectionStatus) {
@@ -119,12 +212,10 @@ void delegate_authenticate(rvnc_connection_t connection,
     bool requiresPassword = rvnc_authentication_type_requires_password(authenticationType);
     
     if (requiresUsername) {
-        printf("Username: ");
-        char* username = getLine();
-        
-        printf("Password: ");
-        char* password = getLine();
-        
+        printf("Enter username: ");
+        char* username = readLine();
+        char* password = readPassword("Enter password: ");
+
         if (username &&
             password) {
             rvnc_authentication_request_complete_with_username_password(authenticationRequest,
@@ -142,8 +233,7 @@ void delegate_authenticate(rvnc_connection_t connection,
             free(password);
         }
     } else if (requiresPassword) {
-        printf("Password: ");
-        char* password = getLine();
+        char* password = readPassword("Enter password: ");
         
         if (password) {
             rvnc_authentication_request_complete_with_password(authenticationRequest,
@@ -161,7 +251,7 @@ void delegate_authenticate(rvnc_connection_t connection,
 void delegate_didCreateFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
-    printf("delegate_didCreateFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %llu; Pixel Data Pointer: %p\n",
+    printf("delegate_didCreateFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %" PRIu64 "; Pixel Data Pointer: %p\n",
            rvnc_framebuffer_size_width_get(framebuffer),
            rvnc_framebuffer_size_height_get(framebuffer),
            rvnc_framebuffer_pixel_data_size_get(framebuffer),
@@ -171,21 +261,21 @@ void delegate_didCreateFramebuffer(rvnc_connection_t connection,
 void delegate_didResizeFramebuffer(rvnc_connection_t connection,
                                    const rvnc_context_t context,
                                    rvnc_framebuffer_t framebuffer) {
-    printf("delegate_didResizeFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %llu; Pixel Data Pointer: %p\n",
+    printf("delegate_didResizeFramebuffer - Framebuffer Size: %ix%i; Pixel Data Size %" PRIu64 "; Pixel Data Pointer: %p\n",
            rvnc_framebuffer_size_width_get(framebuffer),
            rvnc_framebuffer_size_height_get(framebuffer),
            rvnc_framebuffer_pixel_data_size_get(framebuffer),
            rvnc_framebuffer_pixel_data_get(framebuffer));
 }
 
-void delegate_framebufferDidUpdateRegion(rvnc_connection_t connection,
-                                         const rvnc_context_t context,
-                                         rvnc_framebuffer_t framebuffer,
-                                         uint16_t x,
-                                         uint16_t y,
-                                         uint16_t width,
-                                         uint16_t height) {
-    printf("delegate_framebufferDidUpdateRegion - x: %i; y: %i; width: %i; height: %i\n",
+void delegate_didUpdateFramebuffer(rvnc_connection_t connection,
+                                   const rvnc_context_t context,
+                                   rvnc_framebuffer_t framebuffer,
+                                   uint16_t x,
+                                   uint16_t y,
+                                   uint16_t width,
+                                   uint16_t height) {
+    printf("delegate_didUpdateFramebuffer - x: %i; y: %i; width: %i; height: %i\n",
            x,
            y,
            width,
@@ -200,14 +290,14 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
     uint16_t height = rvnc_cursor_size_height_get(cursor);
     uint16_t hotspotX = rvnc_cursor_hotspot_x_get(cursor);
     uint16_t hotspotY = rvnc_cursor_hotspot_y_get(cursor);
-    int bitsPerComponent = rvnc_cursor_bits_per_component_get(cursor);
-    int bitsPerPixel = rvnc_cursor_bits_per_pixel_get(cursor);
-    int bytesPerPixel = rvnc_cursor_bytes_per_pixel_get(cursor);
-    int bytesPerRow = rvnc_cursor_bytes_per_row_get(cursor);
+    int64_t bitsPerComponent = rvnc_cursor_bits_per_component_get(cursor);
+    int64_t bitsPerPixel = rvnc_cursor_bits_per_pixel_get(cursor);
+    int64_t bytesPerPixel = rvnc_cursor_bytes_per_pixel_get(cursor);
+    int64_t bytesPerRow = rvnc_cursor_bytes_per_row_get(cursor);
     void* pixelData = rvnc_cursor_pixel_data_get_copy(cursor);
     uint64_t pixelDataSize = rvnc_cursor_pixel_data_size_get(cursor);
     
-    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %i; bitsPerPixel: %i; bytesPerPixel: %i; bytesPerRow: %i; pixelData: %p; pixelDataSize: %llu\n",
+    printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %" PRId64 "; bitsPerPixel: %" PRId64 "; bytesPerPixel: %" PRId64 "; bytesPerRow: %" PRId64 "; pixelData: %p; pixelDataSize: %" PRIu64 "\n",
            isEmpty ? "Yes" : "No",
            width,
            height,
@@ -221,7 +311,7 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
            pixelDataSize);
     
     if (pixelData) {
-        free(pixelData);
+        rvnc_cursor_pixel_data_destroy(pixelData);
     }
 }
 
@@ -229,8 +319,24 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
 #pragma mark - Main
 
 int main(int argc, char *argv[]) {
+    // Get hostname either from args or stdin
+    const char* hostname;
+    
+    if (argc >= 2) {
+        hostname = argv[1];
+    } else {
+        printf("Enter hostname: ");
+        
+        hostname = readLine();
+    }
+    
+    if (strlen(hostname) <= 0) {
+        printf("No hostname given\n");
+        
+        exit(1);
+    }
+    
     // Declare settings
-    const char* hostname = "localhost";
     const uint16_t port = 5900;
     const bool isShared = true;
     const bool isScalingEnabled = false;
@@ -268,7 +374,7 @@ int main(int argc, char *argv[]) {
                                                                                     delegate_authenticate,
                                                                                     delegate_didCreateFramebuffer,
                                                                                     delegate_didResizeFramebuffer,
-                                                                                    delegate_framebufferDidUpdateRegion,
+                                                                                    delegate_didUpdateFramebuffer,
                                                                                     delegate_didUpdateCursor);
     
     // Set connection delegate in connection
