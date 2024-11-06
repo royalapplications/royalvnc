@@ -14,7 +14,7 @@
     <repository type="git" url="https://github.com/royalapplications/royalvnc.git" commit="$NUGET_GIT_COMMIT$" />
     <dependencies>
       <group>
-        <dependency id="RoyalApps.native.SwiftRuntime.$NUGET_RID$" version="$NUGET_SWIFT_RT_VERSION$" />
+        <dependency id="RoyalApps.RoyalVNCKit.native.SwiftRuntime.$NUGET_RID$" version="$NUGET_SWIFT_RT_VERSION$" />
       </group>
     </dependencies>
   </metadata>

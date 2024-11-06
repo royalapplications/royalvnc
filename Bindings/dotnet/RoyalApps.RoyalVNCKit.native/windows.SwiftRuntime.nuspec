@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
   <metadata minClientVersion="4.0">
-    <id>RoyalApps.native.SwiftRuntime.$NUGET_RID$</id>
+    <id>RoyalApps.RoyalVNCKit.native.SwiftRuntime.$NUGET_RID$</id>
     <version>$NUGET_SWIFT_RT_VERSION$</version>
     <authors>RoyalApps</authors>
     <license type="expression">MIT</license>
@@ -19,6 +19,7 @@
     <file src="$SWIFT_RT_DIR$\BlocksRuntime.dll" target="runtimes/$NUGET_RID$/native/BlocksRuntime.dll" />
     <file src="$SWIFT_RT_DIR$\dispatch.dll" target="runtimes/$NUGET_RID$/native/dispatch.dll" />
     <file src="$SWIFT_RT_DIR$\FoundationEssentials.dll" target="runtimes/$NUGET_RID$/native/FoundationEssentials.dll" />
+    <file src="$SWIFT_RT_DIR$\swift_Concurrency.dll" target="runtimes/$NUGET_RID$/native/swift_Concurrency.dll" />
     <file src="$SWIFT_RT_DIR$\swift_RegexParser.dll" target="runtimes/$NUGET_RID$/native/swift_RegexParser.dll" />
     <file src="$SWIFT_RT_DIR$\swift_StringProcessing.dll" target="runtimes/$NUGET_RID$/native/swift_StringProcessing.dll" />
     <file src="$SWIFT_RT_DIR$\swiftCore.dll" target="runtimes/$NUGET_RID$/native/swiftCore.dll" />
