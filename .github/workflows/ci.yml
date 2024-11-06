@@ -1,6 +1,12 @@
-name: Experiment-Windows
+name: CI
+
 on:
-  workflow_dispatch: # manually-triggered runs
+  push: # trigger on commits to the `main` branch (no PRs)
+    branches:
+      - main
+    paths-ignore:
+      - '.github/workflows/x-*.yml'
+  workflow_dispatch: # and manually-triggered runs
 
 permissions:
   # only allowed to read source code (ref. https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs)
@@ -13,7 +19,7 @@ concurrency:
 
 jobs:
   build:
-    name: "X-Win - ${{ matrix.name }}"
+    name: "CI - ${{ matrix.name }}"
 
     strategy:
       matrix:
@@ -30,7 +36,7 @@ jobs:
               OS: "linux"
               NUGET_RID: "linux-x64"
 
-          - name: "MacOS ARM64"
+          - name: "macOS ARM64"
             os: macos-14
             env:
               OS: "apple"
@@ -114,10 +120,12 @@ jobs:
       if: "success() && matrix.env.OS == 'apple'"
       run: |
         swift package clean --configuration release
+
         swift build --configuration release --arch arm64
         swift build --configuration release --arch x86_64
 
         mkdir -p .build/universal-apple-macosx/release
+
         lipo -create \
           .build/arm64-apple-macosx/release/libRoyalVNCKit.dylib \
           .build/x86_64-apple-macosx/release/libRoyalVNCKit.dylib \
@@ -133,7 +141,7 @@ jobs:
 
     - name: build .NET bindings
       run: |
-        dotnet build --configuration Release  Bindings/dotnet/RoyalApps.RoyalVNCKit.sln
+        dotnet build --configuration Release Bindings/dotnet/RoyalApps.RoyalVNCKit.sln
 
     - name: create native NuGet package
       if: "success() && matrix.env.NUGET_RID != ''"
