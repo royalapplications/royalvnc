@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 #if os(macOS)
 import AppKit
@@ -6,43 +10,51 @@ import AppKit
 import UIKit
 #endif
 
-class VNCClipboard {
-	#if os(macOS)
+final class VNCClipboard {
+#if os(macOS)
 	let pasteboard: NSPasteboard
-	#elseif os(iOS)
+#elseif os(iOS)
 	let pasteboard: UIPasteboard
-	#endif
+#endif
 	
 	init() {
+#if os(macOS) || os(iOS)
 		self.pasteboard = .general
+#endif
 	}
 }
 
 extension VNCClipboard {
 	var text: String? {
 		get {
-			#if os(macOS)
+#if os(macOS)
 			let text = pasteboard.string(forType: .string)
-			#elseif os(iOS)
+#elseif os(iOS)
 			let text = pasteboard.string
-			#endif
+#else
+			let text: String? = nil
+#endif
 
 			return text
 		}
 		set {
-			#if os(macOS)
+#if os(macOS)
 			pasteboard.clearContents()
 
 			pasteboard.setString(newValue ?? "", forType: .string)
-			#elseif os(iOS)
+#elseif os(iOS)
 			pasteboard.string = newValue
-			#endif
+#endif
 		}
 	}
 }
 
 extension VNCClipboard {
 	var changeCount: Int {
+#if os(macOS) || os(iOS)
 		pasteboard.changeCount
+#else
+		0
+#endif
 	}
 }

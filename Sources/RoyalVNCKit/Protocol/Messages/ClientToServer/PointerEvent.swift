@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension VNCProtocol {
 	struct PointerEvent: VNCSendableMessage {
@@ -29,7 +33,7 @@ extension VNCProtocol.PointerEvent {
 		return data
 	}
 	
-	init(buttons: VNCProtocol.MouseButton,
+	init(buttons: VNCProtocol.MousePointerButton,
 		 position: VNCProtocol.MousePosition) {
 		self.buttonMask = buttons.rawValue
 		

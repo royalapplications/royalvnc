@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - Framebuffer Delegate
 extension VNCConnection: VNCFramebufferDelegate {

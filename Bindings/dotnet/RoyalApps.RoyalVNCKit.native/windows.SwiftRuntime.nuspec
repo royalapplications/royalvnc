@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="4.0">
+    <id>RoyalApps.native.SwiftRuntime.$NUGET_RID$</id>
+    <version>$NUGET_SWIFT_RT_VERSION$</version>
+    <authors>RoyalApps</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>RoyalApps_1024.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/royalapplications/royalvnc</projectUrl>
+    <description>Internal implementation package not meant for direct consumption. Do not reference directly.</description>
+    <tags>RoyalApps RoyalVNCKit VNC native SwiftRuntime</tags>
+    <repository type="git" url="https://github.com/royalapplications/royalvnc.git" commit="$NUGET_GIT_COMMIT$" />
+  </metadata>
+  <files>
+    <file src="README.md" target="/README.md" />
+    <file src="..\RoyalApps_1024.png" target="/RoyalApps_1024.png" />
+    <file src="$SWIFT_RT_DIR$\BlocksRuntime.dll" target="runtimes/$NUGET_RID$/native/BlocksRuntime.dll" />
+    <file src="$SWIFT_RT_DIR$\dispatch.dll" target="runtimes/$NUGET_RID$/native/dispatch.dll" />
+    <file src="$SWIFT_RT_DIR$\FoundationEssentials.dll" target="runtimes/$NUGET_RID$/native/FoundationEssentials.dll" />
+    <file src="$SWIFT_RT_DIR$\swift_RegexParser.dll" target="runtimes/$NUGET_RID$/native/swift_RegexParser.dll" />
+    <file src="$SWIFT_RT_DIR$\swift_StringProcessing.dll" target="runtimes/$NUGET_RID$/native/swift_StringProcessing.dll" />
+    <file src="$SWIFT_RT_DIR$\swiftCore.dll" target="runtimes/$NUGET_RID$/native/swiftCore.dll" />
+    <file src="$SWIFT_RT_DIR$\swiftCRT.dll" target="runtimes/$NUGET_RID$/native/swiftCRT.dll" />
+    <file src="$SWIFT_RT_DIR$\swiftDispatch.dll" target="runtimes/$NUGET_RID$/native/swiftDispatch.dll" />
+    <file src="$SWIFT_RT_DIR$\swiftWinSDK.dll" target="runtimes/$NUGET_RID$/native/swiftWinSDK.dll" />
+  </files>
+</package>

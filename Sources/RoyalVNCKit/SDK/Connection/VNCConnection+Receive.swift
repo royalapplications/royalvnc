@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - Server to Client Messages
 extension VNCConnection {
@@ -70,6 +74,11 @@ private extension VNCConnection {
 		
 		logger.logDebug("Received Framebuffer Update: \(framebufferUpdate)")
 		
+		/*
+		// Write out the framebuffer for testing purposes
+		try framebuffer.writeSurface()
+		*/
+
 		try await sendFramebufferUpdateRequest()
 	}
 	

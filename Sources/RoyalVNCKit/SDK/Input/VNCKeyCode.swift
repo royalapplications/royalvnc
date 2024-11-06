@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct VNCKeyCode: Equatable {
     public let rawValue: UInt32
@@ -190,7 +194,7 @@ public extension VNCKeyCode {
 	}
 	
 	var hexDescription: String {
-		let keyHex = String(format: "0x%04X", rawValue)
+		let keyHex = rawValue.hexString()
 		
 		return keyHex
 	}

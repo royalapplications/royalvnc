@@ -1,6 +1,8 @@
-// swiftlint:disable identifier_name
-
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public struct VNCPoint: Equatable {
 	public let x: UInt16
@@ -10,11 +12,6 @@ public struct VNCPoint: Equatable {
 				y: UInt16) {
 		self.x = x
 		self.y = y
-	}
-	
-	public init(cgPoint: CGPoint) {
-		self.x = .init(cgPoint.x)
-		self.y = .init(cgPoint.y)
 	}
 }
 
@@ -26,19 +23,8 @@ extension VNCPoint: Hashable {
 }
 
 public extension VNCPoint {
-	var cgPoint: CGPoint {
-        .init(x: CGFloat(x),
-              y: CGFloat(y))
-	}
-	
 	static let zero: Self = .init(x: 0,
 								  y: 0)
-}
-
-public extension CGPoint {
-	var vncPoint: VNCPoint {
-		.init(cgPoint: self)
-	}
 }
 
 extension VNCPoint: CustomStringConvertible {
@@ -46,5 +32,3 @@ extension VNCPoint: CustomStringConvertible {
 		"x: \(x), y: \(y)"
 	}
 }
-
-// swiftlint:enable identifier_name

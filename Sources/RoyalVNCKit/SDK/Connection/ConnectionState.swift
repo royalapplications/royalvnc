@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension VNCConnection {
 #if canImport(ObjectiveC)
@@ -14,7 +18,7 @@ public extension VNCConnection {
 #if canImport(ObjectiveC)
 	@objc(VNCConnectionState)
 #endif
-	class ConnectionState: NSObjectOrAnyObject {
+    final class ConnectionState: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
 		@objc
 #endif

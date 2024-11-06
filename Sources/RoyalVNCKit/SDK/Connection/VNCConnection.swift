@@ -1,4 +1,10 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+import Dispatch
 
 #if canImport(Network)
 import Network
@@ -7,12 +13,14 @@ import Network
 #if canImport(ObjectiveC)
 @objc(VNCConnection)
 #endif
-public class VNCConnection: NSObjectOrAnyObject {
+public final class VNCConnection: NSObjectOrAnyObject {
 	// MARK: - Public Properties
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	public let settings: Settings
+    
+    public let context: UnsafeMutableRawPointer?
 	
 #if canImport(ObjectiveC)
 	@objc
@@ -56,16 +64,19 @@ public class VNCConnection: NSObjectOrAnyObject {
 	let clipboardMonitor: VNCClipboardMonitor
 	
 	var clientToServerMessageQueue = Queue<VNCSendableMessage>()
+    
+    var mouseButtonState: VNCProtocol.MousePointerButton = [ ]
 	
     lazy var connection: some NetworkConnection = {
         let connectionSettings = NetworkConnectionSettings(connectionTimeout: 15,
                                                            host: settings.hostname,
                                                            port: settings.port)
         
+        // NOTE: To test SocketNetworkConnection on Darwin (macOS, iOS, etc.), comment out the the #if
 #if canImport(Network)
         let connection = NWConnection(settings: connectionSettings)
 #else
-        fatalError("TODO: Implement NetworkConnection for Linux/Windows/etc.")
+		let connection = SocketNetworkConnection(settings: connectionSettings)
 #endif
         
         connection.setStatusUpdateHandler(connectionStatusDidChange)
@@ -107,7 +118,7 @@ public class VNCConnection: NSObjectOrAnyObject {
 			try encodingTypes.validate()
 		} catch {
             // If the sanity check fails here, it's a programming error
-			fatalError((error as NSError).debugDescription)
+			fatalError(error.debugDescription)
 		}
 		
 		return encs
@@ -157,43 +168,64 @@ public class VNCConnection: NSObjectOrAnyObject {
 	}
 	
 	// MARK: - Public Initializers
+    public init(settings: Settings,
+                logger: VNCLogger,
+                context: UnsafeMutableRawPointer?) {
+        self.settings = settings
+        
+        logger.isDebugLoggingEnabled = settings.isDebugLoggingEnabled
+        
+        self.logger = logger
+        
+        self.context = context
+        
+        self.sharedZStream = .init()
+        
+        let clipboard = VNCClipboard()
+        
+        let clipboardMonitor = VNCClipboardMonitor(clipboard: clipboard,
+                                                   monitoringInterval: 0.5,
+                                                   tolerance: 0.15)
+        
+        self.clipboard = clipboard
+        
+        self.clipboardMonitor = clipboardMonitor
+        
+        super.init()
+        
+        self.clipboardMonitor.delegate = self
+    }
+    
 #if canImport(ObjectiveC)
 	@objc
 #endif
-	public init(settings: Settings,
-				logger: VNCLogger) {
-		self.settings = settings
-		
-		logger.isDebugLoggingEnabled = settings.isDebugLoggingEnabled
-		
-		self.logger = logger
-		
-		self.sharedZStream = .init()
-		
-		let clipboard = VNCClipboard()
-		
-		let clipboardMonitor = VNCClipboardMonitor(clipboard: clipboard,
-												   monitoringInterval: 0.5,
-												   tolerance: 0.15)
-		
-		self.clipboard = clipboard
-		
-		self.clipboardMonitor = clipboardMonitor
-		
-		super.init()
-		
-		self.clipboardMonitor.delegate = self
+    public convenience init(settings: Settings,
+                            logger: VNCLogger) {
+        self.init(settings: settings,
+                  logger: logger,
+                  context: nil)
 	}
 	
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	public convenience init(settings: Settings) {
-		let logger = OSLogLogger()
-		
-		self.init(settings: settings,
-				  logger: logger)
+        self.init(settings: settings,
+                  context: nil)
 	}
+    
+    public convenience init(settings: Settings,
+                            context: UnsafeMutableRawPointer?) {
+#if canImport(OSLog)
+        let logger = VNCOSLogLogger()
+#else
+        let logger = VNCPrintLogger()
+#endif
+        
+        self.init(settings: settings,
+                  logger: logger,
+                  context: context)
+    }
 	
 	deinit {
 		let _self = self
@@ -295,6 +327,8 @@ private extension VNCConnection {
 				try await sendFramebufferUpdateRequest()
 			} catch {
 				handleBreakingError(error)
+                
+                return
 			}
 			
 			updateConnectionState(.connected)

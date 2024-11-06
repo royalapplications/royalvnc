@@ -4,7 +4,7 @@ import AppKit
 import Carbon
 
 @objc(VNCCAFramebufferView)
-public class VNCCAFramebufferView: NSView, VNCFramebufferView {
+public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
     @objc
 	public private(set) weak var connection: VNCConnection?
 	
@@ -156,7 +156,7 @@ public class VNCCAFramebufferView: NSView, VNCFramebufferView {
 		
 		removeDisplayLink()
 		
-		guard let window = window,
+		guard let window,
 			  let screen = window.screen ?? NSScreen.main else {
 			return
 		}
@@ -173,7 +173,7 @@ public class VNCCAFramebufferView: NSView, VNCFramebufferView {
 	}
 	
 	public override func updateTrackingAreas() {
-		if let trackingArea = trackingArea {
+		if let trackingArea {
 			removeTrackingArea(trackingArea)
 		}
 		
@@ -242,8 +242,9 @@ public class VNCCAFramebufferView: NSView, VNCFramebufferView {
 
 extension VNCCAFramebufferView {
 	public func connection(_ connection: VNCConnection,
-						   framebuffer: VNCFramebuffer,
-						   didUpdateRegion updatedRegion: CGRect) {
+                           didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                           x: UInt16, y: UInt16,
+                           width: UInt16, height: UInt16) {
 		// NOTE: If we ever take the updatedRegion into consideration, we will likely need to flip the coordinates on macOS
 		
 		guard !settings.useDisplayLink,
@@ -264,17 +265,36 @@ extension VNCCAFramebufferView {
 
 // MARK: - Positions
 private extension VNCCAFramebufferView {
-	func scaledContentRelativePosition(of event: NSEvent) -> CGPoint? {
+    struct UInt16Point {
+        let x: UInt16
+        let y: UInt16
+        
+        init(x: UInt16, y: UInt16) {
+            self.x = x
+            self.y = y
+        }
+        
+        init(_ point: CGPoint) {
+            self.x = .init(point.x)
+            self.y = .init(point.y)
+        }
+    }
+    
+    func scaledContentRelativePosition(of event: NSEvent) -> UInt16Point? {
 		let viewRelativePosition = viewRelativePosition(of: event)
 		
 		let contentRect = contentRect
 		
-		guard contentRect.contains(viewRelativePosition) else { return nil }
+		guard contentRect.contains(viewRelativePosition) else {
+            return nil
+        }
 		
 		let scaledPosition = CGPoint(x: (viewRelativePosition.x - contentRect.origin.x) / scaleRatio,
 									 y: (viewRelativePosition.y - contentRect.origin.y) / scaleRatio)
+        
+        let scaledPositionUInt16 = UInt16Point(scaledPosition)
 		
-		return scaledPosition
+        return scaledPositionUInt16
 	}
 	
 	func viewRelativePosition(of event: NSEvent) -> CGPoint {
@@ -288,72 +308,109 @@ private extension VNCCAFramebufferView {
 // MARK: - Mouse Input
 extension VNCCAFramebufferView {
 	func handleMouseMoved(with event: NSEvent) {
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+		guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.mouseMove(position)
+        connection.mouseMove(x: position.x, y: position.y)
 	}
 	
 	func handleMouseDown(with event: NSEvent) {
 		window?.makeFirstResponder(self)
 		becomeFirstResponder()
 		
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.mouseDown(position)
+        connection.mouseButtonDown(.left,
+                                   x: position.x, y: position.y)
 	}
 	
 	func handleMouseDragged(with event: NSEvent) {
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.mouseDown(position)
+        connection.mouseButtonDown(.left,
+                                   x: position.x, y: position.y)
 	}
 	
 	func handleMouseUp(with event: NSEvent) {
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.mouseUp(position)
+        connection.mouseButtonUp(.left,
+                                 x: position.x, y: position.y)
 	}
 	
 	func handleRightMouseDown(with event: NSEvent) {
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.rightMouseDown(position)
+        connection.mouseButtonDown(.right,
+                                   x: position.x, y: position.y)
 	}
 	
 	func handleRightMouseDragged(with event: NSEvent) {
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.rightMouseDown(position)
+        connection.mouseButtonDown(.right,
+                                   x: position.x, y: position.y)
 	}
 	
 	func handleRightMouseUp(with event: NSEvent) {
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.mouseUp(position)
+        connection.mouseButtonUp(.right,
+                                 x: position.x, y: position.y)
 	}
 	
 	func handleOtherMouseDown(with event: NSEvent) {
 		guard isMiddleButton(event: event) else { return }
 		
-		guard let position = scaledContentRelativePosition(of: event) else { return }
+        guard let connection,
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		connection?.middleMouseDown(position)
+        connection.mouseButtonDown(.middle,
+                                   x: position.x, y: position.y)
 	}
 	
 	func handleOtherMouseDragged(with event: NSEvent) {
-		guard isMiddleButton(event: event) else { return }
+		guard let connection,
+              isMiddleButton(event: event),
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		guard let position = scaledContentRelativePosition(of: event) else { return }
-		
-		connection?.middleMouseDown(position)
+        connection.mouseButtonDown(.middle,
+                                   x: position.x, y: position.y)
 	}
 	
 	func handleOtherMouseUp(with event: NSEvent) {
-		guard isMiddleButton(event: event) else { return }
+		guard let connection,
+              isMiddleButton(event: event),
+              let position = scaledContentRelativePosition(of: event) else {
+            return
+        }
 		
-		guard let position = scaledContentRelativePosition(of: event) else { return }
-		
-		connection?.mouseUp(position)
+        connection.mouseButtonUp(.middle,
+                                 x: position.x, y: position.y)
 	}
 	
 	func handleScrollWheel(with event: NSEvent) {
@@ -364,7 +421,8 @@ extension VNCCAFramebufferView {
 		
 		handleScrollWheel(scrollDelta: scrollDelta,
 						  hasPreciseScrollingDeltas: event.hasPreciseScrollingDeltas,
-						  mousePosition: position)
+                          mousePositionX: position.x,
+                          mousePositionY: position.y)
 	}
 	
 	func isMiddleButton(event: NSEvent) -> Bool {
@@ -377,7 +435,7 @@ extension VNCCAFramebufferView {
 // MARK: - Keyboard Input
 extension VNCCAFramebufferView {
 	func handleKey(event: NSEvent?) {
-		guard let event = event else { return }
+		guard let event else { return }
 		
 		if event.type == .keyDown {
 			handleKeyDown(with: event)
@@ -387,8 +445,8 @@ extension VNCCAFramebufferView {
 	}
 	
 	func handleKeyDown(with event: NSEvent?) {
-		guard let event = event,
-			let connection = self.connection else {
+		guard let event,
+              let connection else {
 			return
 		}
 		
@@ -400,8 +458,8 @@ extension VNCCAFramebufferView {
 	}
 	
 	func handleKeyUp(with event: NSEvent?) {
-		guard let event = event,
-			let connection = self.connection else {
+		guard let event,
+              let connection else {
 			return
 		}
 		
@@ -431,19 +489,19 @@ extension VNCCAFramebufferView {
 	func handlePerformKeyEquivalent(with event: NSEvent) -> Bool {
         // swiftlint:disable:next control_statement
 		guard (settings.inputMode == .forwardKeyboardShortcutsEvenIfInUseLocally || settings.inputMode == .forwardAllKeyboardShortcutsAndHotKeys),
-			  let window = window,
+			  let window,
 			  (window.firstResponder == window || window.firstResponder == self) else {
 			return false
 		}
 		
 		let flags = event.modifierFlags
-		
-		guard flags.contains(.shift) ||
-				flags.contains(.control) ||
-				flags.contains(.option) ||
-				flags.contains(.command) else {
-			return false
-		}
+        
+        guard flags.contains(.shift) ||
+              flags.contains(.control) ||
+              flags.contains(.option) ||
+              flags.contains(.command) else {
+            return false
+        }
 		
 		handleKeyDown(with: event)
 		handleKeyUp(with: event)
@@ -470,7 +528,7 @@ private extension VNCCAFramebufferView {
     func updateImage(_ image: CGImage?) {
         DispatchQueue.main.async { [weak self] in
             guard let self,
-                  let layer = self.layer else {
+                  let layer else {
                 return
             }
             

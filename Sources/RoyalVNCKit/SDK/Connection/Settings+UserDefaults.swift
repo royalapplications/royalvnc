@@ -1,3 +1,4 @@
+#if !os(Linux) && !os(Windows)
 import Foundation
 
 public extension VNCConnection.Settings {
@@ -50,7 +51,7 @@ private extension VNCConnection.Settings {
 	static var standardUserDefaultsStorage = UserDefaultsStorage(defaults: .standard)
 	static var credentialsKeychain = CredentialsKeychain()
 	
-	class UserDefaultsStorage {
+    final class UserDefaultsStorage {
 		let defaults: UserDefaults
 		
 		private let isDebugLoggingEnabledKey = "isDebugLoggingEnabled"
@@ -174,3 +175,4 @@ private extension VNCConnection.Settings {
 		}
 	}
 }
+#endif

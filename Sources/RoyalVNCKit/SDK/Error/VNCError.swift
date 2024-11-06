@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public enum VNCError: Error, LocalizedError {
 	case `protocol`(_ underlyingError: ProtocolError)
@@ -56,7 +60,7 @@ public enum VNCError: Error, LocalizedError {
 extension VNCError {
 	static func combinedErrorDescription(_ baseErrorDescription: String,
 										 underlyingError: Error?) -> String {
-		let underlyingErrorDescription = underlyingError?.localizedDescription ?? ""
+		let underlyingErrorDescription = underlyingError?.humanReadableDescription ?? ""
 		
 		guard underlyingErrorDescription != baseErrorDescription else {
 			return baseErrorDescription
@@ -71,7 +75,7 @@ extension VNCError {
 #if canImport(ObjectiveC)
 @objc(VNCErrorUtils)
 // swiftlint:disable:next type_name
-public class _ObjC_VNCErrorUtils: NSObject {
+public final class _ObjC_VNCErrorUtils: NSObject {
     @objc
 	public static func shouldDisplayErrorToUser(_ error: Error) -> Bool {
 		guard let vncError = error as? VNCError else {

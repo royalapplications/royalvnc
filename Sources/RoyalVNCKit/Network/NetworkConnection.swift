@@ -1,4 +1,9 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
 import Dispatch
 
 enum NetworkConnectionStatus {
@@ -113,10 +118,10 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: UInt16.self)
+            $0.loadUnaligned(as: UInt16.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? UInt16(bigEndian: bigEndianValue)
             : bigEndianValue
         
@@ -132,10 +137,10 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: Int16.self)
+            $0.loadUnaligned(as: Int16.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? Int16(bigEndian: bigEndianValue)
             : bigEndianValue
         
@@ -151,10 +156,10 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: UInt32.self)
+            $0.loadUnaligned(as: UInt32.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? UInt32(bigEndian: bigEndianValue)
             : bigEndianValue
         
@@ -170,10 +175,10 @@ extension NetworkConnectionReading {
         }
         
         let bigEndianValue = data.withUnsafeBytes {
-            $0.load(as: Int32.self)
+            $0.loadUnaligned(as: Int32.self)
         }
         
-        let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
             ? Int32(bigEndian: bigEndianValue)
             : bigEndianValue
         

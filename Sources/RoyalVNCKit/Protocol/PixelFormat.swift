@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension VNCProtocol {
 	struct PixelFormat {
@@ -56,7 +60,7 @@ extension VNCProtocol {
 				bpp = 8
 			}
 			
-			let bits = UInt8(floor(Double(depth) / 3.0))
+            let bits = UInt8((Double(depth) / 3.0).rounded(.down))
 			let colorMax = UInt16((1 << bits) - 1)
 			
 			self.init(bitsPerPixel: bpp,

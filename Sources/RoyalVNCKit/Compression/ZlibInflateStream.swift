@@ -1,5 +1,10 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
-import zlib
+#endif
+
+@_implementationOnly import Z
 
 enum ZlibError: Error {
 	case unknown(status: Int32, message: String?)
@@ -24,7 +29,7 @@ enum ZlibFlush: Int32 {
 	case trees = 6 // Z_TREES
 }
 
-class ZlibInflateStream {
+final class ZlibInflateStream {
 	private let streamPtr: UnsafeMutablePointer<z_stream>
 	
 	init() throws {
@@ -38,7 +43,7 @@ class ZlibInflateStream {
         var status = Z_VERSION_ERROR
         
         withUnsafeMutablePointer(to: &version) { versionPtr in
-            status = zlib.inflateInit_(streamPtr, versionPtr, .init(MemoryLayout<z_stream>.size))
+            status = inflateInit_(streamPtr, versionPtr, .init(MemoryLayout<z_stream>.size))
         }
         
 		guard ZlibError.isSuccess(status) else {
@@ -70,10 +75,10 @@ extension ZlibInflateStream {
 	/// total number of bytes output so far
 	var totalOut: UInt {
 		get {
-			streamPtr.pointee.total_out
+			.init(streamPtr.pointee.total_out)
 		}
 		set {
-			streamPtr.pointee.total_out = newValue
+			streamPtr.pointee.total_out = .init(newValue)
 		}
 	}
 	
@@ -90,10 +95,10 @@ extension ZlibInflateStream {
 	/// total number of input bytes read so far
 	var totalIn: UInt {
 		get {
-			streamPtr.pointee.total_in
+			.init(streamPtr.pointee.total_in)
 		}
 		set {
-			streamPtr.pointee.total_in = newValue
+			streamPtr.pointee.total_in = .init(newValue)
 		}
 	}
 	
@@ -135,10 +140,10 @@ extension ZlibInflateStream {
 	/// Adler-32 or CRC-32 value of the uncompressed data
 	var adler: UInt {
 		get {
-			streamPtr.pointee.adler
+			.init(streamPtr.pointee.adler)
 		}
 		set {
-			streamPtr.pointee.adler = newValue
+			streamPtr.pointee.adler = .init(newValue)
 		}
 	}
 }
@@ -150,7 +155,7 @@ extension ZlibInflateStream {
 	func inflateEnd() throws {
 		let streamPtr = self.streamPtr
 		
-		let status = zlib.inflateEnd(streamPtr)
+		let status = Z.inflateEnd(streamPtr)
 		
 		guard ZlibError.isSuccess(status) else {
 			throw Self.error(streamPtr: streamPtr,
@@ -280,7 +285,7 @@ extension ZlibInflateStream {
 		
 		let flushValue = flush.rawValue
 		
-		let status = zlib.inflate(streamPtr, flushValue)
+		let status = Z.inflate(streamPtr, flushValue)
 		
 		if status == Z_STREAM_END {
 			return true

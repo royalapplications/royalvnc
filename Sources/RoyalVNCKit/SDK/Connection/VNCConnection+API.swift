@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - Connect/Disconnect
 public extension VNCConnection {
@@ -43,74 +47,75 @@ public extension VNCConnection {
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func mouseMove(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ ],
-						  nonNormalizedPosition: mousePosition)
-	}
-	
+    func mouseMove(x: UInt16, y: UInt16) {
+        enqueueMouseEvent(nonNormalizedX: x,
+                          nonNormalizedY: y)
+    }
+
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func mouseDown(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ .button1 ],
-						  nonNormalizedPosition: mousePosition)
-	}
-	
+    func mouseButtonDown(_ button: VNCMouseButton,
+                         x: UInt16, y: UInt16) {
+        updateMouseButtonState(button: button,
+                               isDown: true)
+        
+        enqueueMouseEvent(nonNormalizedX: x,
+                          nonNormalizedY: y)
+    }
+    
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func rightMouseDown(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ .button3 ],
-						  nonNormalizedPosition: mousePosition)
-	}
-	
+    func mouseButtonUp(_ button: VNCMouseButton,
+                       x: UInt16, y: UInt16) {
+        updateMouseButtonState(button: button,
+                               isDown: false)
+        
+        enqueueMouseEvent(nonNormalizedX: x,
+                          nonNormalizedY: y)
+    }
+    
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func middleMouseDown(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ .button2 ],
-						  nonNormalizedPosition: mousePosition)
-	}
-	
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseUp(_ mousePosition: CGPoint) {
-		enqueueMouseEvent(buttons: [ ],
-						  nonNormalizedPosition: mousePosition)
-	}
-	
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelUp(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button4 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-	
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelDown(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button5 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-	
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelLeft(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button6 ],
-							   nonNormalizedPosition: mousePosition)
-	}
-	
-#if canImport(ObjectiveC)
-    @objc
-#endif
-	func mouseWheelRight(_ mousePosition: CGPoint) {
-		enqueueMousePressEvent(buttons: [ .button7 ],
-							   nonNormalizedPosition: mousePosition)
-	}
+    func mouseWheel(_ wheel: VNCMouseWheel,
+                    x: UInt16, y: UInt16,
+                    steps: UInt32) {
+        for _ in 0..<steps {
+            updateMouseButtonState(wheel: wheel,
+                                   isDown: true)
+            
+            enqueueMouseEvent(nonNormalizedX: x,
+                              nonNormalizedY: y)
+            
+            updateMouseButtonState(wheel: wheel,
+                                   isDown: false)
+        }
+    }
+}
+
+extension VNCConnection {
+    func updateMouseButtonState(button: VNCMouseButton,
+                                isDown: Bool) {
+        updateMouseButtonState(mousePointerButton: button.mousePointerButton,
+                               isDown: isDown)
+    }
+    
+    func updateMouseButtonState(wheel: VNCMouseWheel,
+                                isDown: Bool) {
+        updateMouseButtonState(mousePointerButton: wheel.mousePointerButton,
+                               isDown: isDown)
+    }
+    
+    func updateMouseButtonState(mousePointerButton: VNCProtocol.MousePointerButton,
+                                isDown: Bool) {
+        if isDown {
+            mouseButtonState.insert(mousePointerButton)
+        } else {
+            mouseButtonState.remove(mousePointerButton)
+        }
+    }
 }
 
 // MARK: - Keyboard Input

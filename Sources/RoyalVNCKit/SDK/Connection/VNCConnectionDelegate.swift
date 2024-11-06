@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 #if canImport(ObjectiveC)
 @objc(VNCConnectionDelegate)
@@ -28,14 +32,15 @@ public protocol VNCConnectionDelegate: AnyObject {
 #endif
 	func connection(_ connection: VNCConnection,
 					didResizeFramebuffer framebuffer: VNCFramebuffer)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func connection(_ connection: VNCConnection,
-					framebuffer: VNCFramebuffer,
-					didUpdateRegion updatedRegion: CGRect)
-	
+    func connection(_ connection: VNCConnection,
+                    didUpdateFramebuffer framebuffer: VNCFramebuffer,
+                    x: UInt16, y: UInt16,
+                    width: UInt16, height: UInt16)
+
 #if canImport(ObjectiveC)
     @objc
 #endif

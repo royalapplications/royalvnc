@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - Delegate Notifications
 extension VNCConnection {
@@ -19,9 +23,10 @@ extension VNCConnection {
 	
 	func notifyDelegateAboutFramebuffer(_ framebuffer: VNCFramebuffer,
 										updatedRegion: VNCRegion) {
-		delegate?.connection(self,
-							 framebuffer: framebuffer,
-							 didUpdateRegion: updatedRegion.cgRect)
+        delegate?.connection(self,
+                             didUpdateFramebuffer: framebuffer,
+                             x: updatedRegion.x, y: updatedRegion.y,
+                             width: updatedRegion.width, height: updatedRegion.height)
 	}
 	
 	func notifyDelegateAboutUpdatedCursor(_ cursor: VNCCursor) {

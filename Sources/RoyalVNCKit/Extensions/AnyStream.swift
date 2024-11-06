@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 protocol AnyStream {
 	func read(length: Int) throws -> Data
@@ -35,10 +39,10 @@ extension AnyStream {
 		#endif
 		
 		let bigEndianValue = data.withUnsafeBytes {
-			$0.load(as: UInt16.self)
+			$0.loadUnaligned(as: UInt16.self)
 		}
 		
-		let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+        let value = Endianness.current == .little
 			? UInt16(bigEndian: bigEndianValue)
 			: bigEndianValue
 		
@@ -56,10 +60,10 @@ extension AnyStream {
 		#endif
 		
 		let bigEndianValue = data.withUnsafeBytes {
-			$0.load(as: UInt32.self)
+			$0.loadUnaligned(as: UInt32.self)
 		}
 		
-		let value = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
+		let value = Endianness.current == .little
 			? UInt32(bigEndian: bigEndianValue)
 			: bigEndianValue
 		

@@ -1,7 +1,11 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension VNCConnection {
-	class State {
+    final class State {
 		var disconnectRequested = false
 		
 		var serverProtocolVersion: VNCProtocol.ProtocolVersion?

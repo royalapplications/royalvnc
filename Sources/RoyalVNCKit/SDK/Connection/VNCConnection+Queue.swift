@@ -1,4 +1,12 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+#if canImport(CoreGraphics)
+import CoreGraphics
+#endif
 
 // MARK: - Queue Management
 extension VNCConnection {
@@ -17,30 +25,30 @@ extension VNCConnection {
 		enqueueClientToServerMessage(keyEvent)
 	}
     
-    func enqueueMousePressEvent(buttons: VNCProtocol.MouseButton,
-                                nonNormalizedPosition: CGPoint) {
+    func enqueueMouseEvent(nonNormalizedX: UInt16,
+                           nonNormalizedY: UInt16) {
         guard settings.inputMode != .none else { return }
         
-        let normalizedPosition = normalizedMousePosition(cgPoint: nonNormalizedPosition)
+        let normalizedPosition = normalizedMousePosition(x: nonNormalizedX,
+                                                         y: nonNormalizedY)
+        
+        enqueueMouseEvent(buttons: mouseButtonState,
+                          position: normalizedPosition)
+    }
+    
+    func enqueueMouseEvent(buttons: VNCProtocol.MousePointerButton,
+                           nonNormalizedX: UInt16,
+                           nonNormalizedY: UInt16) {
+        guard settings.inputMode != .none else { return }
+        
+        let normalizedPosition = normalizedMousePosition(x: nonNormalizedX,
+                                                         y: nonNormalizedY)
         
         enqueueMouseEvent(buttons: buttons,
                           position: normalizedPosition)
-        
-        enqueueMouseEvent(buttons: [ ],
-                          position: normalizedPosition)
     }
 	
-	func enqueueMouseEvent(buttons: VNCProtocol.MouseButton,
-						   nonNormalizedPosition: CGPoint) {
-		guard settings.inputMode != .none else { return }
-		
-		let normalizedPosition = normalizedMousePosition(cgPoint: nonNormalizedPosition)
-		
-		enqueueMouseEvent(buttons: buttons,
-						  position: normalizedPosition)
-	}
-	
-	func enqueueMouseEvent(buttons: VNCProtocol.MouseButton,
+	func enqueueMouseEvent(buttons: VNCProtocol.MousePointerButton,
 						   position: VNCProtocol.MousePosition) {
 		guard settings.inputMode != .none else { return }
 		
@@ -59,29 +67,26 @@ extension VNCConnection {
 	func enqueueClientToServerMessage(_ message: VNCSendableMessage) {
 		clientToServerMessageQueue.enqueue(message)
 	}
-	
-	func normalizedMousePosition(cgPoint: CGPoint) -> VNCProtocol.MousePosition {
-		var normalizedX = Int(cgPoint.x)
-		var normalizedY = Int(cgPoint.y)
-		
-		let framebufferWidth = Int(framebuffer?.size.width ?? 0)
-		let framebufferHeight = Int(framebuffer?.size.height ?? 0)
-		
-		if normalizedY < 0 {
-			normalizedY = 0
-		} else if normalizedY > framebufferHeight {
-			normalizedY = framebufferHeight
-		}
-		
-		if normalizedX < 0 {
-			normalizedX = 0
-		} else if normalizedX > framebufferWidth {
-			normalizedX = framebufferWidth
-		}
-		
-		let normalizedPosition = VNCProtocol.MousePosition(x: .init(normalizedX),
-														   y: .init(normalizedY))
-		
-		return normalizedPosition
-	}
+    
+    func normalizedMousePosition(x: UInt16,
+                                 y: UInt16) -> VNCProtocol.MousePosition {
+        var normalizedX = x
+        var normalizedY = y
+        
+        let framebufferWidth = framebuffer?.size.width ?? 0
+        let framebufferHeight = framebuffer?.size.height ?? 0
+        
+        if normalizedY > framebufferHeight {
+            normalizedY = framebufferHeight
+        }
+        
+        if normalizedX > framebufferWidth {
+            normalizedX = framebufferWidth
+        }
+        
+        let normalizedPosition = VNCProtocol.MousePosition(x: normalizedX,
+                                                           y: normalizedY)
+        
+        return normalizedPosition
+    }
 }

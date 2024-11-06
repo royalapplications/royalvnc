@@ -1,6 +1,10 @@
 // swiftlint:disable line_length
 
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension VNCProtocol {
 	struct ExtendedDesktopSizeEncoding: VNCReceivablePseudoEncoding {

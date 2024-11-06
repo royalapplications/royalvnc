@@ -1,7 +1,11 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension VNCProtocol {
-	class ZRLEEncoding: VNCFrameEncoding {
+    final class ZRLEEncoding: VNCFrameEncoding {
 		let encodingType = VNCFrameEncodingType.zrle.rawValue
 		
 		static let tileSize: UInt16 = 64

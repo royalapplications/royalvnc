@@ -1,4 +1,10 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+import Dispatch
 
 #if os(macOS)
 import AppKit
@@ -6,7 +12,7 @@ import AppKit
 import UIKit
 #endif
 
-class VNCClipboardMonitor {
+final class VNCClipboardMonitor {
 	let clipboard: VNCClipboard
 	let monitoringInterval: TimeInterval
 	let tolerance: TimeInterval
@@ -15,7 +21,10 @@ class VNCClipboardMonitor {
 	
 	private(set) var isMonitoring = false
 	
+#if !canImport(FoundationEssentials)
 	private var timer: Timer?
+#endif
+
 	private var lastChangeCount = 0
 	
 	init(clipboard: VNCClipboard,
@@ -40,39 +49,39 @@ extension VNCClipboardMonitor {
 		// -1 to send clipboard to trigger notification immediately if something's on the pasteboard
 		lastChangeCount = clipboard.changeCount - 1
 		
+#if !canImport(FoundationEssentials)
 		guard timer == nil else { // Already have a timer
 			return
 		}
 		
 		DispatchQueue.main.async { [weak self] in
 			guard let self else { return }
-			
-			let timer = Timer.scheduledTimer(timeInterval: self.monitoringInterval,
-											 target: self,
-											 selector: #selector(self.timerDidFire(_:)),
-											 userInfo: nil,
-											 repeats: true)
+            
+            let timer = Timer.scheduledTimer(withTimeInterval: self.monitoringInterval,
+                                             repeats: true,
+                                             block: timerDidFire(_:))
 			
 			timer.tolerance = self.tolerance
 			
             self.timer = timer
             self.isMonitoring = true
 		}
+#endif
 	}
 	
 	func stopMonitoring() {
+#if !canImport(FoundationEssentials)
 		timer?.invalidate()
 		timer = nil
+#endif
 		
 		lastChangeCount = 0
 		isMonitoring = false
 	}
 }
 
+#if !canImport(FoundationEssentials)
 private extension VNCClipboardMonitor {
-#if canImport(ObjectiveC)
-	@objc
-#endif
 	func timerDidFire(_ timer: Timer) {
 		guard let delegate,
 			  timer == self.timer else {
@@ -99,3 +108,4 @@ private extension VNCClipboardMonitor {
 								  didChangeText: text)
 	}
 }
+#endif

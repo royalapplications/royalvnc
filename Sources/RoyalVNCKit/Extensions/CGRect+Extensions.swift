@@ -1,4 +1,6 @@
+#if canImport(CoreGraphics)
 import Foundation
+import CoreGraphics
 
 public extension CGRect {
 	func flipped(bounds: CGRect) -> CGRect {
@@ -8,3 +10,4 @@ public extension CGRect {
               height: self.height)
     }
 }
+#endif

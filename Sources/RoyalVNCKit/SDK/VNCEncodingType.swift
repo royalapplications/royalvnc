@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// VNC Encodings can either be specified as Int32 or UInt32 which have the same byte size. You MUST NOT actually use a Int64 value!
 public struct VNCEncodingType: RawRepresentable, ExpressibleByIntegerLiteral, Equatable, Hashable {

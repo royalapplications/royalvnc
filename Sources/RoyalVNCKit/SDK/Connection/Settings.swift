@@ -1,10 +1,14 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension VNCConnection {
 #if canImport(ObjectiveC)
 	@objc(VNCConnectionSettings)
 #endif
-	class Settings: NSObjectOrAnyObject {
+    final class Settings: NSObjectOrAnyObject {
 #if canImport(ObjectiveC)
 		@objc
 #endif
@@ -153,7 +157,7 @@ public extension VNCConnection.Settings.InputMode {
 @objc(VNCInputModeUtils)
 #endif
 // swiftlint:disable:next type_name
-public class _ObjC_VNCInputModeUtils: NSObject {
+public final class _ObjC_VNCInputModeUtils: NSObject {
 #if canImport(ObjectiveC)
 	@objc
 #endif

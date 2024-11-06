@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 #if canImport(ObjectiveC)
 @objc(VNCCredential)
@@ -8,7 +12,7 @@ public protocol VNCCredential: AnyObject { }
 #if canImport(ObjectiveC)
 @objc(VNCPasswordCredential)
 #endif
-public class VNCPasswordCredential: NSObjectOrAnyObject, VNCCredential {
+public final class VNCPasswordCredential: NSObjectOrAnyObject, VNCCredential {
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -25,7 +29,7 @@ public class VNCPasswordCredential: NSObjectOrAnyObject, VNCCredential {
 #if canImport(ObjectiveC)
 @objc(VNCUsernamePasswordCredential)
 #endif
-public class VNCUsernamePasswordCredential: NSObjectOrAnyObject, VNCCredential {
+public final class VNCUsernamePasswordCredential: NSObjectOrAnyObject, VNCCredential {
 #if canImport(ObjectiveC)
     @objc
 #endif

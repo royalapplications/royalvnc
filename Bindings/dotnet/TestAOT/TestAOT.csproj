@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">$(NETCoreSdkRuntimeIdentifier)</RuntimeIdentifier>
+    <Nullable>enable</Nullable>
+    <PublishAot>true</PublishAot>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <StackTraceSupport>false</StackTraceSupport>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <EventSourceSupport>false</EventSourceSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RoyalApps.RoyalVNCKit\RoyalApps.RoyalVNCKit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RoyalApps.RoyalVNCKit.native.$(RoyalVNCKit_NativeRID)" Version="$(RoyalVNCKit_NupkgVersion)" />
+  </ItemGroup>
+
+</Project>

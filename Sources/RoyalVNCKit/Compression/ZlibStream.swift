@@ -1,7 +1,12 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
-import zlib
+#endif
 
-class ZlibStream {
+@_implementationOnly import Z
+
+final class ZlibStream {
 	private let stream: ZlibInflateStream
     
 	enum ZlibStreamError: Error {

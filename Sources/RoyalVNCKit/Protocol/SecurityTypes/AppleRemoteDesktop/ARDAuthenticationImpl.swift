@@ -1,4 +1,12 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
+#if canImport(Security)
+import Security
+#endif
 
 extension VNCProtocol.ARDAuthentication {
     struct Authentication {
@@ -24,19 +32,24 @@ extension VNCProtocol.ARDAuthentication {
             let randomCredsDataSuccess = creds.withUnsafeMutableBytes {
                 guard let credsBytes = $0.baseAddress else { return false }
                 
-                let randomStatus = SecRandomCopyBytes(kSecRandomDefault, credArraySize, credsBytes)
+#if canImport(Security)
+				let randomStatus = SecRandomCopyBytes(kSecRandomDefault, credArraySize, credsBytes)
                 
                 guard randomStatus == errSecSuccess else { return false }
+#else
+				// TODO: Probably not secure
+				for i in 0..<credArraySize {
+					$0[i] = UInt8.random(in: 0...255)
+				}
+#endif
                 
                 return true
             }
             
             guard randomCredsDataSuccess else { return nil }
 			
-			let encoding = String.Encoding.utf8
-			
-			let usernameLength = username.lengthOfBytes(using: encoding)
-			let passwordLength = password.lengthOfBytes(using: encoding)
+			let usernameLength = username.utf8.count
+			let passwordLength = password.utf8.count
 			
 			let maxLength = 63
 			
@@ -45,17 +58,17 @@ extension VNCProtocol.ARDAuthentication {
 				? String(username[username.startIndex..<username.index(username.startIndex, offsetBy: maxLength)])
 				: username
 			
-			let cappedUsernameLength = cappedUsername.lengthOfBytes(using: encoding)
+			let cappedUsernameLength = cappedUsername.utf8.count
 			
 			let cappedPassword = passwordLength > maxLength
 				? String(password[password.startIndex..<password.index(password.startIndex, offsetBy: maxLength)])
 				: password
 			
-			let cappedPasswordLength = cappedPassword.lengthOfBytes(using: encoding)
+			let cappedPasswordLength = cappedPassword.utf8.count
             
             // Convert username and password strings into C strings
-            guard let usernameC = cappedUsername.cString(using: encoding) else { return nil }
-            guard let passwordC = cappedPassword.cString(using: encoding) else { return nil }
+            let usernameC = cappedUsername.utf8CString
+            let passwordC = cappedPassword.utf8CString
 			
 			// Merge username and password into single array
 			let fillCredsSuccess = creds.withUnsafeMutableBytes {
