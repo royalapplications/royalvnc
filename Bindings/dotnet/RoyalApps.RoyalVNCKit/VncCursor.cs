@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using static RoyalApps.RoyalVNCKit.RoyalVNCKit;
 
 namespace RoyalApps.RoyalVNCKit;
 
@@ -15,26 +16,26 @@ public sealed unsafe class VncCursor : IDisposable
         _instance = instance;
     }
 
-    public bool IsEmpty => RoyalVNCKit.rvnc_cursor_is_empty_get(_instance).FromNativeBool();
-    public ushort Width => RoyalVNCKit.rvnc_cursor_size_width_get(_instance);
-    public ushort Height => RoyalVNCKit.rvnc_cursor_size_height_get(_instance);
-    public ushort HotspotX => RoyalVNCKit.rvnc_cursor_hotspot_x_get(_instance);
-    public ushort HotspotY => RoyalVNCKit.rvnc_cursor_hotspot_y_get(_instance);
-    public long BitsPerComponent => RoyalVNCKit.rvnc_cursor_bits_per_component_get(_instance);
-    public long BitsPerPixel => RoyalVNCKit.rvnc_cursor_bits_per_pixel_get(_instance);
-    public long BytesPerPixel => RoyalVNCKit.rvnc_cursor_bytes_per_pixel_get(_instance);
-    public long BytesPerRow => RoyalVNCKit.rvnc_cursor_bytes_per_row_get(_instance);
+    public bool IsEmpty => rvnc_cursor_is_empty_get(_instance).FromNativeBool();
+    public ushort Width => rvnc_cursor_size_width_get(_instance);
+    public ushort Height => rvnc_cursor_size_height_get(_instance);
+    public ushort HotspotX => rvnc_cursor_hotspot_x_get(_instance);
+    public ushort HotspotY => rvnc_cursor_hotspot_y_get(_instance);
+    public long BitsPerComponent => rvnc_cursor_bits_per_component_get(_instance);
+    public long BitsPerPixel => rvnc_cursor_bits_per_pixel_get(_instance);
+    public long BytesPerPixel => rvnc_cursor_bytes_per_pixel_get(_instance);
+    public long BytesPerRow => rvnc_cursor_bytes_per_row_get(_instance);
     
     public ReadOnlySpan<byte> PixelData
     {
         get
         {
-            var length = checked((int)RoyalVNCKit.rvnc_cursor_pixel_data_size_get(_instance));
+            var length = checked((int)rvnc_cursor_pixel_data_size_get(_instance));
             if (length is 0)
                 return ReadOnlySpan<byte>.Empty;
 
             if (_pixelData is null)
-                _pixelData = RoyalVNCKit.rvnc_cursor_pixel_data_get_copy(_instance);
+                _pixelData = rvnc_cursor_pixel_data_get_copy(_instance);
             
             Debug.Assert(_pixelData is not null);
             return new(_pixelData, length);
@@ -50,7 +51,7 @@ public sealed unsafe class VncCursor : IDisposable
 
         if (_pixelData is not null)
         {
-            RoyalVNCKit.rvnc_cursor_pixel_data_destroy(_pixelData);
+            rvnc_cursor_pixel_data_destroy(_pixelData);
             _pixelData = null;
         }
 

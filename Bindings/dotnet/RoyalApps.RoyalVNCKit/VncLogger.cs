@@ -1,4 +1,5 @@
 using System;
+using static RoyalApps.RoyalVNCKit.RoyalVNCKit;
 
 namespace RoyalApps.RoyalVNCKit;
 
@@ -18,7 +19,7 @@ public sealed unsafe class VncLogger : IDisposable
     internal VncLogger(VncContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
-        Instance = RoyalVNCKit.rvnc_logger_create(LogEntryHandler, context.Instance);
+        Instance = rvnc_logger_create(LogEntryHandler, context.Instance);
     }
 
     public void Dispose()
@@ -31,11 +32,11 @@ public sealed unsafe class VncLogger : IDisposable
         if (Instance is null)
             return;
 
-        RoyalVNCKit.rvnc_logger_destroy(Instance);
+        rvnc_logger_destroy(Instance);
         Instance = null;
     }
 
-    static readonly RoyalVNCKit.LogDelegate LogEntryHandler = LogEntry;
+    static readonly LogDelegate LogEntryHandler = LogEntry;
     
     static void LogEntry(
         void* logger,

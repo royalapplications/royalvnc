@@ -1,4 +1,5 @@
 using System;
+using static RoyalApps.RoyalVNCKit.RoyalVNCKit;
 
 namespace RoyalApps.RoyalVNCKit;
 
@@ -24,7 +25,7 @@ public sealed unsafe class VncConnection: IDisposable
         var context = new VncContext();
         var logger = new VncLogger(context);
         context.Logger = logger;
-        return RoyalVNCKit.rvnc_connection_create(settings.Instance, logger.Instance, context.Instance);
+        return rvnc_connection_create(settings.Instance, logger.Instance, context.Instance);
     }
 
     VncContext? Context
@@ -33,7 +34,7 @@ public sealed unsafe class VncConnection: IDisposable
         {
             ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
 
-            var contextInstance = RoyalVNCKit.rvnc_connection_context_get(_instance);
+            var contextInstance = rvnc_connection_context_get(_instance);
 
             if (contextInstance is null)
                 return null;
@@ -50,7 +51,7 @@ public sealed unsafe class VncConnection: IDisposable
         {
             ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
 
-            void* nativeState = RoyalVNCKit.rvnc_connection_state_get_copy(_instance);
+            void* nativeState = rvnc_connection_state_get_copy(_instance);
             using var holder = new VncConnectionState(nativeState);
             
             return holder.Status;
@@ -70,7 +71,7 @@ public sealed unsafe class VncConnection: IDisposable
             if (context is not null)
                 context.ConnectionDelegate = value;
     
-            RoyalVNCKit.rvnc_connection_delegate_set(_instance, val);
+            rvnc_connection_delegate_set(_instance, val);
         }
     }
     
@@ -78,28 +79,28 @@ public sealed unsafe class VncConnection: IDisposable
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
     
-        RoyalVNCKit.rvnc_connection_connect(_instance);
+        rvnc_connection_connect(_instance);
     }
     
     public void Disconnect()
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
     
-        RoyalVNCKit.rvnc_connection_disconnect(_instance);
+        rvnc_connection_disconnect(_instance);
     }
     
     public void SendKeyDown(KeySymbol key)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
 
-        RoyalVNCKit.rvnc_connection_key_down(_instance, key);
+        rvnc_connection_key_down(_instance, key);
     }
     
     public void SendKeyUp(KeySymbol key)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
 
-        RoyalVNCKit.rvnc_connection_key_up(_instance, key);
+        rvnc_connection_key_up(_instance, key);
     }
     
     public void SendMouseButtonDown(ushort x, ushort y, MouseButton button)
@@ -110,7 +111,7 @@ public sealed unsafe class VncConnection: IDisposable
             throw new ArgumentOutOfRangeException(nameof(button));
         }
         
-        RoyalVNCKit.rvnc_connection_mouse_down(_instance, button, x, y);
+        rvnc_connection_mouse_down(_instance, button, x, y);
     }
     
     public void SendMouseButtonUp(ushort x, ushort y, MouseButton button)
@@ -121,14 +122,14 @@ public sealed unsafe class VncConnection: IDisposable
             throw new ArgumentOutOfRangeException(nameof(button));
         }
         
-        RoyalVNCKit.rvnc_connection_mouse_up(_instance, button, x, y);
+        rvnc_connection_mouse_up(_instance, button, x, y);
     }
     
     public void SendMouseMove(ushort x, ushort y)
     {
         ObjectDisposedException.ThrowIf(_isDisposed || _instance is null, this);
     
-        RoyalVNCKit.rvnc_connection_mouse_move(_instance, x, y);
+        rvnc_connection_mouse_move(_instance, x, y);
     }
     
     public void SendMouseScroll(ushort x, ushort y, double scrollWheelDeltaX, double scrollWheelDeltaY)
@@ -139,7 +140,7 @@ public sealed unsafe class VncConnection: IDisposable
         MouseWheel direction = MouseWheel.Down;
         uint steps = 1;
         
-        RoyalVNCKit.rvnc_connection_mouse_wheel(_instance, direction, x, y, steps);
+        rvnc_connection_mouse_wheel(_instance, direction, x, y, steps);
     }
 
     public void Dispose()
@@ -156,7 +157,7 @@ public sealed unsafe class VncConnection: IDisposable
         if (_instance is null)
             return;
 
-        RoyalVNCKit.rvnc_connection_destroy(_instance);
+        rvnc_connection_destroy(_instance);
         _instance = null;
     }
 }

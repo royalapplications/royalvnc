@@ -1,4 +1,5 @@
 using System;
+using static RoyalApps.RoyalVNCKit.RoyalVNCKit;
 
 namespace RoyalApps.RoyalVNCKit;
 
@@ -30,7 +31,7 @@ public sealed unsafe class VncSettings: IDisposable
     public VncSettings(IVncSettings settings)
     {
         ArgumentNullException.ThrowIfNull(settings);
-        Instance = RoyalVNCKit.rvnc_settings_create(
+        Instance = rvnc_settings_create(
             settings.IsDebugLoggingEnabled.ToNativeBool(),
             settings.Hostname,
             settings.Port,
@@ -53,7 +54,7 @@ public sealed unsafe class VncSettings: IDisposable
         if (Instance is null)
             return;
 
-        RoyalVNCKit.rvnc_settings_destroy(Instance);
+        rvnc_settings_destroy(Instance);
         Instance = null;
     }
 }

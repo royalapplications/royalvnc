@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using static RoyalApps.RoyalVNCKit.RoyalVNCKit;
 
 namespace RoyalApps.RoyalVNCKit;
 
@@ -53,7 +55,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
     }
 
     public VncConnectionDelegate() : this(
-        RoyalVNCKit.rvnc_connection_delegate_create(
+        rvnc_connection_delegate_create(
             connectionStateDidChange: ConnectionStateDidChangeHandler,
             authenticate: AuthenticateHandler,
             didCreateFramebuffer: DidCreateFramebufferHandler,
@@ -74,7 +76,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         if (Instance is null)
             return;
 
-        RoyalVNCKit.rvnc_connection_delegate_destroy(Instance);
+        rvnc_connection_delegate_destroy(Instance);
         Instance = null;
     }
 
@@ -100,14 +102,14 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         return connection is not null && connectionDelegate is not null;
     }
 
-    static readonly RoyalVNCKit.ConnectionStateDidChangeDelegate ConnectionStateDidChangeHandler = ConnectionStateDidChange;
+    static readonly ConnectionStateDidChangeDelegate ConnectionStateDidChangeHandler = ConnectionStateDidChange;
     static void ConnectionStateDidChange(
         void* connection,
         void* context,
         void* connectionState
     )
     {
-        if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
+        if (!TryGetConnectionAndDelegate(context, out var vncConnection, out var vncConnectionDelegate)
             || vncConnectionDelegate is not { ConnectionStateChanged: {} handler })
             return;
 
@@ -115,46 +117,48 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         handler.Invoke(vncConnection, state);
     }
 
-    static readonly RoyalVNCKit.AuthenticateDelegate AuthenticateHandler = Authenticate;
+    static readonly AuthenticateDelegate AuthenticateHandler = Authenticate;
     static void Authenticate(
         void* connection,
         void* context,
         void* authenticationRequest
     )
     {
-        if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
+        if (!TryGetConnectionAndDelegate(context, out var vncConnection, out var vncConnectionDelegate)
             || vncConnectionDelegate is not { AuthenticationRequested: { } handler })
         {
-            RoyalVNCKit.rvnc_authentication_request_cancel(authenticationRequest);
+            rvnc_authentication_request_cancel(authenticationRequest);
             return;
         }
 
-        var authType = RoyalVNCKit.rvnc_authentication_request_authentication_type_get(authenticationRequest);
-        bool requiresUsername = RoyalVNCKit.rvnc_authentication_type_requires_username(authType).FromNativeBool();
-        bool requiresPassword = RoyalVNCKit.rvnc_authentication_type_requires_password(authType).FromNativeBool();
+        var authType = rvnc_authentication_request_authentication_type_get(authenticationRequest);
+        bool requiresUsername = rvnc_authentication_type_requires_username(authType).FromNativeBool();
+        bool requiresPassword = rvnc_authentication_type_requires_password(authType).FromNativeBool();
         
         var request = new AuthenticationRequest(authType, requiresUsername, requiresPassword);
         
         if (!handler.Invoke(vncConnection, request) || (request.Username is null && request.Password is null))
         {
-            RoyalVNCKit.rvnc_authentication_request_cancel(authenticationRequest);
+            rvnc_authentication_request_cancel(authenticationRequest);
             return;
         }
         
-        if (request is { Username: string username, Password: string password })
-            RoyalVNCKit.rvnc_authentication_request_complete_with_username_password(authenticationRequest, username, password);
+        Debug.Assert(request.RequiresPassword);
+
+        if (request.RequiresUsername)
+            rvnc_authentication_request_complete_with_username_password(authenticationRequest, request.Username ?? "", request.Password ?? "");
         else
-            RoyalVNCKit.rvnc_authentication_request_complete_with_password(authenticationRequest, request.Password!);
+            rvnc_authentication_request_complete_with_password(authenticationRequest, request.Password ?? "");
     }
     
-    static readonly RoyalVNCKit.DidUpdateCursorDelegate DidUpdateCursorHandler = DidUpdateCursor;
+    static readonly DidUpdateCursorDelegate DidUpdateCursorHandler = DidUpdateCursor;
     static void DidUpdateCursor(
         void* connection,
         void* context,
         void* cursor
     )
     {
-        if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
+        if (!TryGetConnectionAndDelegate(context, out var vncConnection, out var vncConnectionDelegate)
             || vncConnectionDelegate is not { CursorUpdated: { } handler })
             return;
 
@@ -162,14 +166,14 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         handler.Invoke(vncConnection, vncCursor);
     }
     
-    static readonly RoyalVNCKit.DidCreateFramebufferDelegate DidCreateFramebufferHandler = DidCreateFramebuffer;
+    static readonly DidCreateFramebufferDelegate DidCreateFramebufferHandler = DidCreateFramebuffer;
     static void DidCreateFramebuffer(
         void* connection,
         void* context,
         void* framebuffer
     )
     {
-        if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
+        if (!TryGetConnectionAndDelegate(context, out var vncConnection, out var vncConnectionDelegate)
             || vncConnectionDelegate is not { FramebufferCreated: { } handler })
             return;
 
@@ -177,14 +181,14 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         handler.Invoke(vncConnection, vncFramebuffer);
     }
     
-    static readonly RoyalVNCKit.DidResizeFramebufferDelegate DidResizeFramebufferHandler = DidResizeFramebuffer;
+    static readonly DidResizeFramebufferDelegate DidResizeFramebufferHandler = DidResizeFramebuffer;
     static void DidResizeFramebuffer(
         void* connection,
         void* context,
         void* framebuffer
     )
     {
-        if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
+        if (!TryGetConnectionAndDelegate(context, out var vncConnection, out var vncConnectionDelegate)
             || vncConnectionDelegate is not { FramebufferResized: { } handler })
             return;
 
@@ -192,7 +196,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         handler.Invoke(vncConnection, vncFramebuffer);
     }
         
-    static readonly RoyalVNCKit.DidUpdateFramebufferDelegate DidUpdateFramebufferHandler = DidUpdateFramebuffer;
+    static readonly DidUpdateFramebufferDelegate DidUpdateFramebufferHandler = DidUpdateFramebuffer;
     static void DidUpdateFramebuffer(
         void* connection,
         void* context,
@@ -203,7 +207,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         ushort height
     )
     {
-        if (!TryGetConnectionAndDelegate(context, out VncConnection? vncConnection, out VncConnectionDelegate? vncConnectionDelegate)
+        if (!TryGetConnectionAndDelegate(context, out var vncConnection, out var vncConnectionDelegate)
             || vncConnectionDelegate is not { FramebufferUpdated: { } handler })
             return;
 
