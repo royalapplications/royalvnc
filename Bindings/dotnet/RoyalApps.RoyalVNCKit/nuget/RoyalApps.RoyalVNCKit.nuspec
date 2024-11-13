@@ -13,7 +13,7 @@
         <tags>RoyalApps RoyalVNCKit VNC .NET</tags>
         <repository type="git" url="https://github.com/royalapplications/royalvnc.git" commit="$NUGET_GIT_COMMIT$" />
         <dependencies>
-            <group targetFramework="net8.0">
+            <group targetFramework="net9.0">
                 <dependency id="RoyalApps.RoyalVNCKit.native.linux-arm64" version="$NUGET_VERSION$" />
                 <dependency id="RoyalApps.RoyalVNCKit.native.linux-x64" version="$NUGET_VERSION$" />
                 <dependency id="RoyalApps.RoyalVNCKit.native.osx" version="$NUGET_VERSION$" />
@@ -25,6 +25,6 @@
     <files>
         <file src="README.md" target="/README.md" />
         <file src="..\RoyalApps_1024.png" target="/RoyalApps_1024.png" />
-        <file src="bin\Release\RoyalApps.RoyalVNCKit.dll" target="/lib/net8.0/RoyalApps.RoyalVNCKit.dll" />
+        <file src="bin\Release\RoyalApps.RoyalVNCKit.dll" target="/lib/net9.0/RoyalApps.RoyalVNCKit.dll" />
     </files>
 </package>
