@@ -98,6 +98,10 @@ jobs:
 
     # setup build environment
 
+    - uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
     - name: setup environment (Apple)
       if: "success() && matrix.env.OS == 'apple'"
       run: |
