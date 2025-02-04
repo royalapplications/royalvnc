@@ -11,6 +11,10 @@ $PROJECT_DIR = Join-Path $REPO_ROOT 'Bindings/dotnet/RoyalApps.RoyalVNCKit' -Res
 
 exec { dotnet build --configuration Release "-p:Version=${NUGET_VERSION}" $PROJECT_DIR }
 
+$template = Get-Content "${PROJECT_DIR}/nuget/runtime.template.json" -Encoding utf8 -Raw
+$template.Replace('"v"', "`"${NUGET_VERSION}`"") `
+    | Set-Content "${PROJECT_DIR}/bin/Release/runtime.json" -Encoding utf8 -Force -NoNewline
+
 Write-Host 'Creating RoyalApps.RoyalVNCKit  NuGet package'
 
 exec {

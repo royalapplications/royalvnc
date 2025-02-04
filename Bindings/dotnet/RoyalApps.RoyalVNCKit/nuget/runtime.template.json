@@ -1,0 +1,29 @@
+{
+  "runtimes": {
+    "linux-arm64": {
+      "RoyalApps.RoyalVNCKit": {
+        "RoyalApps.RoyalVNCKit.native.linux-arm64": "v"
+      }
+    },
+    "linux-x64": {
+      "RoyalApps.RoyalVNCKit": {
+        "RoyalApps.RoyalVNCKit.native.linux-x64": "v"
+      }
+    },
+    "osx": {
+      "RoyalApps.RoyalVNCKit": {
+        "RoyalApps.RoyalVNCKit.native.osx": "v"
+      }
+    },
+    "win-arm64": {
+      "RoyalApps.RoyalVNCKit": {
+        "RoyalApps.RoyalVNCKit.native.win-arm64": "v"
+      }
+    },
+    "win-x64": {
+      "RoyalApps.RoyalVNCKit": {
+        "RoyalApps.RoyalVNCKit.native.win-x64": "v"
+      }
+    }
+  }
+}
