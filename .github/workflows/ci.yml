@@ -145,7 +145,7 @@ jobs:
 
     - name: build .NET bindings
       run: |
-        dotnet build --configuration Release Bindings/dotnet/RoyalApps.RoyalVNCKit.sln
+        dotnet build --configuration Release Bindings/dotnet/RoyalApps.RoyalVNCKit.slnx
 
     - name: create native NuGet package
       if: "success() && matrix.env.NUGET_RID != ''"
