@@ -10,6 +10,8 @@ import Glibc
 import WinSDK
 #elseif canImport(Darwin)
 import Darwin
+#elseif canImport(Android)
+import Android
 #endif
 
 final class AddressInfo {
@@ -21,6 +23,8 @@ final class AddressInfo {
 
 #if canImport(Glibc)
         let socktype = Int32(sockstream.rawValue)
+#elseif canImport(Android)
+        let socktype = Int32(sockstream)
 #elseif canImport(WinSDK)
         let socktype = sockstream
 #elseif canImport(Darwin)
@@ -60,7 +64,7 @@ final class AddressInfo {
 
 // MARK: - Property Accessors
 extension AddressInfo {
-#if canImport(Glibc) || canImport(Darwin)
+#if canImport(Glibc) || canImport(Darwin) || canImport(Android)
     typealias Socklen = socklen_t
 #elseif canImport(WinSDK)
     typealias Socklen = Int

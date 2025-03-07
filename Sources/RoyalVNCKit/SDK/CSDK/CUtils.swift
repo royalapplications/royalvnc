@@ -12,6 +12,10 @@ import WinSDK
 import Glibc
 #endif
 
+#if canImport(Android)
+import Android
+#endif
+
 extension String {
     func duplicateCString() -> UnsafeMutablePointer<CChar>? {
 #if canImport(WinSDK)

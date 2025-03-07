@@ -42,24 +42,7 @@ char* readLine(void) {
 }
 
 char* readPassword(const char* prompt) {
-#ifndef _WIN32
-    char* password = getpass(prompt);
-    
-    if (!password) {
-        return NULL;
-    }
-    
-    size_t len = strlen(password);
-    char* result = malloc(len + 1);
-    
-    if (!result) {
-        return NULL;
-    }
-    
-    strcpy(result, password);
-
-    return result;
-#else
+#ifdef _WIN32
     int len = 4096;
     char* buf = malloc(sizeof(char) * len);
 
@@ -109,6 +92,27 @@ done:
     CloseHandle(hi);
 
     return buf;
+#elif defined(__ANDROID_API__)
+    // TODO
+    
+    return NULL;
+#else
+    char* password = getpass(prompt);
+    
+    if (!password) {
+        return NULL;
+    }
+    
+    size_t len = strlen(password);
+    char* result = malloc(len + 1);
+    
+    if (!result) {
+        return NULL;
+    }
+    
+    strcpy(result, password);
+
+    return result;
 #endif
 }
 

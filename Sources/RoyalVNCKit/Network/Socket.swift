@@ -10,12 +10,14 @@ import Glibc
 import WinSDK
 #elseif canImport(Darwin)
 import Darwin
+#elseif canImport(Android)
+import Android
 #endif
 
 final class Socket {
     let addressInfo: AddressInfo
 
-#if canImport(Glibc) || canImport(Darwin)
+#if canImport(Glibc) || canImport(Darwin) || canImport(Android)
     private typealias NativeSocket = Int32
 #elseif canImport(WinSDK)
     private typealias NativeSocket = SOCKET
@@ -30,7 +32,7 @@ final class Socket {
             addressInfo.protocol
         )
 
-#if canImport(Glibc) || canImport(Darwin)
+#if canImport(Glibc) || canImport(Darwin) || canImport(Android)
         guard nativeSocket >= 0 else {
             throw .socketCreationFailed(underlyingErrorCode: nil)
         }
@@ -53,6 +55,12 @@ final class Socket {
         connectResult = Glibc.connect(
             nativeSocket,
             addressInfo.addr,
+            addressInfo.addrlen
+        )
+#elseif canImport(Android)
+        connectResult = Android.connect(
+            nativeSocket,
+            addressInfo.addr!, // TODO: Get rid of force unwrap
             addressInfo.addrlen
         )
 #elseif canImport(Darwin)
@@ -110,6 +118,13 @@ final class Socket {
                 .init(bufferCount),
                 0
             )
+#elseif canImport(Android)
+            let ret = Android.send(
+                nativeSocket,
+                bufferPtrAddr,
+                .init(bufferCount),
+                0
+            )
 #elseif canImport(Darwin)
             let ret = Darwin.send(
                 nativeSocket,
@@ -133,7 +148,7 @@ final class Socket {
     }
 
     deinit {
-#if canImport(Glibc) || canImport(Darwin)
+#if canImport(Glibc) || canImport(Darwin) || canImport(Android)
         close(nativeSocket)
 #elseif canImport(WinSDK)
         closesocket(nativeSocket)

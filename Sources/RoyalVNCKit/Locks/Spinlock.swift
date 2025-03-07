@@ -1,11 +1,15 @@
-#if canImport(Glibc)
+#if canImport(Glibc) || canImport(Android)
 #if canImport(FoundationEssentials)
 import FoundationEssentials
 #else
 import Foundation
 #endif
 
+#if canImport(Glibc)
 import Glibc
+#elseif canImport(Android)
+import Android
+#endif
 
 final class Spinlock {
     private var spinlock = pthread_spinlock_t()

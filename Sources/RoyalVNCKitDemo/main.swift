@@ -10,6 +10,8 @@ import Darwin
 import Glibc
 #elseif canImport(WinSDK)
 import WinSDK
+#elseif canImport(Android)
+import Android
 #endif
 
 import RoyalVNCKit
