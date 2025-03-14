@@ -1,5 +1,9 @@
-#if !os(Linux) && !os(Windows)
+#if !os(Linux) && !os(Windows) && !os(Android)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension VNCConnection.Settings {
 #if canImport(ObjectiveC)

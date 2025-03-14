@@ -1,5 +1,10 @@
 #if canImport(OSLog)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
 import OSLog
 
 public final class VNCOSLogLogger: VNCLogger {

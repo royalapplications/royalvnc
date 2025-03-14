@@ -1,5 +1,10 @@
 #if canImport(Security)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
 import Security
 
 struct Keychain {

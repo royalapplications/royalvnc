@@ -1,7 +1,11 @@
 // This is hacky, but I currently don't have a better idea on how to handle this for ObjC
 
 #if canImport(ObjectiveC)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 @objc(VNCKeyCode)
 // swiftlint:disable:next type_name

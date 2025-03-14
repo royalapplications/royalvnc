@@ -1,5 +1,10 @@
 #if os(macOS)
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+
 import CoreGraphics
 
 public extension VNCKeyCode {
