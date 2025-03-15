@@ -42,12 +42,12 @@ jobs:
               OS: "apple"
               NUGET_RID: "osx"
 
-          - name: "Windows x64"
-            os: windows-latest
-            env:
-              OS: "windows"
-              NUGET_RID: "win-x64"
-              NUGET_PACK_DOTNET_LIB: "1"
+          #- name: "Windows x64"
+          #  os: windows-latest
+          #  env:
+          #    OS: "windows"
+          #    NUGET_RID: "win-x64"
+          #    NUGET_PACK_DOTNET_LIB: "1"
 
           #- name: "Windows ARM64"
           #  os: windows-11-arm64-gh
@@ -109,12 +109,7 @@ jobs:
 
     - name: setup VC++ environment (Windows)
       if: "success() && matrix.env.OS == 'windows'"
-      uses: compnerd/gha-setup-vsdevenv@5eb3eae1490d4f7875d574c4973539f69109700d # main as of 2025-03-09
-      with:
-        # workaround for Swift 6.0.x incompat with latest WinSDK (10.0.26100.0)
-        # ref. https://github.com/swiftlang/swift/issues/79745
-        # ref. https://forums.swift.org/t/swiftpm-plugin-doesnt-work-with-the-latest-visual-studio-version/78183/15
-        winsdk: "10.0.22621.0"
+      uses: compnerd/gha-setup-vsdevenv@v6
 
     - name: setup Swift (Windows)
       if: "success() && matrix.env.OS == 'windows'"
