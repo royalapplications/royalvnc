@@ -109,7 +109,7 @@ jobs:
 
     - name: setup VC++ environment (Windows)
       if: "success() && matrix.env.OS == 'windows'"
-      uses: compnerd/gha-setup-vsdevenv@v6
+      uses: compnerd/gha-setup-vsdevenv@5eb3eae1490d4f7875d574c4973539f69109700d # main as of 2025-03-09
       with:
         # workaround for Swift 6.0.x incompat with latest WinSDK (10.0.26100.0)
         # ref. https://github.com/swiftlang/swift/issues/79745
