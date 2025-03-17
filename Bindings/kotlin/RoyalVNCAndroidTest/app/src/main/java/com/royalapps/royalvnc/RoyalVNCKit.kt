@@ -2,6 +2,7 @@ package com.royalapps.royalvnc
 
 import com.sun.jna.*
 import com.sun.jna.ptr.*
+import java.nio.ByteBuffer
 
 // Enums
 
@@ -255,6 +256,11 @@ object RoyalVNCKit {
     external fun rvnc_framebuffer_pixel_data_rgba32_destroy(
         framebuffer: Pointer /* rvnc_framebuffer_t */,
         buffer: Pointer /* void* */
+    )
+
+    external fun rvnc_framebuffer_copy_pixel_data_to_rgba32_buffer(
+        framebuffer: Pointer /* rvnc_framebuffer_t */,
+        destinationPixelBuffer: ByteBuffer /* void* */
     )
 
 

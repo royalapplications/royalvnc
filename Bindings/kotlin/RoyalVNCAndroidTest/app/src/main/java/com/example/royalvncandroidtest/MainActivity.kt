@@ -36,6 +36,8 @@ class MainActivity :
 
     private var _isConnected = mutableStateOf(false)
 
+    private var _pixelBuffer: VncPixelBuffer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -238,6 +240,8 @@ class MainActivity :
         framebuffer: VncFramebuffer
     ) {
         Log.d(_logTag, "didCreateFramebuffer (width: ${framebuffer.width}; height: ${framebuffer.height})")
+
+        _pixelBuffer = VncPixelBuffer(framebuffer)
     }
 
     override fun didResizeFramebuffer(
@@ -245,6 +249,8 @@ class MainActivity :
         framebuffer: VncFramebuffer
     ) {
         Log.d(_logTag, "didResizeFramebuffer (width: ${framebuffer.width}; height: ${framebuffer.height})")
+
+        _pixelBuffer = VncPixelBuffer(framebuffer)
     }
 
     override fun didUpdateFramebuffer(
@@ -257,10 +263,16 @@ class MainActivity :
     ) {
         Log.d(_logTag, "didUpdateFramebuffer (x: $x; y: $y; width: $width; height: $height)")
 
-        val bitmap = framebuffer.bitmap
+        _pixelBuffer?.let {
+            val bitmap = it.getBitmap(framebuffer)
 
-        runOnUiThread {
-            _image.value = bitmap.asImageBitmap()
+            runOnUiThread {
+                _image.value = bitmap.asImageBitmap()
+            }
+        } ?: run {
+            runOnUiThread {
+                _image.value = null
+            }
         }
     }
 
