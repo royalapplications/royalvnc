@@ -255,20 +255,9 @@ class MainActivity :
         width: Short,
         height: Short
     ) {
-        val pixelData = framebuffer.pixelData
-        val pixelDataSize = framebuffer.pixelDataSize
+        Log.d(_logTag, "didUpdateFramebuffer (x: $x; y: $y; width: $width; height: $height)")
 
-        Log.d(_logTag, "didUpdateFramebuffer (x: $x; y: $y; width: $width; height: $height; pixelDataSize: $pixelDataSize)")
-
-        val bgraBuffer = pixelData.getByteBuffer(0, pixelDataSize)
-        val framebufferWidth = framebuffer.width.toInt()
-        val framebufferHeight = framebuffer.height.toInt()
-
-        val bitmap = PixelUtils.bgraBufferToBitmap(
-            bgraBuffer,
-            framebufferWidth,
-            framebufferHeight
-        )
+        val bitmap = framebuffer.bitmap
 
         runOnUiThread {
             _image.value = bitmap.asImageBitmap()

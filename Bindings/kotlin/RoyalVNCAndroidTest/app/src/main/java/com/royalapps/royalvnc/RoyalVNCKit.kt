@@ -1,6 +1,7 @@
 package com.royalapps.royalvnc
 
 import com.sun.jna.*
+import com.sun.jna.ptr.*
 
 // Enums
 
@@ -245,6 +246,16 @@ object RoyalVNCKit {
     external fun rvnc_framebuffer_pixel_data_size_get(
         framebuffer: Pointer /* rvnc_framebuffer_t */
     ): Long /* uint64_t */
+
+    external fun rvnc_framebuffer_pixel_data_rgba32_get_copy(
+        framebuffer: Pointer /* rvnc_framebuffer_t */,
+        pixelDataSize: LongByReference? /* uint64_t* _Nullable */
+    ): Pointer /* void* */
+
+    external fun rvnc_framebuffer_pixel_data_rgba32_destroy(
+        framebuffer: Pointer /* rvnc_framebuffer_t */,
+        buffer: Pointer /* void* */
+    )
 
 
     // Cursor
