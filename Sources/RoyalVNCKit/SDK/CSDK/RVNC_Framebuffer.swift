@@ -81,3 +81,12 @@ public func rvnc_framebuffer_pixel_data_rgba32_destroy(_ framebuffer: rvnc_conne
     VNCFramebuffer.fromPointer(framebuffer)
         .destroyRGBA32PixelData(buffer)
 }
+
+@_cdecl("rvnc_framebuffer_copy_pixel_data_to_rgba32_buffer")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_framebuffer_copy_pixel_data_to_rgba32_buffer(_ framebuffer: rvnc_connection_state_t,
+                                                              _ destinationPixelBuffer: UnsafeMutableRawPointer) {
+    VNCFramebuffer.fromPointer(framebuffer)
+        .copyPixelDataToRGBA32(destinationPixelBuffer: destinationPixelBuffer)
+}

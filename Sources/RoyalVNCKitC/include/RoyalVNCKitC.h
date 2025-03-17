@@ -144,6 +144,10 @@ extern void* _Nonnull rvnc_framebuffer_pixel_data_rgba32_get_copy(rvnc_framebuff
 extern void rvnc_framebuffer_pixel_data_rgba32_destroy(rvnc_framebuffer_t _Nonnull framebuffer,
                                                        void* _Nonnull pixelData);
 
+// NOTE: Copies the pixel data to a pre-allocated RGBA32 destination buffer.
+extern void rvnc_framebuffer_copy_pixel_data_to_rgba32_buffer(rvnc_framebuffer_t _Nonnull framebuffer,
+                                                              void* _Nonnull destinationPixelBuffer);
+
 
 #pragma mark - Cursor
 
