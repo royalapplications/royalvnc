@@ -57,3 +57,27 @@ public func rvnc_framebuffer_pixel_data_size_get(_ framebuffer: rvnc_connection_
     
     return .init(surfaceByteCount)
 }
+
+@_cdecl("rvnc_framebuffer_pixel_data_rgba32_get_copy")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_framebuffer_pixel_data_rgba32_get_copy(_ framebuffer: rvnc_connection_state_t,
+                                                        _ pixelDataSize: UnsafeMutablePointer<UInt64>?) -> UnsafeMutableRawPointer {
+    var byteCount: Int = 0
+    
+    let framebuffer = VNCFramebuffer.fromPointer(framebuffer)
+    let pixelBuffer = framebuffer.copyPixelDataToRGBA32(pixelDataSize: &byteCount)
+    
+    pixelDataSize?.pointee = .init(byteCount)
+    
+    return pixelBuffer
+}
+
+@_cdecl("rvnc_framebuffer_pixel_data_rgba32_destroy")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_framebuffer_pixel_data_rgba32_destroy(_ framebuffer: rvnc_connection_state_t,
+                                                       _ buffer: UnsafeMutableRawPointer) {
+    VNCFramebuffer.fromPointer(framebuffer)
+        .destroyRGBA32PixelData(buffer)
+}

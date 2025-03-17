@@ -137,6 +137,12 @@ extern uint16_t rvnc_framebuffer_size_height_get(rvnc_framebuffer_t _Nonnull fra
 extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnull framebuffer);
 extern uint64_t rvnc_framebuffer_pixel_data_size_get(rvnc_framebuffer_t _Nonnull framebuffer);
 
+extern void* _Nonnull rvnc_framebuffer_pixel_data_rgba32_get_copy(rvnc_framebuffer_t _Nonnull framebuffer,
+                                                                  uint64_t* _Nullable pixelDataSize);
+
+extern void rvnc_framebuffer_pixel_data_rgba32_destroy(rvnc_framebuffer_t _Nonnull framebuffer,
+                                                       void* _Nonnull pixelData);
+
 
 #pragma mark - Cursor
 
