@@ -137,6 +137,7 @@ extern uint16_t rvnc_framebuffer_size_height_get(rvnc_framebuffer_t _Nonnull fra
 extern void* _Nonnull rvnc_framebuffer_pixel_data_get(rvnc_framebuffer_t _Nonnull framebuffer);
 extern uint64_t rvnc_framebuffer_pixel_data_size_get(rvnc_framebuffer_t _Nonnull framebuffer);
 
+// NOTE: This returns a copy of the pixel data formatted as 32-bit RGBA data. The returned value must be deallocated by calling `rvnc_framebuffer_pixel_data_rgba32_destroy`.
 extern void* _Nonnull rvnc_framebuffer_pixel_data_rgba32_get_copy(rvnc_framebuffer_t _Nonnull framebuffer,
                                                                   uint64_t* _Nullable pixelDataSize);
 
