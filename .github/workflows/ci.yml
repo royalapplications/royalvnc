@@ -42,12 +42,12 @@ jobs:
               OS: "apple"
               NUGET_RID: "osx"
 
-          #- name: "Windows x64"
-          #  os: windows-latest
-          #  env:
-          #    OS: "windows"
-          #    NUGET_RID: "win-x64"
-          #    NUGET_PACK_DOTNET_LIB: "1"
+          - name: "Windows x64"
+           os: windows-latest
+           env:
+             OS: "windows"
+             NUGET_RID: "win-x64"
+             NUGET_PACK_DOTNET_LIB: "1"
 
           #- name: "Windows ARM64"
           #  os: windows-11-arm64-gh
@@ -68,7 +68,7 @@ jobs:
       VCPKG_DISABLE_METRICS: 1
       NUGET_BASE_VERSION: "0.0"
       ROYALVNC_BUILD_DEBUG: 0
-      SWIFT_VERSION: "6.0.3"
+      SWIFT_VERSION: "6.1"
 
     steps:
     #- name: setup tools (win-arm64)
