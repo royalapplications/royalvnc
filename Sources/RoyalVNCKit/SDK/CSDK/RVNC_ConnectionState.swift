@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 extension VNCConnection.Status {
     var cConnectionStatus: RVNC_CONNECTION_STATUS {

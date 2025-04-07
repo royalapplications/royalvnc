@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import libtomcrypt
+internal import libtomcrypt
 
 struct AES128ECBEncryption {
     static func encrypt(data: Data,

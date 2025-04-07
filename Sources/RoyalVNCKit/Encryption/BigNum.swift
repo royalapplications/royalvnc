@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import libtommath
+internal import libtommath
 
 final class BigNum {
 	private let num: UnsafeMutablePointer<BIGNUM>

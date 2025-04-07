@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import Z
+internal import Z
 
 enum ZlibError: Error {
 	case unknown(status: Int32, message: String?)

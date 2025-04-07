@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 final class VNCAuthenticationRequest_C {
     typealias CompletionHandler = ((any VNCCredential)?) -> Void

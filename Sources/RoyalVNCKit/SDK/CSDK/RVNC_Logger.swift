@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 final class VNCLogger_C: VNCLogger {
     fileprivate let context: rvnc_context_t?

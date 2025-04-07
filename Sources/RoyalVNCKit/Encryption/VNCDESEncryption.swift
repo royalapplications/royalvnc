@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import d3des
+internal import d3des
 
 struct VNCDESEncryption {
 	static func encrypt(data: Data,
