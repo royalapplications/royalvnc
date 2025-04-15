@@ -91,6 +91,7 @@ jobs:
       if: "success() && matrix.env.OS == 'windows'"
       uses: compnerd/gha-setup-vsdevenv@v6
       with:
+        arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
         host_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
 
     - name: setup Swift (Windows)
