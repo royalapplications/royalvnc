@@ -48,14 +48,14 @@ jobs:
               OS: "windows"
               NUGET_RID: "win-x64"
               NUGET_PACK_DOTNET_LIB: "1"
-              SWIFT_TOOLS_ARCH: "amd64"
+              BUILD_TOOLS_ARCH: "amd64"
 
           - name: "Windows ARM64"
             os: windows-11-arm
             env:
               OS: "windows"
               NUGET_RID: "win-arm64"
-              SWIFT_TOOLS_ARCH: "arm64"
+              BUILD_TOOLS_ARCH: "arm64"
 
     runs-on: "${{ matrix.os }}"
 
@@ -90,6 +90,8 @@ jobs:
     - name: setup VC++ environment (Windows)
       if: "success() && matrix.env.OS == 'windows'"
       uses: compnerd/gha-setup-vsdevenv@v6
+      with:
+        host_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
 
     - name: setup Swift (Windows)
       if: "success() && matrix.env.OS == 'windows'"
@@ -97,7 +99,7 @@ jobs:
       with:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
-        build_arch: "${{ matrix.env.SWIFT_TOOLS_ARCH }}"
+        build_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
 
     # build RoyalVNCKit
 
