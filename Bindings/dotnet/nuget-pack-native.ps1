@@ -8,10 +8,6 @@ $PSStyle.OutputRendering = 'ANSI'
 . $PSScriptRoot/nuget-utils.ps1
 
 $CONFIGURATION = 'Release'
-if ($NUGET_RID -eq 'win-arm64') {
-    # ref. https://github.com/swiftlang/swift/issues/77220
-    $CONFIGURATION = 'Debug'
-}
 
 $DEMO_DIR = Join-Path $REPO_ROOT 'Bindings/dotnet/RoyalApps.RoyalVNCKit.Demo' -Resolve
 exec { dotnet build --configuration $CONFIGURATION $DEMO_DIR }
