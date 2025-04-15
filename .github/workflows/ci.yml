@@ -48,12 +48,14 @@ jobs:
               OS: "windows"
               NUGET_RID: "win-x64"
               NUGET_PACK_DOTNET_LIB: "1"
+              SWIFT_ARCH: "amd64"
 
           - name: "Windows ARM64"
             os: windows-11-arm
             env:
               OS: "windows"
               NUGET_RID: "win-arm64"
+              SWIFT_ARCH: "arm64"
 
     runs-on: "${{ matrix.os }}"
 
@@ -95,6 +97,7 @@ jobs:
       with:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
+        arch: "${{ matrix.env.SWIFT_ARCH }}"
 
     # build RoyalVNCKit
 
