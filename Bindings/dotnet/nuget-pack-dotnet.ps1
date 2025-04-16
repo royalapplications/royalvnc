@@ -1,3 +1,4 @@
+#!/usr/bin/env pwsh
 #Requires -PSEdition Core -Version 7.4
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
