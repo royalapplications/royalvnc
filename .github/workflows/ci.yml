@@ -156,7 +156,7 @@ jobs:
         NUGET_RID: "${{ matrix.env.NUGET_RID }}"
       shell: cmd
       run: |
-        pwsh Bindings/dotnet/nuget-test-aot.ps1
+        pwsh.exe Bindings/dotnet/nuget-test-aot.ps1
 
     - name: create NuGet package
       if: "success() && matrix.env.NUGET_PACK_DOTNET_LIB == '1'"
