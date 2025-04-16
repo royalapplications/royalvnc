@@ -141,13 +141,13 @@ jobs:
       run: |
         pwsh Bindings/dotnet/nuget-pack-native.ps1
 
-    #- name: test AOT build and interop
-    #  if: "success() && matrix.env.NUGET_RID != ''"
-    #  env:
-    #    NUGET_VERSION: "${{ env.NUGET_BASE_VERSION }}.${{ github.run_number }}"
-    #    NUGET_RID: "${{ matrix.env.NUGET_RID }}"
-    #  run: |
-    #    pwsh Bindings/dotnet/nuget-test-aot.ps1
+    - name: test AOT build and interop (non-Windows)
+      if: "success() && matrix.env.NUGET_RID != '' && matrix.env.OS != 'windows'"
+      env:
+        NUGET_VERSION: "${{ env.NUGET_BASE_VERSION }}.${{ github.run_number }}"
+        NUGET_RID: "${{ matrix.env.NUGET_RID }}"
+      run: |
+        pwsh Bindings/dotnet/nuget-test-aot.ps1
 
     - name: create NuGet package
       if: "success() && matrix.env.NUGET_PACK_DOTNET_LIB == '1'"
