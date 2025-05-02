@@ -34,7 +34,7 @@ It has no external dependencies but includes some free (public domain) third par
 ### Misc. Features
 - Support for 8-bit, 16-bit and 24/32-bit color depths with high-performance framebuffer implementations.
 - Clipboard redirection support for text in both ways (remote to local and local to remote).
-- Connection state management and rendering is decoupled from each other, so it's possible to build "headless" clients (ie. no rendering of the remote desktop). 
+- Connection state management and rendering is decoupled from each other, so it's possible to build "headless" clients (ie. no rendering of the remote desktop).
 - The SDK includes a ready-to-use implementation of a framebuffer view for macOS (subclass of `NSView`), which also handles mouse and keyboard input, local cursor (`NSCursor`), scaling and rendering. The iOS/iPadOS equivalent (`UIView`) is a work-in-progress.
 - First-class error handling. The `VNCError` type divides all possible errors into three broad categories: Protocol, Authentication and Connection errors. There are helper functions to retrieve human-readable descriptions for all errors and a convenience functions that allows the SDK consumer to distinguish between errors that should be displayed to the user and ones that shouldn't.
 - Headless CLI demos (one using Swift and another one using the C API) are included in the repository.

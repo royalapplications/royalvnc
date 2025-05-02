@@ -16,35 +16,35 @@ public final class VNCCursor: NSObjectOrAnyObject {
     @objc
 #endif
 	public static let empty = VNCCursor()
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	public let isEmpty: Bool
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	public let imageData: Data
-	
+
 	public let size: VNCSize
 	public let hotspot: VNCPoint
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	public let bitsPerComponent: Int
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	public let bitsPerPixel: Int
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	public let bytesPerPixel: Int
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -53,21 +53,21 @@ public final class VNCCursor: NSObjectOrAnyObject {
 #if canImport(CoreGraphics)
 	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
 #endif
-	
+
 	override init() {
 		self.isEmpty = true
-		
+
 		self.imageData = .init()
-		
+
 		self.size = .zero
 		self.hotspot = .zero
-		
+
 		self.bitsPerComponent = 0
 		self.bitsPerPixel = 0
 		self.bytesPerPixel = 0
 		self.bytesPerRow = 0
 	}
-	
+
 	init(imageData: Data,
 		 size: VNCSize,
 		 hotspot: VNCPoint,
@@ -75,11 +75,11 @@ public final class VNCCursor: NSObjectOrAnyObject {
 		 bitsPerPixel: Int,
 		 bytesPerPixel: Int) {
 		self.isEmpty = false
-		
+
 		self.imageData = imageData
 		self.size = size
 		self.hotspot = hotspot
-		
+
 		self.bitsPerComponent = bitsPerComponent
 		self.bitsPerPixel = bitsPerPixel
 		self.bytesPerPixel = bytesPerPixel
@@ -95,7 +95,7 @@ public extension VNCCursor {
 	var cgSize: CGSize {
 		size.cgSize
 	}
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -110,13 +110,13 @@ public extension VNCCursor {
 		guard !imageData.isEmpty else {
 			return nil
 		}
-		
+
 		guard let dataProvider = CGDataProvider(data: imageData as CFData) else {
 			return nil
 		}
-		
+
 		let bitmapInfo: CGBitmapInfo = .init(rawValue: CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.last.rawValue)
-		
+
 		let image = CGImage(width: .init(size.width),
 							height: .init(size.height),
 							bitsPerComponent: bitsPerComponent,
@@ -128,7 +128,7 @@ public extension VNCCursor {
 							decode: nil,
 							shouldInterpolate: false,
 							intent: .defaultIntent)
-		
+
 		return image
 	}
 }

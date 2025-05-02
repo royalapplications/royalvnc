@@ -11,9 +11,9 @@ public enum VNCPseudoEncodingType: VNCEncodingType {
 	case continuousUpdates = -313
 	case desktopSize = -223
 	case extendedDesktopSize = -308
-	
+
 	// Level 1 means lowest compression level, Level 10 means highest compression level
-	
+
 	/// Lowest compression level
 	case compressionLevel1 = -256
 	case compressionLevel2 = -255
@@ -26,7 +26,7 @@ public enum VNCPseudoEncodingType: VNCEncodingType {
 	case compressionLevel9 = -248
 	/// Highest compression level
 	case compressionLevel10 = -247
-	
+
 	case extendedClipboard = 0xc0a1e5ce
 }
 

@@ -7,7 +7,7 @@ import Foundation
 extension VNCProtocol {
 	struct Bell: VNCReceivableMessage {
 		static let messageType: UInt8 = 2
-		
+
 		let messageType: UInt8
 	}
 }

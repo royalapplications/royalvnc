@@ -25,15 +25,15 @@ extension VNCConnection.ConnectionState {
     func retainedPointer() -> rvnc_connection_state_t {
         .retainedPointerFrom(self)
     }
-    
+
     func unretainedPointer() -> rvnc_connection_state_t {
         .unretainedPointerFrom(self)
     }
-    
+
     static func autoreleasePointer(_ pointer: rvnc_connection_state_t) {
         pointer.autorelease(VNCConnection.ConnectionState.self)
     }
-    
+
     static func fromPointer(_ pointer: rvnc_connection_state_t) -> Self {
         pointer.unretainedInstance()
     }
@@ -53,7 +53,7 @@ public func rvnc_connection_state_status_get(_ connectionState: rvnc_connection_
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let status = connectionStateSwift.status
     let cStatus = status.cConnectionStatus
-    
+
     return cStatus
 }
 
@@ -63,14 +63,14 @@ public func rvnc_connection_state_status_get(_ connectionState: rvnc_connection_
 public func rvnc_connection_state_error_description_get_copy(_ connectionState: rvnc_connection_state_t) -> UnsafeMutablePointer<CChar>? {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let error = connectionStateSwift.error
-    
+
     guard let error else {
         return nil
     }
-    
+
     let errorDescription = error.humanReadableDescription
     let errorDescriptionC = errorDescription.duplicateCString()
-    
+
     return errorDescriptionC
 }
 
@@ -80,11 +80,11 @@ public func rvnc_connection_state_error_description_get_copy(_ connectionState: 
 public func rvnc_connection_state_error_should_display_to_user_get(_ connectionState: rvnc_connection_state_t) -> Bool {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let error = connectionStateSwift.error
-    
+
     guard let vncError = error as? VNCError else {
         return false
     }
-    
+
     return vncError.shouldDisplayToUser
 }
 
@@ -94,10 +94,10 @@ public func rvnc_connection_state_error_should_display_to_user_get(_ connectionS
 public func rvnc_connection_state_error_is_authentication_error_get(_ connectionState: rvnc_connection_state_t) -> Bool {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let error = connectionStateSwift.error
-    
+
     guard let vncError = error as? VNCError else {
         return false
     }
-    
+
     return vncError.isAuthenticationError
 }

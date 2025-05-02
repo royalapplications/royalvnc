@@ -67,12 +67,12 @@ public final class _ObjC_VNCFrameEncodingTypeUtils: NSObject {
 	public static var defaultFrameEncodings: [Int64] {
 		VNCFrameEncodingType.defaultFrameEncodings.map({ $0.rawValue.rawValue })
 	}
-	
+
     @objc
 	public static func descriptionForFrameEncoding(_ frameEncoding: _ObjC_VNCFrameEncodingType) -> String {
 		let enc = VNCFrameEncodingType.fromObjCFrameEncodingType(frameEncoding)
 		let desc = enc.description
-		
+
 		return desc
 	}
 }
@@ -82,19 +82,19 @@ public extension [VNCFrameEncodingType] {
 	static var `default`: Self {
 		VNCFrameEncodingType.defaultFrameEncodings
 	}
-	
+
 	func encode() -> [String] {
 		let encodedValue = compactMap { frameEncoding in
 			let encType = frameEncoding.rawValue
 			let rawValue = encType.rawValue
 			let strValue = String(rawValue)
-			
+
 			return strValue
 		}
-		
+
 		return encodedValue
 	}
-	
+
 	static func decode(_ strings: [String]) -> Self {
 		let encs: [VNCFrameEncodingType] = strings.compactMap {
 			guard let encTypeNum = VNCEncodingType.RawValue($0),
@@ -102,10 +102,10 @@ public extension [VNCFrameEncodingType] {
 				  let enc = VNCFrameEncodingType(rawValue: encType) else {
 				return nil
 			}
-			
+
 			return enc
 		}
-		
+
 		return encs
 	}
 }

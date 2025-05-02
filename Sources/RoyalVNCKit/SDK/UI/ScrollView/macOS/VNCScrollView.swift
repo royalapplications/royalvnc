@@ -17,16 +17,16 @@ public final class VNCScrollView: NSScrollView {
 			.nextResponder?
 			.scrollWheel(with: event)
 	}
-	
+
 	public override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
-		
+
 		commonInit()
 	}
-	
+
 	public required init?(coder: NSCoder) {
 		super.init(coder: coder)
-		
+
 		commonInit()
 	}
 }
@@ -35,7 +35,7 @@ private extension VNCScrollView {
 	func commonInit() {
 		scrollerStyle = .legacy
 		autohidesScrollers = false
-		
+
 		hasVerticalScroller = false
 		hasHorizontalScroller = false
 	}

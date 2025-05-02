@@ -13,7 +13,7 @@ public extension VNCError {
 		case ardAuthenticationFailed
 		case ultraVNCMSLogonIIAuthenticationFailed
 		case encryptionFailed
-		
+
 		// MARK: - LocalizedError
 		public var errorDescription: String? {
 			// TODO: Localize
@@ -43,13 +43,13 @@ private extension VNCError.AuthenticationError {
 	func combinedErrorDescription(_ baseErrorDescription: String,
 								  reason: String?) -> String {
 		let unwrappedReason: String
-		
+
 		if let reason = reason {
 			unwrappedReason = reason
 		} else {
 			unwrappedReason = ""
 		}
-		
+
 		return "\(baseErrorDescription)\(unwrappedReason.isEmpty ? "" : " Reason provided by the Server: \(unwrappedReason)")"
 	}
 }

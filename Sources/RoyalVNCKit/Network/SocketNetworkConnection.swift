@@ -31,14 +31,14 @@ final class SocketNetworkConnection: NetworkConnection {
             fatalError("Initializing Winsock failed: \(error.humanReadableDescription)")
         }
 #endif
-        
+
         self.settings = settings
     }
-    
+
     func setStatusUpdateHandler(_ statusUpdateHandler: NetworkConnectionStatusUpdateHandler?) {
         self.statusUpdateHandler = statusUpdateHandler
     }
-    
+
     var isReady: Bool {
         switch status {
             case .ready:
@@ -47,7 +47,7 @@ final class SocketNetworkConnection: NetworkConnection {
                 false
         }
     }
-    
+
     func cancel() {
         // TODO
         // fatalError("Not implemented")
@@ -143,7 +143,7 @@ extension SocketNetworkConnection: NetworkConnectionWriting {
             queue.async {
                 let bytesToSend = [UInt8](data)
                 let bytesSent = socket.send(buffer: bytesToSend)
-                
+
                 if bytesSent < 0 {
                     continuation.resume(throwing: Errors.sendFailed)
                 } else {

@@ -28,16 +28,16 @@ typedef struct Context {
 char* readLine(void) {
     int maxLength = sizeof(char) * 4096;
     char* str = malloc(maxLength);
-    
+
     if (fgets(str, maxLength, stdin)) {
         size_t len = strlen(str);
-        
+
         if (len > 0 &&
             str[len - 1] == '\n') {
             str[--len] = '\0';
         }
     }
-    
+
     return str;
 }
 
@@ -94,22 +94,22 @@ done:
     return buf;
 #elif defined(__ANDROID_API__)
     // TODO
-    
+
     return NULL;
 #else
     char* password = getpass(prompt);
-    
+
     if (!password) {
         return NULL;
     }
-    
+
     size_t len = strlen(password);
     char* result = malloc(len + 1);
-    
+
     if (!result) {
         return NULL;
     }
-    
+
     strcpy(result, password);
 
     return result;
@@ -161,7 +161,7 @@ void loggerDelegate_log(rvnc_logger_t logger,
                         RVNC_LOG_LEVEL logLevel,
                         const char* message) {
     char* logLevelStr = logLevelToString(logLevel);
-    
+
     printf("[%s] %s\n",
            logLevelStr,
            message);
@@ -175,19 +175,19 @@ void delegate_connectionStateDidChange(rvnc_connection_t connection,
                                        rvnc_connection_state_t connectionState) {
     RVNC_CONNECTION_STATUS status = rvnc_connection_state_status_get(connectionState);
     const char* statusStr = connectionStatusToString(status);
-    
+
     char* errorDescription = rvnc_connection_state_error_description_get_copy(connectionState);
     char* errorDescriptionForLog;
-    
+
     if (errorDescription) {
         errorDescriptionForLog = errorDescription;
     } else {
         errorDescriptionForLog = "N/A";
     }
-    
+
     bool shouldDisplayErrorToUser = rvnc_connection_state_error_should_display_to_user_get(connectionState);
     bool isAuthenticationError = rvnc_connection_state_error_is_authentication_error_get(connectionState);
-    
+
     if (shouldDisplayErrorToUser) {
         printf("delegate_connectionStateDidChange - Status: %s; Error Description: %s; Is Authentication Error: %s\n",
                statusStr,
@@ -197,7 +197,7 @@ void delegate_connectionStateDidChange(rvnc_connection_t connection,
         printf("delegate_connectionStateDidChange - Status: %s\n",
                statusStr);
     }
-    
+
     if (errorDescription) {
         free(errorDescription);
     }
@@ -208,13 +208,13 @@ void delegate_authenticate(rvnc_connection_t connection,
                            rvnc_authentication_request_t authenticationRequest) {
     RVNC_AUTHENTICATIONTYPE authenticationType = rvnc_authentication_request_authentication_type_get(authenticationRequest);
     char* authenticationTypeStr = authenticationTypeToString(authenticationType);
-    
+
     printf("delegate_authenticate - Authentication type: %s\n",
            authenticationTypeStr);
-    
+
     bool requiresUsername = rvnc_authentication_type_requires_username(authenticationType);
     bool requiresPassword = rvnc_authentication_type_requires_password(authenticationType);
-    
+
     if (requiresUsername) {
         printf("Enter username: ");
         char* username = readLine();
@@ -228,21 +228,21 @@ void delegate_authenticate(rvnc_connection_t connection,
         } else {
             rvnc_authentication_request_cancel(authenticationRequest);
         }
-        
+
         if (username) {
             free(username);
         }
-        
+
         if (password) {
             free(password);
         }
     } else if (requiresPassword) {
         char* password = readPassword("Enter password: ");
-        
+
         if (password) {
             rvnc_authentication_request_complete_with_password(authenticationRequest,
                                                                password);
-            
+
             free(password);
         } else {
             rvnc_authentication_request_cancel(authenticationRequest);
@@ -300,7 +300,7 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
     int64_t bytesPerRow = rvnc_cursor_bytes_per_row_get(cursor);
     void* pixelData = rvnc_cursor_pixel_data_get_copy(cursor);
     uint64_t pixelDataSize = rvnc_cursor_pixel_data_size_get(cursor);
-    
+
     printf("delegate_didUpdateCursor - isEmpty: %s; width: %i; height: %i; hotspotX: %i; hotspotY: %i; bitsPerComponent: %" PRId64 "; bitsPerPixel: %" PRId64 "; bytesPerPixel: %" PRId64 "; bytesPerRow: %" PRId64 "; pixelData: %p; pixelDataSize: %" PRIu64 "\n",
            isEmpty ? "Yes" : "No",
            width,
@@ -313,7 +313,7 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
            bytesPerRow,
            pixelData,
            pixelDataSize);
-    
+
     if (pixelData) {
         rvnc_cursor_pixel_data_destroy(pixelData);
     }
@@ -325,21 +325,21 @@ void delegate_didUpdateCursor(rvnc_connection_t connection,
 int main(int argc, char *argv[]) {
     // Get hostname either from args or stdin
     const char* hostname;
-    
+
     if (argc >= 2) {
         hostname = argv[1];
     } else {
         printf("Enter hostname: ");
-        
+
         hostname = readLine();
     }
-    
+
     if (strlen(hostname) <= 0) {
         printf("No hostname given\n");
-        
+
         exit(1);
     }
-    
+
     // Declare settings
     const uint16_t port = 5900;
     const bool isShared = true;
@@ -349,14 +349,14 @@ int main(int argc, char *argv[]) {
     const bool isClipboardRedirectionEnabled = false;
     const RVNC_COLORDEPTH colorDepth = RVNC_COLORDEPTH_24BIT;
     const bool enableDebugLogging = true;
-    
+
     // Create context
     Context* context = malloc(sizeof(Context));
-    
+
     // Create logger
     rvnc_logger_t logger = rvnc_logger_create(loggerDelegate_log,
                                               context);
-    
+
     // Create settings
     rvnc_settings_t settings = rvnc_settings_create(enableDebugLogging,
                                                     hostname,
@@ -367,12 +367,12 @@ int main(int argc, char *argv[]) {
                                                     inputMode,
                                                     isClipboardRedirectionEnabled,
                                                     colorDepth);
-    
+
     // Create connection
     rvnc_connection_t connection = rvnc_connection_create(settings,
                                                           logger,
                                                           context);
-    
+
     // Create connection delegate
     rvnc_connection_delegate_t connectionDelegate = rvnc_connection_delegate_create(delegate_connectionStateDidChange,
                                                                                     delegate_authenticate,
@@ -380,33 +380,33 @@ int main(int argc, char *argv[]) {
                                                                                     delegate_didResizeFramebuffer,
                                                                                     delegate_didUpdateFramebuffer,
                                                                                     delegate_didUpdateCursor);
-    
+
     // Set connection delegate in connection
     rvnc_connection_delegate_set(connection, connectionDelegate);
-    
+
     // Connect
     rvnc_connection_connect(connection);
-    
+
     // Run loop until connection is disconnected
     while (true) {
         rvnc_connection_state_t connectionState = rvnc_connection_state_get_copy(connection);
         RVNC_CONNECTION_STATUS connectionStatus = rvnc_connection_state_status_get(connectionState);
-        
+
         rvnc_connection_state_destroy(connectionState);
-        
+
         if (connectionStatus == RVNC_CONNECTION_STATUS_DISCONNECTED) {
             break;
         }
-        
+
         usleep(0.5 * 1000000.0);
     }
-    
+
     // Clean up
     rvnc_connection_destroy(connection);
     rvnc_connection_delegate_destroy(connectionDelegate);
     rvnc_settings_destroy(settings);
     rvnc_logger_destroy(logger);
     free(context);
-    
+
     return EXIT_SUCCESS;
 }

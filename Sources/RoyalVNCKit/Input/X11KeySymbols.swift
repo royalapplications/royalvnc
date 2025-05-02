@@ -26,7 +26,7 @@ struct X11KeySymbols {
 	static let XK_Sys_Req                       = UInt32(0xff15)
 	static let XK_Escape                        = UInt32(0xff1b)
 	static let XK_Delete                        = UInt32(0xffff)  /* Delete, rubout */
-	
+
 	/* International & multi-key character composition */
 
 	static let XK_Multi_key                     = UInt32(0xff20)  /* Multi-key character compose */

@@ -12,7 +12,7 @@ public extension VNCConnection {
 	func connect() {
 		beginConnecting()
 	}
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -27,15 +27,15 @@ public extension VNCConnection {
 #endif
 	func updateColorDepth(_ colorDepth: Settings.ColorDepth) {
 		guard let framebuffer = framebuffer else { return }
-		
+
 		let newPixelFormat = VNCProtocol.PixelFormat(depth: colorDepth.rawValue)
-		
+
 		state.pixelFormat = newPixelFormat
-		
+
 		let sendPixelFormatMessage = VNCProtocol.SetPixelFormat(pixelFormat: newPixelFormat)
-		
+
 		clientToServerMessageQueue.enqueue(sendPixelFormatMessage)
-		
+
 		recreateFramebuffer(size: framebuffer.size,
 							screens: framebuffer.screens,
 							pixelFormat: newPixelFormat)
@@ -59,11 +59,11 @@ public extension VNCConnection {
                          x: UInt16, y: UInt16) {
         updateMouseButtonState(button: button,
                                isDown: true)
-        
+
         enqueueMouseEvent(nonNormalizedX: x,
                           nonNormalizedY: y)
     }
-    
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -71,11 +71,11 @@ public extension VNCConnection {
                        x: UInt16, y: UInt16) {
         updateMouseButtonState(button: button,
                                isDown: false)
-        
+
         enqueueMouseEvent(nonNormalizedX: x,
                           nonNormalizedY: y)
     }
-    
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -85,10 +85,10 @@ public extension VNCConnection {
         for _ in 0..<steps {
             updateMouseButtonState(wheel: wheel,
                                    isDown: true)
-            
+
             enqueueMouseEvent(nonNormalizedX: x,
                               nonNormalizedY: y)
-            
+
             updateMouseButtonState(wheel: wheel,
                                    isDown: false)
         }
@@ -101,13 +101,13 @@ extension VNCConnection {
         updateMouseButtonState(mousePointerButton: button.mousePointerButton,
                                isDown: isDown)
     }
-    
+
     func updateMouseButtonState(wheel: VNCMouseWheel,
                                 isDown: Bool) {
         updateMouseButtonState(mousePointerButton: wheel.mousePointerButton,
                                isDown: isDown)
     }
-    
+
     func updateMouseButtonState(mousePointerButton: VNCProtocol.MousePointerButton,
                                 isDown: Bool) {
         if isDown {
@@ -124,14 +124,14 @@ public extension VNCConnection {
 		enqueueKeyEvent(key: key,
 						isDown: true)
 	}
-	
+
 #if canImport(ObjectiveC)
 	@objc(keyDown:)
 #endif
 	func _objc_keyDown(_ key: UInt32) {
 		keyDown(.init(key))
 	}
-	
+
 	func keyUp(_ key: VNCKeyCode) {
 		enqueueKeyEvent(key: key,
 						isDown: false)

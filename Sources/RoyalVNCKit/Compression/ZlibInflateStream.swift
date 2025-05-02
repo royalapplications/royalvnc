@@ -8,7 +8,7 @@ import Foundation
 
 enum ZlibError: Error {
 	case unknown(status: Int32, message: String?)
-	
+
 	case streamEnd(message: String?)
 	case needDict(message: String?)
 	case errNo(message: String?)
@@ -31,32 +31,32 @@ enum ZlibFlush: Int32 {
 
 final class ZlibInflateStream {
 	private let streamPtr: UnsafeMutablePointer<z_stream>
-	
+
 	init() throws {
 		let streamPtr = UnsafeMutablePointer<z_stream>.allocate(capacity: 1)
-		
+
 		streamPtr.pointee.total_out = 0
 		streamPtr.pointee.zalloc = nil
 		streamPtr.pointee.zfree = nil
-		
+
 		var version = ZLIB_VERSION
         var status = Z_VERSION_ERROR
-        
+
         withUnsafeMutablePointer(to: &version) { versionPtr in
             status = inflateInit_(streamPtr, versionPtr, .init(MemoryLayout<z_stream>.size))
         }
-        
+
 		guard ZlibError.isSuccess(status) else {
 			throw Self.error(streamPtr: streamPtr,
 							 status: status)
 		}
-		
+
 		self.streamPtr = streamPtr
 	}
-	
+
 	deinit {
 		let streamPtr = self.streamPtr
-		
+
 		streamPtr.deallocate()
 	}
 }
@@ -71,7 +71,7 @@ extension ZlibInflateStream {
 			streamPtr.pointee.avail_out = newValue
 		}
 	}
-	
+
 	/// total number of bytes output so far
 	var totalOut: UInt {
 		get {
@@ -81,7 +81,7 @@ extension ZlibInflateStream {
 			streamPtr.pointee.total_out = .init(newValue)
 		}
 	}
-	
+
 	/// number of bytes available at nextIn
 	var availIn: UInt32 {
 		get {
@@ -91,7 +91,7 @@ extension ZlibInflateStream {
 			streamPtr.pointee.avail_in = newValue
 		}
 	}
-	
+
 	/// total number of input bytes read so far
 	var totalIn: UInt {
 		get {
@@ -101,7 +101,7 @@ extension ZlibInflateStream {
 			streamPtr.pointee.total_in = .init(newValue)
 		}
 	}
-	
+
 	/// next input byte
 	var nextIn: UnsafeMutablePointer<UInt8>? {
 		get {
@@ -111,7 +111,7 @@ extension ZlibInflateStream {
 			streamPtr.pointee.next_in = newValue
 		}
 	}
-	
+
 	/// next output byte will go here
 	var nextOut: UnsafeMutablePointer<UInt8>? {
 		get {
@@ -121,7 +121,7 @@ extension ZlibInflateStream {
 			streamPtr.pointee.next_out = newValue
 		}
 	}
-	
+
 	/// best guess about the data type: binary or text for deflate, or the decoding state for inflate
 	var dataType: Int32 {
 		get {
@@ -131,12 +131,12 @@ extension ZlibInflateStream {
 			streamPtr.pointee.data_type = newValue
 		}
 	}
-	
+
 	/// last error message, nil if no error
 	var errorMessage: String? {
 		Self.errorMessage(streamPtr: streamPtr)
 	}
-	
+
 	/// Adler-32 or CRC-32 value of the uncompressed data
 	var adler: UInt {
 		get {
@@ -154,15 +154,15 @@ extension ZlibInflateStream {
 	/// inflateEnd returns Z_OK if success, or Z_STREAM_ERROR if the stream state was inconsistent.
 	func inflateEnd() throws {
 		let streamPtr = self.streamPtr
-		
+
 		let status = Z.inflateEnd(streamPtr)
-		
+
 		guard ZlibError.isSuccess(status) else {
 			throw Self.error(streamPtr: streamPtr,
 							 status: status)
 		}
 	}
-	
+
 	/*
 		inflate decompresses as much data as possible, and stops when the input
 	  buffer becomes empty or the output buffer becomes full.  It may introduce
@@ -282,20 +282,20 @@ extension ZlibInflateStream {
 	*/
 	func inflate(flush: ZlibFlush) throws -> Bool {
 		let streamPtr = self.streamPtr
-		
+
 		let flushValue = flush.rawValue
-		
+
 		let status = Z.inflate(streamPtr, flushValue)
-		
+
 		if status == Z_STREAM_END {
 			return true
 		}
-		
+
 		guard ZlibError.isSuccess(status) else {
 			throw Self.error(streamPtr: streamPtr,
 							 status: status)
 		}
-		
+
 		return false
 	}
 }
@@ -304,20 +304,20 @@ private extension ZlibInflateStream {
 	static func error(streamPtr: UnsafePointer<z_stream>,
 					  status: Int32) -> ZlibError {
 		let errMsg = Self.errorMessage(streamPtr: streamPtr)
-		
+
 		let err = ZlibError.withStatus(status,
 									   errorMessage: errMsg)
-		
+
 		return err
 	}
-	
+
 	static func errorMessage(streamPtr: UnsafePointer<z_stream>) -> String? {
 		guard let msg = streamPtr.pointee.msg else {
 			return nil
 		}
-		
+
 		let errorMsg = String(cString: msg)
-		
+
 		return errorMsg
 	}
 }
@@ -326,7 +326,7 @@ private extension ZlibError {
 	static func isSuccess(_ status: Int32) -> Bool {
 		status == Z_OK
 	}
-	
+
 	static func withStatus(_ status: Int32,
 						   errorMessage: String?) -> Self {
 		switch status {

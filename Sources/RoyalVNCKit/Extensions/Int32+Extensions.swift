@@ -9,11 +9,11 @@ extension Int32 {
 		let value = bigEndian
 			? self.bigEndian
 			: self
-		
+
 		let uint8s: [UInt8] = withUnsafeBytes(of: value) {
 			.init($0)
 		}
-		
+
 		return uint8s
 	}
 }

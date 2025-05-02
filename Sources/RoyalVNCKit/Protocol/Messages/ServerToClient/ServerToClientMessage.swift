@@ -13,7 +13,7 @@ extension VNCProtocol {
 extension VNCProtocol.ServerToClientMessage {
 	static func receive(connection: NetworkConnectionReading) async throws -> Self {
 		let messageType = try await connection.readUInt8()
-		
+
 		return .init(messageType: messageType)
 	}
 }

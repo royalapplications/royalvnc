@@ -10,15 +10,15 @@ extension VNCCursor {
     func retainedPointer() -> rvnc_cursor_t {
         .retainedPointerFrom(self)
     }
-    
+
     func unretainedPointer() -> rvnc_cursor_t {
         .unretainedPointerFrom(self)
     }
-    
+
     static func autoreleasePointer(_ pointer: rvnc_cursor_t) {
         pointer.autorelease(VNCCursor.self)
     }
-    
+
     static func fromPointer(_ pointer: rvnc_cursor_t) -> Self {
         pointer.unretainedInstance()
     }
@@ -99,16 +99,16 @@ public func rvnc_cursor_pixel_data_get_copy(_ cursor: rvnc_cursor_t) -> UnsafeMu
     let cursorSwift = VNCCursor.fromPointer(cursor)
     let data = cursorSwift.imageData
     let size = data.count
-    
+
     guard size > 0 else {
         return nil
     }
-    
+
     let dataC = UnsafeMutableRawBufferPointer.allocate(byteCount: size,
                                                        alignment: MemoryLayout<UInt8>.alignment)
-    
+
     data.copyBytes(to: dataC)
-    
+
     return dataC.baseAddress
 }
 
@@ -126,6 +126,6 @@ public func rvnc_cursor_pixel_data_size_get(_ cursor: rvnc_cursor_t) -> UInt64 {
     let cursorSwift = VNCCursor.fromPointer(cursor)
     let data = cursorSwift.imageData
     let size = data.count
-    
+
     return .init(size)
 }

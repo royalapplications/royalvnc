@@ -12,14 +12,14 @@ public extension VNCConnection.Settings {
 	func saveToUserDefaults() {
 		Self.standardUserDefaultsStorage.save(settings: self)
 	}
-	
+
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	static func fromUserDefaults() -> VNCConnection.Settings {
 		standardUserDefaultsStorage.load()
 	}
-	
+
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -34,7 +34,7 @@ public extension VNCConnection.Settings {
 												 port: port)
 		}
 	}
-	
+
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -54,10 +54,10 @@ public extension VNCConnection.Settings {
 private extension VNCConnection.Settings {
 	static var standardUserDefaultsStorage = UserDefaultsStorage(defaults: .standard)
 	static var credentialsKeychain = CredentialsKeychain()
-	
+
     final class UserDefaultsStorage {
 		let defaults: UserDefaults
-		
+
 		private let isDebugLoggingEnabledKey = "isDebugLoggingEnabled"
 		private let hostnameKey = "hostname"
 		private let portKey = "port"
@@ -68,13 +68,13 @@ private extension VNCConnection.Settings {
 		private let isClipboardRedirectionEnabledKey = "isClipboardRedirectionEnabled"
 		private let colorDepthKey = "colorDepth"
 		private let frameEncodingsKey = "frameEncodings"
-		
+
 		init(defaults: UserDefaults) {
 			self.defaults = defaults
-			
+
 			registerDefaults()
 		}
-		
+
 		func registerDefaults() {
 			defaults.register(defaults: [
 				isDebugLoggingEnabledKey: false,
@@ -89,69 +89,69 @@ private extension VNCConnection.Settings {
 				frameEncodingsKey: VNCFrameEncodingType.defaultFrameEncodings.encode()
 			])
 		}
-		
+
 		var isDebugLoggingEnabled: Bool {
 			get { defaults.bool(forKey: isDebugLoggingEnabledKey) }
 			set { defaults.set(newValue, forKey: isDebugLoggingEnabledKey) }
 		}
-		
+
 		var hostname: String {
 			get { defaults.string(forKey: hostnameKey) ?? "" }
 			set { defaults.set(newValue, forKey: hostnameKey) }
 		}
-		
+
 		var port: UInt16 {
 			get { .init(defaults.integer(forKey: portKey)) }
 			set { defaults.set(newValue, forKey: portKey) }
 		}
-		
+
 		var isShared: Bool {
 			get { defaults.bool(forKey: isSharedKey) }
 			set { defaults.set(newValue, forKey: isSharedKey) }
 		}
-		
+
 		var isScalingEnabled: Bool {
 			get { defaults.bool(forKey: isScalingEnabledKey) }
 			set { defaults.set(newValue, forKey: isScalingEnabledKey) }
 		}
-		
+
 		var useDisplayLink: Bool {
 			get { defaults.bool(forKey: useDisplayLinkKey) }
 			set { defaults.set(newValue, forKey: useDisplayLinkKey) }
 		}
-		
+
 		var inputMode: InputMode {
 			get { .init(rawValue: .init(defaults.integer(forKey: inputModeKey))) ?? .forwardKeyboardShortcutsIfNotInUseLocally }
 			set { defaults.set(newValue.rawValue, forKey: inputModeKey) }
 		}
-		
+
 		var isClipboardRedirectionEnabled: Bool {
 			get { defaults.bool(forKey: isClipboardRedirectionEnabledKey) }
 			set { defaults.set(newValue, forKey: isClipboardRedirectionEnabledKey) }
 		}
-		
+
 		var frameEncodings: [VNCFrameEncodingType] {
 			get {
 				guard let encodedValue = defaults.stringArray(forKey: frameEncodingsKey) else {
 					return VNCFrameEncodingType.defaultFrameEncodings
 				}
-				
+
 				let encs = [VNCFrameEncodingType].decode(encodedValue)
-				
+
 				return encs
 			}
 			set {
 				let encodedValue = newValue.encode()
-				
+
 				defaults.set(encodedValue, forKey: frameEncodingsKey)
 			}
 		}
-		
+
 		var colorDepth: ColorDepth {
 			get { .init(rawValue: .init(defaults.integer(forKey: colorDepthKey))) ?? .depth24Bit }
 			set { defaults.set(newValue.rawValue, forKey: colorDepthKey) }
 		}
-		
+
 		func save(settings: VNCConnection.Settings) {
 			isDebugLoggingEnabled = settings.isDebugLoggingEnabled
 			hostname = settings.hostname
@@ -164,7 +164,7 @@ private extension VNCConnection.Settings {
 			colorDepth = settings.colorDepth
 			frameEncodings = settings.frameEncodings
 		}
-		
+
 		func load() -> VNCConnection.Settings {
 			.init(isDebugLoggingEnabled: isDebugLoggingEnabled,
 				  hostname: hostname,

@@ -10,15 +10,15 @@ extension VNCConnection {
     func retainedPointer() -> rvnc_connection_t {
         .retainedPointerFrom(self)
     }
-    
+
     func unretainedPointer() -> rvnc_connection_t {
         .unretainedPointerFrom(self)
     }
-    
+
     static func autoreleasePointer(_ pointer: rvnc_connection_t) {
         pointer.autorelease(VNCConnection.self)
     }
-    
+
     static func fromPointer(_ pointer: rvnc_connection_t) -> Self {
         pointer.unretainedInstance()
     }
@@ -31,17 +31,17 @@ public func rvnc_connection_create(_ settings: rvnc_settings_t,
                                    _ logger: rvnc_logger_t?,
                                    _ context: rvnc_context_t?) -> rvnc_connection_t {
     let loggerSwift: VNCLogger_C?
-    
+
     if let logger {
         loggerSwift = VNCLogger_C.fromPointer(logger)
     } else {
         loggerSwift = nil
     }
-    
+
     let settingsSwift = VNCConnection.Settings.fromPointer(settings)
-    
+
     let connection: VNCConnection
-    
+
     if let loggerSwift {
         connection = VNCConnection(settings: settingsSwift,
                                    logger: loggerSwift,
@@ -50,7 +50,7 @@ public func rvnc_connection_create(_ settings: rvnc_settings_t,
         connection = VNCConnection(settings: settingsSwift,
                                    context: context)
     }
-    
+
     return connection.retainedPointer()
 }
 
@@ -83,7 +83,7 @@ public func rvnc_connection_disconnect(_ connection: rvnc_connection_t) {
 public func rvnc_connection_update_color_depth(_ connection: rvnc_connection_t,
                                                _ colorDepth: RVNC_COLORDEPTH) {
     let colorDepthSwift = colorDepth.swiftColorDepth
-    
+
     VNCConnection.fromPointer(connection)
         .updateColorDepth(colorDepthSwift)
 }
@@ -95,13 +95,13 @@ public func rvnc_connection_delegate_set(_ connection: rvnc_connection_t,
                                          _ connectionDelegate: rvnc_connection_delegate_t?) {
     let connectionSwift = VNCConnection.fromPointer(connection)
     let connectionDelegateSwift: VNCConnectionDelegate?
-    
+
     if let connectionDelegate {
         connectionDelegateSwift = VNCConnectionDelegate_C.fromPointer(connectionDelegate)
     } else {
         connectionDelegateSwift = nil
     }
-    
+
     connectionSwift.delegate = connectionDelegateSwift
 }
 
@@ -111,7 +111,7 @@ public func rvnc_connection_delegate_set(_ connection: rvnc_connection_t,
 public func rvnc_connection_context_get(_ connection: rvnc_connection_t) -> rvnc_context_t? {
     let connectionSwift = VNCConnection.fromPointer(connection)
     let context = connectionSwift.context
-    
+
     return context
 }
 
@@ -122,7 +122,7 @@ public func rvnc_connection_state_get_copy(_ connection: rvnc_connection_t) -> r
     let connectionSwift = VNCConnection.fromPointer(connection)
     let connectionState = connectionSwift.connectionState
     let connectionStateC = connectionState.retainedPointer()
-    
+
     return connectionStateC
 }
 
@@ -133,7 +133,7 @@ public func rvnc_connection_settings_get_copy(_ connection: rvnc_connection_t) -
     let connectionSwift = VNCConnection.fromPointer(connection)
     let connectionSettings = connectionSwift.settings
     let connectionSettingsC = connectionSettings.retainedPointer()
-    
+
     return connectionSettingsC
 }
 

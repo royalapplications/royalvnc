@@ -10,15 +10,15 @@ extension VNCFramebuffer {
     func retainedPointer() -> rvnc_framebuffer_t {
         .retainedPointerFrom(self)
     }
-    
+
     func unretainedPointer() -> rvnc_framebuffer_t {
         .unretainedPointerFrom(self)
     }
-    
+
     static func autoreleasePointer(_ pointer: rvnc_framebuffer_t) {
         pointer.autorelease(VNCFramebuffer.self)
     }
-    
+
     static func fromPointer(_ pointer: rvnc_framebuffer_t) -> Self {
         pointer.unretainedInstance()
     }
@@ -54,7 +54,7 @@ public func rvnc_framebuffer_pixel_data_get(_ framebuffer: rvnc_connection_state
 public func rvnc_framebuffer_pixel_data_size_get(_ framebuffer: rvnc_connection_state_t) -> UInt64 {
     let framebufferSwift = VNCFramebuffer.fromPointer(framebuffer)
     let surfaceByteCount = framebufferSwift.surfaceByteCount
-    
+
     return .init(surfaceByteCount)
 }
 
@@ -64,12 +64,12 @@ public func rvnc_framebuffer_pixel_data_size_get(_ framebuffer: rvnc_connection_
 public func rvnc_framebuffer_pixel_data_rgba32_get_copy(_ framebuffer: rvnc_connection_state_t,
                                                         _ pixelDataSize: UnsafeMutablePointer<UInt64>?) -> UnsafeMutableRawPointer {
     var byteCount: Int = 0
-    
+
     let framebuffer = VNCFramebuffer.fromPointer(framebuffer)
     let pixelBuffer = framebuffer.copyPixelDataToRGBA32(pixelDataSize: &byteCount)
-    
+
     pixelDataSize?.pointee = .init(byteCount)
-    
+
     return pixelBuffer
 }
 

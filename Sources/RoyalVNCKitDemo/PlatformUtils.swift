@@ -17,11 +17,11 @@ import Android
 func platformSleep(forTimeInterval timeInterval: TimeInterval) {
 #if canImport(WinSDK)
     let timeIntervalMS = UInt32(timeInterval * 1000.0)
-    
+
     Sleep(timeIntervalMS)
 #elseif canImport(Glibc) || canImport(Android)
     let timeIntervalMicroseconds = UInt32(timeInterval * 1000000.0)
-    
+
     usleep(timeIntervalMicroseconds)
 #else
     Thread.sleep(forTimeInterval: timeInterval)
@@ -32,16 +32,16 @@ func readPassword(prompt: String) -> String? {
 #if canImport(Darwin)
     var buffer = [CChar](repeating: 0,
                          count: 4096)
-    
+
     guard let passwordC = readpassphrase(prompt,
                                          &buffer,
                                          buffer.count,
                                          0) else {
         return nil
     }
-    
+
     let password = String(cString: passwordC)
-    
+
     return password
 #elseif canImport(Glibc)
     guard let passwordC = getpass(prompt) else {
@@ -49,11 +49,11 @@ func readPassword(prompt: String) -> String? {
     }
 
     let password = String(cString: passwordC)
-    
+
     return password
 #elseif canImport(Android)
     // TODO
-    
+
     return nil
 #else
     let len = 4096

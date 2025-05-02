@@ -24,7 +24,7 @@ extension VNCProtocol {
 		case jrle = 22
 		case openH264 = 50
 		case tightPNG = -260
-		
+
 		case apple1000 = 1000
 		case apple1001 = 1001
 		case apple1002 = 1002

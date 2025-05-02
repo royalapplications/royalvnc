@@ -12,7 +12,7 @@ public extension VNCSize {
         self.width = .init(cgSize.width)
         self.height = .init(cgSize.height)
     }
-    
+
 	var cgSize: CGSize {
         .init(width: CGFloat(width),
               height: CGFloat(height))

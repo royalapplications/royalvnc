@@ -6,25 +6,25 @@ import Foundation
 
 public struct VNCKeyCode: Equatable {
     public let rawValue: UInt32
-	
+
 	// Must be kept in Sync with _ObjC_VNCKeyCode!
-    
+
 	public static let shift = VNCKeyCode(X11KeySymbols.XK_Shift_L)
 	public static let rightShift = VNCKeyCode(X11KeySymbols.XK_Shift_R)
-    
+
 	public static let control = VNCKeyCode(X11KeySymbols.XK_Control_L)
     public static let rightControl = VNCKeyCode(X11KeySymbols.XK_Control_R)
-    
+
 	public static let option = VNCKeyCode(X11KeySymbols.XK_Alt_L)
 	public static let optionForARD = VNCKeyCode(X11KeySymbols.XK_Meta_L)
     public static let rightOption = VNCKeyCode(X11KeySymbols.XK_Alt_R)
 	public static let rightOptionForARD = VNCKeyCode(X11KeySymbols.XK_Meta_R)
-    
+
 	public static let command = VNCKeyCode(X11KeySymbols.XK_Super_L)
 	public static let commandForARD = VNCKeyCode(X11KeySymbols.XK_Hyper_L)
 	public static let rightCommand = VNCKeyCode(X11KeySymbols.XK_Super_R)
 	public static let rightCommandForARD = VNCKeyCode(X11KeySymbols.XK_Hyper_R)
-    
+
 	public static let `return` = VNCKeyCode(X11KeySymbols.XK_Return)
 	public static let forwardDelete = VNCKeyCode(X11KeySymbols.XK_Delete)
 	public static let space = VNCKeyCode(X11KeySymbols.XK_space)
@@ -40,7 +40,7 @@ public struct VNCKeyCode: Equatable {
 	public static let end = VNCKeyCode(X11KeySymbols.XK_End)
 	public static let home = VNCKeyCode(X11KeySymbols.XK_Home)
 	public static let insert = VNCKeyCode(X11KeySymbols.XK_Insert)
-    
+
 	public static let ansiKeypadClear = VNCKeyCode(X11KeySymbols.XK_Clear)
 	public static let ansiKeypadEquals = VNCKeyCode(X11KeySymbols.XK_KP_Equal)
 	public static let ansiKeypadDivide = VNCKeyCode(X11KeySymbols.XK_KP_Divide)
@@ -49,7 +49,7 @@ public struct VNCKeyCode: Equatable {
 	public static let ansiKeypadPlus = VNCKeyCode(X11KeySymbols.XK_KP_Add)
 	public static let ansiKeypadEnter = VNCKeyCode(X11KeySymbols.XK_KP_Enter)
 	public static let ansiKeypadDecimal = VNCKeyCode(X11KeySymbols.XK_KP_Separator)
-    
+
 	public static let f1 = VNCKeyCode(X11KeySymbols.XK_F1)
     public static let f2 = VNCKeyCode(X11KeySymbols.XK_F2)
     public static let f3 = VNCKeyCode(X11KeySymbols.XK_F3)
@@ -69,7 +69,7 @@ public struct VNCKeyCode: Equatable {
     public static let f17 = VNCKeyCode(X11KeySymbols.XK_F17)
     public static let f18 = VNCKeyCode(X11KeySymbols.XK_F18)
     public static let f19 = VNCKeyCode(X11KeySymbols.XK_F19)
-	
+
 	private static let names: [UInt32: String] = [
 		Self.shift.rawValue: "L⇧",
 		Self.rightShift.rawValue: "R⇧",
@@ -102,7 +102,7 @@ public struct VNCKeyCode: Equatable {
 		Self.end.rawValue: "End",
 		Self.home.rawValue: "Home",
 		Self.insert.rawValue: "Insert",
-		
+
 		Self.ansiKeypadClear.rawValue: "Keypad Clear",
 		Self.ansiKeypadEquals.rawValue: "Keypad =",
 		Self.ansiKeypadDivide.rawValue: "Keypad /",
@@ -111,7 +111,7 @@ public struct VNCKeyCode: Equatable {
 		Self.ansiKeypadPlus.rawValue: "Keypad +",
 		Self.ansiKeypadEnter.rawValue: "Keypad Enter",
 		Self.ansiKeypadDecimal.rawValue: "Keypad Decimal",
-		
+
 		Self.f1.rawValue: "F1",
 		Self.f2.rawValue: "F2",
 		Self.f3.rawValue: "F3",
@@ -132,15 +132,15 @@ public struct VNCKeyCode: Equatable {
 		Self.f18.rawValue: "F18",
 		Self.f19.rawValue: "F19"
 	]
-    
+
     public init(_ rawValue: UInt32) {
         self.rawValue = rawValue
     }
-    
+
     public init(asciiCharacter: UInt8) {
         self.init(.init(asciiCharacter))
     }
-	
+
 	public static func == (lhs: VNCKeyCode, rhs: VNCKeyCode) -> Bool {
 		return lhs.rawValue == rhs.rawValue
 	}
@@ -152,25 +152,25 @@ public extension VNCKeyCode {
 			  !character.isNewline else {
 			return .init()
 		}
-		
+
 		if let asciiValue = character.asciiValue {
 			return [ self.init(asciiCharacter: asciiValue) ]
 		}
-		
+
 		var codes = [VNCKeyCode]()
-		
+
 		for scalar in character.unicodeScalars {
 			let unicodeValue = scalar.value
-			
+
 			codes.append(.init(unicodeValue))
 		}
-		
+
 		return codes
 	}
-	
+
 	func rawValue(forAppleRemoteDesktop isARD: Bool) -> UInt32 {
 		var remappedRawValue: UInt32?
-		
+
 		if isARD {
 			switch self {
 				case .command:
@@ -185,27 +185,27 @@ public extension VNCKeyCode {
 					break
 			}
 		}
-		
+
 		if let remappedRawValue = remappedRawValue {
 			return remappedRawValue
 		} else {
 			return rawValue
 		}
 	}
-	
+
 	var hexDescription: String {
 		let keyHex = rawValue.hexString()
-		
+
 		return keyHex
 	}
-	
+
 	var name: String? {
 		return Self.names[rawValue]
 	}
-	
+
 	var description: String {
 		let keyDesc = name ?? hexDescription
-		
+
 		return keyDesc
 	}
 }

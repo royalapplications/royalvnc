@@ -10,7 +10,7 @@ import CoreGraphics
 public extension VNCKeyCode {
     static func from(cgKeyCode: CGKeyCode) -> VNCKeyCode? {
         let keyCode = VNCKeyCodeMaps.cgKeyCodeToVNCKeyCodeMapping[cgKeyCode]
-        
+
         return keyCode
     }
 }
@@ -19,34 +19,34 @@ private struct VNCKeyCodeMaps {
     static let cgKeyCodeToVNCKeyCodeMapping: [CGKeyCode: VNCKeyCode] = [
         CGKeyCodes.shift: .shift,
         CGKeyCodes.rightShift: .rightShift,
-        
+
         CGKeyCodes.control: .control,
         CGKeyCodes.rightControl: .rightControl,
-        
+
         CGKeyCodes.option: .option,
         CGKeyCodes.rightOption: .rightOption,
-        
+
         CGKeyCodes.command: .command,
         CGKeyCodes.rightCommand: .rightCommand,
-        
+
         CGKeyCodes.return: .return,
         CGKeyCodes.forwardDelete: .forwardDelete,
         CGKeyCodes.space: .space,
         CGKeyCodes.delete: .delete,
         CGKeyCodes.tab: .tab,
         CGKeyCodes.escape: .escape,
-		
+
         CGKeyCodes.leftArrow: .leftArrow,
         CGKeyCodes.upArrow: .upArrow,
         CGKeyCodes.rightArrow: .rightArrow,
         CGKeyCodes.downArrow: .downArrow,
-		
+
         CGKeyCodes.pageUp: .pageUp,
         CGKeyCodes.pageDown: .pageDown,
         CGKeyCodes.end: .end,
         CGKeyCodes.home: .home,
 		CGKeyCodes.help: .insert,
-        
+
         CGKeyCodes.ansiKeypadClear: .ansiKeypadClear,
         CGKeyCodes.ansiKeypadEquals: .ansiKeypadEquals,
         CGKeyCodes.ansiKeypadDivide: .ansiKeypadDivide,
@@ -55,7 +55,7 @@ private struct VNCKeyCodeMaps {
         CGKeyCodes.ansiKeypadPlus: .ansiKeypadPlus,
         CGKeyCodes.ansiKeypadEnter: .ansiKeypadEnter,
         CGKeyCodes.ansiKeypadDecimal: .ansiKeypadDecimal,
-        
+
         CGKeyCodes.f1: .f1,
         CGKeyCodes.f2: .f2,
         CGKeyCodes.f3: .f3,

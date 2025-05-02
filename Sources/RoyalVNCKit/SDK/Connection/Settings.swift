@@ -13,56 +13,56 @@ public extension VNCConnection {
 		@objc
 #endif
 		public let isDebugLoggingEnabled: Bool
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let hostname: String
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let port: UInt16
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let isShared: Bool
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let isScalingEnabled: Bool
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let useDisplayLink: Bool
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let inputMode: InputMode
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let isClipboardRedirectionEnabled: Bool
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
 		public let colorDepth: ColorDepth
-		
+
 		public let frameEncodings: [VNCFrameEncodingType]
-		
+
 #if canImport(ObjectiveC)
 		@objc(frameEncodings)
 #endif
 		public var _objc_frameEncodings: [Int64] {
 			frameEncodings.map({ $0.rawValue.rawValue })
 		}
-		
+
 		public init(isDebugLoggingEnabled: Bool,
 					hostname: String,
 					port: UInt16,
@@ -74,23 +74,23 @@ public extension VNCConnection {
 					colorDepth: ColorDepth,
 					frameEncodings: [VNCFrameEncodingType]) {
 			self.isDebugLoggingEnabled = isDebugLoggingEnabled
-			
+
 			self.hostname = hostname
 			self.port = port
-			
+
 			self.isShared = isShared
-			
+
 			self.isScalingEnabled = isScalingEnabled
 			self.useDisplayLink = useDisplayLink
-			
+
 			self.inputMode = inputMode
-			
+
 			self.isClipboardRedirectionEnabled = isClipboardRedirectionEnabled
-			
+
 			self.colorDepth = colorDepth
 			self.frameEncodings = frameEncodings
 		}
-		
+
 #if canImport(ObjectiveC)
 		@objc
 #endif
@@ -106,10 +106,10 @@ public extension VNCConnection {
 								frameEncodings: [Int64]) {
 			let frameEncodingsSwift: [VNCFrameEncodingType] = frameEncodings.compactMap({
 				guard let objcFrameEncodingType = _ObjC_VNCFrameEncodingType(rawValue: $0) else { return nil }
-				
+
 				return VNCFrameEncodingType.fromObjCFrameEncodingType(objcFrameEncodingType)
 			})
-			
+
 			self.init(isDebugLoggingEnabled: isDebugLoggingEnabled,
 					  hostname: hostname,
 					  port: port,
@@ -130,12 +130,12 @@ public extension VNCConnection.Settings {
 #endif
 	enum InputMode: UInt32 {
 		case none
-		
+
 		case forwardKeyboardShortcutsIfNotInUseLocally
 		case forwardKeyboardShortcutsEvenIfInUseLocally
 		case forwardAllKeyboardShortcutsAndHotKeys
 	}
-	
+
 #if canImport(ObjectiveC)
 	@objc(VNCColorDepth)
 #endif

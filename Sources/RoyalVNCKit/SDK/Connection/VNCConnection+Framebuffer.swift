@@ -11,17 +11,17 @@ extension VNCConnection: VNCFramebufferDelegate {
 		notifyDelegateAboutFramebuffer(framebuffer,
 									   updatedRegion: updatedRegion)
 	}
-	
+
 	func framebuffer(_ framebuffer: VNCFramebuffer,
 					 didUpdateDesktopName newDesktopName: String) {
 		state.desktopName = newDesktopName
 	}
-	
+
 	func framebuffer(_ framebuffer: VNCFramebuffer,
 					 didUpdateCursor cursor: VNCCursor) {
 		notifyDelegateAboutUpdatedCursor(cursor)
 	}
-	
+
 	func framebuffer(_ framebuffer: VNCFramebuffer,
 					 sizeDidChange newSize: VNCSize,
 					 screens newScreens: [VNCScreen]) {
@@ -36,9 +36,9 @@ extension VNCConnection {
 							 screens: [VNCScreen],
 							 pixelFormat: VNCProtocol.PixelFormat) {
 		state.incrementalUpdatesEnabled = false
-		
+
 		let newFramebuffer: VNCFramebuffer
-		
+
 		do {
             newFramebuffer = try VNCFramebuffer(logger: logger,
                                                 size: size,
@@ -46,16 +46,16 @@ extension VNCConnection {
                                                 pixelFormat: pixelFormat)
 		} catch {
 			handleBreakingError(error)
-			
+
 			return
 		}
-        
+
         self.framebuffer?.delegate = nil
-		
+
 		newFramebuffer.delegate = self
-		
+
 		self.framebuffer = newFramebuffer
-		
+
 		notifyDelegateAboutFramebufferResize(newFramebuffer)
 	}
 }

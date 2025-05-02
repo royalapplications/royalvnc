@@ -11,7 +11,7 @@ public extension VNCError {
 		case closedDuringHandshake(handshakingPhase: String, underlyingError: Error?)
 		case cancelled
 		case failed(_ underlyingError: Error?)
-		
+
 		// MARK: - LocalizedError
 		public var errorDescription: String? {
 			// TODO: Localize

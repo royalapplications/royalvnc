@@ -42,15 +42,15 @@ extension VNCConnection.Settings {
     func retainedPointer() -> rvnc_settings_t {
         .retainedPointerFrom(self)
     }
-    
+
     func unretainedPointer() -> rvnc_settings_t {
         .unretainedPointerFrom(self)
     }
-    
+
     static func autoreleasePointer(_ pointer: rvnc_settings_t) {
         pointer.autorelease(VNCConnection.Settings.self)
     }
-    
+
     static func fromPointer(_ pointer: rvnc_settings_t) -> Self {
         pointer.unretainedInstance()
     }
@@ -69,10 +69,10 @@ public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
                                  _ isClipboardRedirectionEnabled: Bool,
                                  _ colorDepth: RVNC_COLORDEPTH) -> rvnc_settings_t {
     let hostnameStr = String(cString: hostname)
-    
+
     let inputModeSwift = inputMode.swiftInputMode
     let colorDepthSwift = colorDepth.swiftColorDepth
-    
+
     let settings = VNCConnection.Settings(isDebugLoggingEnabled: isDebugLoggingEnabled,
                                           hostname: hostnameStr,
                                           port: port,
@@ -83,7 +83,7 @@ public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
                                           isClipboardRedirectionEnabled: isClipboardRedirectionEnabled,
                                           colorDepth: colorDepthSwift,
                                           frameEncodings: .default)
-    
+
     return settings.retainedPointer()
 }
 

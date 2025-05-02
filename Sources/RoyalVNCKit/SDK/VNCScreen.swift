@@ -16,9 +16,9 @@ public final class VNCScreen: NSObjectOrAnyObject {
     @objc
 #endif
 	public let id: UInt32
-	
+
 	public let frame: VNCRegion
-	
+
 	init(id: UInt32,
 		 frame: VNCRegion) {
 		self.id = id
@@ -44,18 +44,18 @@ extension VNCScreen {
 		guard let otherScreen = object as? VNCScreen else {
 			return false
 		}
-		
+
 		let equal = self.id == otherScreen.id &&
 				    self.frame == otherScreen.frame
-		
+
 		return equal
 	}
-	
+
 	public override var hash: Int {
 		var hasher = Hasher()
 		hasher.combine(id)
 		hasher.combine(frame)
-		
+
 		return hasher.finalize()
 	}
 }
@@ -64,7 +64,7 @@ extension VNCScreen: Equatable {
 	public static func ==(lhs: VNCScreen, rhs: VNCScreen) -> Bool {
         let equal = lhs.id == rhs.id &&
 				    lhs.frame == rhs.frame
-		
+
 		return equal
     }
 }
@@ -75,7 +75,7 @@ extension VNCScreen {
 		let id = screen.id
 		let frame = VNCRegion(x: screen.xPosition, y: screen.yPosition,
 							  width: screen.width, height: screen.height)
-		
+
 		self.init(id: id, frame: frame)
 	}
 }

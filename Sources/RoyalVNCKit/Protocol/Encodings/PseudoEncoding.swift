@@ -5,5 +5,5 @@ import Foundation
 #endif
 
 protocol VNCPseudoEncoding: VNCEncoding {
-	
+
 }

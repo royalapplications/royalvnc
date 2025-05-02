@@ -10,7 +10,7 @@ protocol VNCMessage {
 
 protocol VNCSendableMessage: VNCMessage {
 	var data: Data { get }
-	
+
 	func send(connection: NetworkConnectionWriting) async throws
 }
 

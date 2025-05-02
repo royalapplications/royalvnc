@@ -16,7 +16,7 @@ final class VNCClipboard {
 #elseif os(iOS)
 	let pasteboard: UIPasteboard
 #endif
-	
+
 	init() {
 #if os(macOS) || os(iOS)
 		self.pasteboard = .general

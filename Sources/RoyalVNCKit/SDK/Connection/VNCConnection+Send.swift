@@ -8,7 +8,7 @@ import Foundation
 extension VNCConnection {
 	func startSendLoop() {
         logger.logDebug("Starting send loop")
-        
+
 		sendTask = Task(priority: taskPriority) {
 			while !state.disconnectRequested,
                   connection.isReady {
@@ -20,32 +20,32 @@ extension VNCConnection {
 			}
 		}
 	}
-	
+
 	func sendFramebufferUpdateRequest() async throws {
 		guard let framebuffer else { return }
 		guard !state.areContinuousUpdatesEnabled else { return }
-		
+
 		let incremental = state.incrementalUpdatesEnabled
-		
+
 		let fullFramebufferRegion = VNCRegion(location: .zero,
 											  size: framebuffer.size)
-		
+
 		// Request next update
 		try await sendFramebufferUpdateRequest(incremental: incremental,
 											   region: fullFramebufferRegion)
-		
+
 		if !incremental {
 			state.incrementalUpdatesEnabled = true
 		}
 	}
-	
+
 	func sendEnableContinuousUpdates() async throws {
 		guard let framebuffer else { return }
 		guard state.areContinuousUpdatesEnabled else { return }
-		
+
 		let fullFramebufferRegion = VNCRegion(location: .zero,
 											  size: framebuffer.size)
-		
+
 		try await sendEnableContinuousUpdates(enable: true,
 											  region: fullFramebufferRegion)
 	}
@@ -57,13 +57,13 @@ private extension VNCConnection {
               connection.isReady,
 			  let message = clientToServerMessageQueue.dequeue() else {
 			try await Task.sleep(seconds: 0.01)
-			
+
 			return
 		}
-		
+
 		try await sendMessage(message)
 	}
-	
+
 	func sendFramebufferUpdateRequest(incremental: Bool,
 									  region: VNCRegion) async throws {
 		let framebufferUpdateRequest = VNCProtocol.FramebufferUpdateRequest(incremental: incremental,
@@ -71,10 +71,10 @@ private extension VNCConnection {
 																			yPosition: region.location.y,
 																			width: region.size.width,
 																			height: region.size.height)
-		
+
 		try await sendMessage(framebufferUpdateRequest)
 	}
-	
+
 	func sendEnableContinuousUpdates(enable: Bool,
 									 region: VNCRegion) async throws {
 		let message = VNCProtocol.EnableContinuousUpdates(enable: enable,
@@ -82,10 +82,10 @@ private extension VNCConnection {
 														  yPosition: region.y,
 														  width: region.width,
 														  height: region.height)
-		
+
 		try await sendMessage(message)
 	}
-	
+
 	func sendMessage(_ message: VNCSendableMessage) async throws {
 		try await message.send(connection: connection)
 	}

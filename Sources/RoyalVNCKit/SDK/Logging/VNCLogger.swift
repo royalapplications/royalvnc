@@ -12,22 +12,22 @@ public protocol VNCLogger: AnyObject {
     @objc
 #endif
 	var isDebugLoggingEnabled: Bool { get set }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	func logDebug(_ message: String)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	func logInfo(_ message: String)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	func logWarning(_ message: String)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -46,22 +46,22 @@ extension VNCLogger {
 		prefixedMessage(message,
 						prefix: VNCLoggerConstants.prefixDebug)
 	}
-	
+
 	func infoMessage(_ message: String) -> String {
 		prefixedMessage(message,
 						prefix: VNCLoggerConstants.prefixInfo)
 	}
-	
+
 	func warningMessage(_ message: String) -> String {
 		prefixedMessage(message,
 						prefix: VNCLoggerConstants.prefixWarning)
 	}
-	
+
 	func errorMessage(_ message: String) -> String {
 		prefixedMessage(message,
 						prefix: VNCLoggerConstants.prefixError)
 	}
-	
+
 	func prefixedMessage(_ message: String,
 						 prefix: String) -> String {
 		"\(prefix) - \(message)"

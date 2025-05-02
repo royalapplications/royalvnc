@@ -12,18 +12,18 @@ extension NWConnection: NetworkConnection {
     convenience init(settings: NetworkConnectionSettings) {
         let tcpOptions = NWProtocolTCP.Options()
         tcpOptions.connectionTimeout = settings.connectionTimeout
-        
+
         let connectionParameters = NWParameters(tls: nil,
                                                 tcp: tcpOptions)
-        
+
         connectionParameters.expiredDNSBehavior = .allow
         connectionParameters.serviceClass = .interactiveVideo
-        
+
         self.init(host: .init(settings.host),
                   port: .init(rawValue: settings.port)!,
                   using: connectionParameters)
     }
-    
+
     var status: NetworkConnectionStatus {
         switch state {
         case .setup: .setup
@@ -32,19 +32,19 @@ extension NWConnection: NetworkConnection {
         case .ready: .ready
         case .failed(let error): .failed(error)
         case .cancelled: .cancelled
-            
+
         @unknown default:
             .unknown(self)
         }
     }
-    
+
     func setStatusUpdateHandler(_ statusUpdateHandler: NetworkConnectionStatusUpdateHandler?) {
         guard let statusUpdateHandler else {
             stateUpdateHandler = nil
-            
+
             return
         }
-        
+
         stateUpdateHandler = { state in
             switch state {
             case .setup:
@@ -59,13 +59,13 @@ extension NWConnection: NetworkConnection {
                 statusUpdateHandler(.failed(error))
             case .cancelled:
                 statusUpdateHandler(.cancelled)
-        
+
             @unknown default:
                 statusUpdateHandler(.unknown(self))
             }
         }
     }
-    
+
     var isReady: Bool {
         state == .ready
     }
@@ -78,31 +78,31 @@ extension NWConnection: NetworkConnectionReading {
 			receive(minimumIncompleteLength: minimumLength, maximumLength: maximumLength) { content, _, isComplete, error in
 				guard !isComplete else {
 					continuation.resume(throwing: VNCError.connection(.closed))
-					
+
 					return
 				}
-				
+
 				guard error == nil else {
 					continuation.resume(throwing: error!)
-					
+
 					return
 				}
-				
+
 				guard let content else {
 					continuation.resume(throwing: VNCError.protocol(.noData))
-					
+
 					return
 				}
-				
+
 				let receivedLength = content.count
-				
+
 				guard receivedLength >= minimumLength,
 					  receivedLength <= maximumLength else {
 					continuation.resume(throwing: VNCError.protocol(.invalidData))
-					
+
 					return
 				}
-				
+
 				continuation.resume(returning: content)
 			}
 		}

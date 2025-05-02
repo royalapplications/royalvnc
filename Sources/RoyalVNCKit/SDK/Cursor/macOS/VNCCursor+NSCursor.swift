@@ -12,14 +12,14 @@ public extension VNCCursor {
 		guard !isEmpty else {
 			return Self.emptyNSCursor
 		}
-		
+
 		guard let nsImage else {
 			return Self.emptyNSCursor
 		}
-		
+
 		let cursor = NSCursor(image: nsImage,
 							  hotSpot: hotspot.cgPoint)
-		
+
 		return cursor
 	}
 }
@@ -27,15 +27,15 @@ public extension VNCCursor {
 private extension VNCCursor {
 	static var emptyNSCursor: NSCursor {
 		// TODO: Should use a "dot" cursor like in other VNC clients
-		
+
 		.arrow
 	}
-	
+
 	var nsImage: NSImage? {
 		guard let cgImage else { return nil }
 
 		let nsImage = NSImage(cgImage: cgImage, size: size.cgSize)
-		
+
 		return nsImage
 	}
 }

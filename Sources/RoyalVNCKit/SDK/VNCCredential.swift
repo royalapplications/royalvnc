@@ -17,7 +17,7 @@ public final class VNCPasswordCredential: NSObjectOrAnyObject, VNCCredential {
     @objc
 #endif
 	public let password: String
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -34,12 +34,12 @@ public final class VNCUsernamePasswordCredential: NSObjectOrAnyObject, VNCCreden
     @objc
 #endif
 	public let username: String
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	public let password: String
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif

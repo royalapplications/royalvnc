@@ -20,13 +20,13 @@ extension VNCProtocol.DesktopNameEncoding {
 		guard rectangle.region == .zero else {
 			throw VNCError.protocol(.frameDecode(encodingType: encodingType, underlyingError: nil))
 		}
-		
+
 		logger.logDebug("Receiving new desktop name")
-		
+
 		let newDesktopName = try await connection.readString(encoding: .utf8)
-		
+
 		logger.logDebug("Finished receiving new desktop name: \"\(newDesktopName)\"")
-		
+
 		framebuffer.updateDesktopName(newDesktopName)
 	}
 }

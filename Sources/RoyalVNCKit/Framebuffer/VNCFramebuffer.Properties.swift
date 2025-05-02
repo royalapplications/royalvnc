@@ -8,21 +8,21 @@ extension VNCFramebuffer {
 	struct Properties: Equatable {
 		let colorDepth: Int
 		let usesColorMap: Bool
-		
+
 		let bitsPerPixel: Int
 		let bytesPerPixel: Int
 		let bytesPerRow: Int
-		
+
 		let redMax: Int
 		let greenMax: Int
 		let blueMax: Int
 		let alphaMax: Int
-		
+
 		let redShift: Int
 		let greenShift: Int
 		let blueShift: Int
 		let alphaShift: Int
-		
+
 		init(colorDepth: Int,
 			 usesColorMap: Bool,
 			 bitsPerPixel: Int,
@@ -38,22 +38,22 @@ extension VNCFramebuffer {
 			 alphaShift: Int) {
 			self.colorDepth = colorDepth
 			self.usesColorMap = usesColorMap
-			
+
 			self.bitsPerPixel = bitsPerPixel
 			self.bytesPerPixel = bytesPerPixel
 			self.bytesPerRow = bytesPerRow
-			
+
 			self.redMax = redMax
 			self.greenMax = greenMax
 			self.blueMax = blueMax
 			self.alphaMax = alphaMax
-			
+
 			self.redShift = redShift
 			self.greenShift = greenShift
 			self.blueShift = blueShift
 			self.alphaShift = alphaShift
 		}
-		
+
 		init(pixelFormat: VNCProtocol.PixelFormat,
 			 width: Int) {
 			self.init(colorDepth: .init(pixelFormat.depth),
@@ -70,28 +70,28 @@ extension VNCFramebuffer {
 					  blueShift: .init(pixelFormat.blueShift),
 					  alphaShift: 0)
 		}
-		
+
 		static func internalProperties(width: Int) -> Self {
 			let colorDepth = 24
 			let usesColorMap = false
-			
+
 			let bitsPerPixel = 32
 			let bytesPerPixel = 4
 			let bytesPerRow = width * bytesPerPixel
-			
+
             let bits = Int((Double(colorDepth) / 3.0).rounded(.down))
 			let colorMax = Int((1 << bits) - 1)
-			
+
 			let redMax = colorMax
 			let greenMax = colorMax
 			let blueMax = colorMax
 			let alphaMax = colorMax
-			
+
 			let blueShift = bits * 0
 			let greenShift = bits * 1
 			let redShift = bits * 2
 			let alphaShift = bits * 3
-			
+
 			return .init(colorDepth: colorDepth,
 						 usesColorMap: usesColorMap,
 						 bitsPerPixel: bitsPerPixel,

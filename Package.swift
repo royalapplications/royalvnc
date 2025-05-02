@@ -36,9 +36,9 @@ libtomCSettings = [
 
 zTarget = Target.target(name: "Z", path: "Sources/zlib-1.3.1", cSettings: [
     .define("STDC"),
-    .define("HAVE_STDARG_H"), 
+    .define("HAVE_STDARG_H"),
     .define("HAVE_HIDDEN"),
-    
+
     .unsafeFlags([
         disableDeprecatedDeclarationsWarning,
     ])
@@ -67,7 +67,7 @@ let d3desTarget = Target.target(name: "d3des")
 
 let package = Package(
     name: "RoyalVNCKit",
-    
+
     platforms: [
         .macOS(.v11),
         .iOS(.v15),
@@ -75,14 +75,14 @@ let package = Package(
         .tvOS(.v15),
         .visionOS(.v1)
     ],
-    
+
     products: [
         .library(
             name: "RoyalVNCKit",
             type: .dynamic,
             targets: [ "RoyalVNCKit" ]
         ),
-        
+
         .executable(name: "RoyalVNCKitDemo",
                     targets: [ "RoyalVNCKitDemo" ])
     ],
@@ -92,10 +92,10 @@ let package = Package(
             name: "RoyalVNCKitC",
             cSettings: cSettings
         ),
-        
+
         .target(
             name: "RoyalVNCKit",
-            
+
             dependencies: [
                 "RoyalVNCKitC",
                 .byName(name: d3desTarget.name),
@@ -103,23 +103,23 @@ let package = Package(
                 .byName(name: libtomcryptTarget.name),
                 .byName(name: zTarget.name)
             ],
-            
+
             cSettings: cSettings,
             swiftSettings: [ .swiftLanguageMode(swiftLanguageMode) ]
         ),
-        
+
         d3desTarget,
         libtommathTarget,
         libtomcryptTarget,
         zTarget,
-        
+
         .executableTarget(
             name: "RoyalVNCKitDemo",
             dependencies: [ "RoyalVNCKit" ],
 
             cSettings: cSettings
         ),
-        
+
         .executableTarget(
             name: "RoyalVNCKitCDemo",
             dependencies: [ "RoyalVNCKit" ],

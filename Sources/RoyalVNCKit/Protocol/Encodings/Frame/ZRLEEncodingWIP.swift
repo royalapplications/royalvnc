@@ -5,14 +5,14 @@
 extension VNCProtocol {
     final class ZRLEEncoding: VNCFrameEncoding {
 		let encodingType = VNCFrameEncodingType.zrle.rawValue
-		
+
 		static let tileSize: UInt16 = 64
-		
+
 		let zStream: ZlibStream
-		
+
 		// A buffer which fits even the largest tiles
 //		var tileBuffer = Data(repeating: 0, count: Int(tileSize * tileSize * 4))
-		
+
 		init(zStream: ZlibStream) {
 			self.zStream = zStream
 		}
@@ -26,36 +26,36 @@ extension VNCProtocol.ZRLEEncoding {
 						 logger: VNCLogger) async throws {
 		let compressedData = try await VNCProtocol.ZlibEncoding.retrieveCompressedData(connection: connection,
 																					   logger: logger)
-		
+
 		let decompressedData = try zStream.decompressedData(compressedData: compressedData)
-		
+
 		let stream = DataStream(data: decompressedData)
-		
+
 		let rectangleWidth = rectangle.width
 		let rectangleHeight = rectangle.height
-		
+
 		let rectangleX = rectangle.xPosition
 		let rectangleY = rectangle.yPosition
-		
+
 		let tileSize = Self.tileSize
-		
+
 		// Decide on format for cpixels (compressed pixels) while respecting some special cases
 		let cPixelFormat = Self.compressedPixelFormat(sourcePixelFormat: framebuffer.sourcePixelFormat)
-		
+
 		// Iterate over all tiles
         // TODO: Get rid of stride()
 		for tileY in stride(from: rectangleY, to: rectangleY + rectangleHeight, by: .init(tileSize)) {
 			let tileHeight = min(tileSize, rectangleY + rectangleHeight - tileY)
-			
+
             // TODO: Get rid of stride()
 			for tileX in stride(from: rectangleX, to: rectangleX + rectangleWidth, by: .init(tileSize)) {
 				let tileWidth = min(tileSize, rectangleX + rectangleWidth - tileX)
-				
+
 				let tile = VNCRegion(x: tileX,
 									 y: tileY,
 									 width: tileWidth,
 									 height: tileHeight)
-				
+
 				try readTile(tile,
 							 cPixelFormat: cPixelFormat,
 							 stream: stream,
@@ -63,7 +63,7 @@ extension VNCProtocol.ZRLEEncoding {
 							 logger: logger)
 			}
 		}
-		
+
 		framebuffer.didUpdate(region: rectangle.region)
 	}
 }
@@ -72,7 +72,7 @@ extension VNCProtocol.ZRLEEncoding {
 private extension VNCProtocol.ZRLEEncoding {
 	static func compressedPixelFormat(sourcePixelFormat: VNCProtocol.PixelFormat) -> VNCProtocol.PixelFormat {
 		// See https://github.com/TigerVNC/tigervnc/blob/d8bbbeb3b37c713a72a113f7ef78741e15cc4a4d/common/rfb/ZRLEDecoder.cxx#L84
-		
+
 		if sourcePixelFormat.trueColor,
 			  sourcePixelFormat.bitsPerPixel == 32,
 			  sourcePixelFormat.depth <= 24 {
@@ -84,14 +84,14 @@ private extension VNCProtocol.ZRLEEncoding {
 			// Does the white pixel fit in the least/most significant 3 bytes (big-endian view)?
 			let fitsInLs3Bytes = maxPixel < 1 << 24
 			let fitsInMs3Bytes = (maxPixel & 0xff) == 0
-			
+
 			// Note that we have to differentiate between endianness here, because reversing the bytes also affects,
 			// where we have to put the received bytes when reconstructing the pixel value:
-			
+
 			// Should the received bytes be put first in memory, when reconstructing the pixel value? memory(LE): ___0 (0x0___)
 			// little-endian received as C,B,A --> memory(LE): CBA0 (0x0ABC)                     == least-significant
 			//    big-endian received as A,B,C --> memory(LE): ABC0 (0x0CBA) --> reverse: 0xABC0 ==  most-significant
-			
+
 			if (fitsInLs3Bytes && !sourcePixelFormat.bigEndian) ||
 			   (fitsInMs3Bytes && sourcePixelFormat.bigEndian) {
 				// The pixel conversion algorithm automatically puts the three bytes first in memory (with 1 trash byte after), but we know,
@@ -107,7 +107,7 @@ private extension VNCProtocol.ZRLEEncoding {
 							 greenShift: sourcePixelFormat.greenShift,
 							 blueShift: sourcePixelFormat.blueShift)
 			}
-			
+
 			// Should the received bytes be put last in memory, when reconstructing the pixel value? memory(LE): 0___ (0x___0)
 			//    big-endian received as A,B,C --> memory(LE): 0ABC (0xCBA0) --> reverse: 0x0ABC == least-significant
 			// little-endian received as C,B,A --> memory(LE): 0CBA (0xABC0)                     == most-significant
@@ -119,7 +119,7 @@ private extension VNCProtocol.ZRLEEncoding {
 				let shiftOffset = fitsInLs3Bytes
 					? 8
 					: -8
-				
+
 				return .init(bitsPerPixel: 24,
 							 depth: sourcePixelFormat.depth,
 							 bigEndian: sourcePixelFormat.bigEndian,
@@ -132,7 +132,7 @@ private extension VNCProtocol.ZRLEEncoding {
 							 blueShift: .init(Int(sourcePixelFormat.blueShift) + shiftOffset))
 			}
 		}
-		
+
 		return sourcePixelFormat
 	}
 }
@@ -146,14 +146,14 @@ private extension VNCProtocol.ZRLEEncoding {
 				  logger: VNCLogger) throws {
 		// Read one byte for the subencoding type
 		let subencodingType = try stream.readUInt8()
-		
+
 		// Top bit defines if this tile is run-length encoded, bottom 7 bits define the palette size
 		let isRunLengthEncoded = subencodingType & 128 != 0
 		let paletteSize = subencodingType & 127
-		
+
 		// Create a cursor for this tile on the target framebuffer, if any framebuffer reference is available
 //		FramebufferCursor framebufferCursor = new FramebufferCursor(targetFramebuffer, tile)
-		
+
 		// Read tile based on the subencoding type
 		if !isRunLengthEncoded {
 			if paletteSize == 0 { // Raw
@@ -197,7 +197,7 @@ private extension VNCProtocol.ZRLEEncoding {
 			}
 		}
 	}
-	
+
 	func readRawTile(_ tile: VNCRegion,
 					 cPixelFormat: VNCProtocol.PixelFormat,
 					 stream: AnyStream,
@@ -206,14 +206,14 @@ private extension VNCProtocol.ZRLEEncoding {
 		// Calculate how many bytes we're going to receive
 		let bytesPerPixel = cPixelFormat.bytesPerPixel
 		let totalBytesToRead = Int(tile.width) * Int(tile.height) * Int(bytesPerPixel)
-		
+
 		// Read raw data
 		var buffer = try stream.read(length: totalBytesToRead)
-		
+
 		// Process all bytes and draw to the framebuffer
 		framebuffer.update(region: tile, data: &buffer)
 	}
-	
+
 	func readSolidTile(_ tile: VNCRegion,
 					   cPixelFormat: VNCProtocol.PixelFormat,
 					   stream: AnyStream,
@@ -222,11 +222,11 @@ private extension VNCProtocol.ZRLEEncoding {
 		// Read a single color value
 		let bytesPerPixel = cPixelFormat.bytesPerPixel
 		var buffer = try stream.read(length: .init(bytesPerPixel))
-		
+
 		// Fill the tile with a solid color
 		framebuffer.fill(region: tile, withPixel: &buffer)
 	}
-	
+
 	func readPackedPaletteTile(_ tile: VNCRegion,
 							   paletteSize: UInt8,
 							   cPixelFormat: VNCProtocol.PixelFormat,
@@ -236,15 +236,15 @@ private extension VNCProtocol.ZRLEEncoding {
 		// Calculate how many bytes we're going to receive
 		let bytesPerPixel = cPixelFormat.bytesPerPixel
 		let paletteBytes = Int(paletteSize) * Int(bytesPerPixel)
-		
+
 		let bitsPerPackedPixel = paletteSize > 4
 			? 4
 			: paletteSize > 2
 				? 2
 				: 1
-		
+
 		let packedPixelBytes: Int
-		
+
 		switch bitsPerPackedPixel {
 			case 1:
 				packedPixelBytes = (Int(tile.width) + 7) / 8 * Int(tile.height)
@@ -255,26 +255,26 @@ private extension VNCProtocol.ZRLEEncoding {
 			default:
 				throw VNCError.protocol(.zrleUnexpectedPaletteSize(paletteSize: paletteSize))
 		}
-		
+
 		let totalBytesToRead = paletteBytes + packedPixelBytes
-		
+
 		// Read all data. Buffer is always large enough: 16 * 4 + (64 + 1) / 2 * 64 = 2144 < 16384 = 64 * 64 * 4
 		let buffer = try stream.read(length: totalBytesToRead)
-		
+
 		let palette = buffer[0..<paletteBytes]
 		let packedPixels = buffer[paletteBytes..<paletteBytes + packedPixelBytes]
-		
+
 		let indexMask = UInt8(((1 << bitsPerPackedPixel) - 1) & 127)
-		
+
 		// See: https://github.com/TigerVNC/tigervnc/blob/a356a706526ac4182b3ae144166ae04271b85258/java/com/tigervnc/rfb/ZRLEDecoder.java#L213
-		
+
 		var pixelOffset = 0
-		
+
 		// Process the pixels line by line
 		for yPos in 0..<tile.height {
 			var pixelsByte: UInt8 = 0
 			var remainingBits = 0
-			
+
 			// Write pixels left to right
 			for xPos in 0..<tile.width {
 				// Read next byte?
@@ -282,32 +282,32 @@ private extension VNCProtocol.ZRLEEncoding {
 					// TODO: Correct?
 					pixelsByte = packedPixels[pixelOffset]
 					pixelOffset += 1
-					
+
 					remainingBits = 8
 				}
-				
+
 				// Get palette index
 				remainingBits -= bitsPerPackedPixel
-				
+
 				let paletteIndex = ((Int(pixelsByte) >> remainingBits) & Int(indexMask)) * Int(bytesPerPixel)
-				
+
 				guard paletteIndex < paletteBytes else {
 					throw VNCError.protocol(.zrlePaletteIndexOverflow(paletteIndex: paletteIndex, paletteSize: paletteSize))
 				}
-				
+
 				// TODO: Correct?
 				var pixelData = palette[paletteIndex..<paletteIndex + Int(bytesPerPixel)]
-				
+
 				// Set the pixel
 				// TODO: Correct?
 				let pixelRegion = VNCRegion(x: xPos + tile.x, y: yPos + tile.y,
 											width: 1, height: 1)
-				
+
 				framebuffer.fill(region: pixelRegion, withPixel: &pixelData)
 			}
 		}
 	}
-	
+
 	func readRLETile(_ tile: VNCRegion,
 					 cPixelFormat: VNCProtocol.PixelFormat,
 					 stream: AnyStream,
@@ -342,7 +342,7 @@ private extension VNCProtocol.ZRLEEncoding {
 //			}
 //		}
 	}
-	
+
 	func readPaletteRLETile(_ tile: VNCRegion,
 							paletteSize: UInt8,
 							cPixelFormat: VNCProtocol.PixelFormat,
@@ -351,16 +351,16 @@ private extension VNCProtocol.ZRLEEncoding {
 							logger: VNCLogger) throws {
 		// TODO
 	}
-	
+
 	func readRLELength(stream: AnyStream) throws -> Int {
 		var length = 0
 		var current = 0
-		
+
 		repeat {
 			current = .init(try stream.readUInt8())
 			length += current
 		} while (current == 255)
-		
+
 		return length + 1
 	}
 } */

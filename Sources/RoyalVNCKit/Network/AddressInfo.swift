@@ -42,10 +42,10 @@ final class AddressInfo {
         let getaddrinfoStatus = getaddrinfo(
             host,
             "\(port)",
-            &hints, 
+            &hints,
             &addrInfo
         )
-        
+
         guard getaddrinfoStatus == 0 else {
             throw .dnsResolutionFailed
         }

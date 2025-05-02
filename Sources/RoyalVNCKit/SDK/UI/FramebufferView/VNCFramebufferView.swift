@@ -13,42 +13,42 @@ public protocol VNCFramebufferView: AnyObject {
     @objc
 #endif
 	var framebufferSize: CGSize { get }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var connection: VNCConnection? { get }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var settings: VNCConnection.Settings { get }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var scaleRatio: CGFloat { get }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var contentRect: CGRect { get }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var scrollStep: CGFloat { get }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var accumulatedScrollDeltaX: CGFloat { get set }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	var accumulatedScrollDeltaY: CGFloat { get set }
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -56,7 +56,7 @@ public protocol VNCFramebufferView: AnyObject {
                     didUpdateFramebuffer framebuffer: VNCFramebuffer,
                     x: UInt16, y: UInt16,
                     width: UInt16, height: UInt16)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif

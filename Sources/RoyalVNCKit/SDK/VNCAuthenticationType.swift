@@ -24,7 +24,7 @@ public extension VNCAuthenticationType {
 				true
 		}
 	}
-	
+
 	var requiresPassword: Bool {
 		switch self {
 			case .vnc:
@@ -45,7 +45,7 @@ public final class _ObjC_VNCAuthenticationTypeUtils: NSObject {
 	public static func authenticationTypeRequiresUsername(_ authenticationType: VNCAuthenticationType) -> Bool {
 		authenticationType.requiresUsername
 	}
-	
+
     @objc
 	public static func authenticationTypeRequiresPassword(_ authenticationType: VNCAuthenticationType) -> Bool {
 		authenticationType.requiresPassword

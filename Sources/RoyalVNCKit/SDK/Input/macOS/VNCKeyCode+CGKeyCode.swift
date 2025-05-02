@@ -11,7 +11,7 @@ public extension VNCKeyCode {
     static func keyCodesFrom(cgKeyCode: CGKeyCode,
                              characters: String?) -> [VNCKeyCode] {
 		var keys: [VNCKeyCode]
-        
+
         if let key = VNCKeyCode.from(cgKeyCode: cgKeyCode) {
             keys = [ key ]
         } else if let chars = characters {
@@ -19,7 +19,7 @@ public extension VNCKeyCode {
 		} else {
 			keys = .init()
 		}
-        
+
         return keys
     }
 }

@@ -12,7 +12,7 @@ public struct CGKeyCodes {
     // swiftlint:disable:next unneeded_synthesized_initializer
 	@available(*, unavailable)
 	init() { }
-	
+
 	// MARK: - ANSI Keys (these are for the US keyboard layout)
 	public static let ansiA = CGKeyCode(kVK_ANSI_A)
 	public static let ansiS = CGKeyCode(kVK_ANSI_S)
@@ -79,7 +79,7 @@ public struct CGKeyCodes {
 	public static let ansiKeypad7 = CGKeyCode(kVK_ANSI_Keypad7)
 	public static let ansiKeypad8 = CGKeyCode(kVK_ANSI_Keypad8)
 	public static let ansiKeypad9 = CGKeyCode(kVK_ANSI_Keypad9)
-	
+
 	// MARK: - Keycodes for keys that are independent of keyboard layout
 	public static let `return` = CGKeyCode(kVK_Return)
 	public static let tab = CGKeyCode(kVK_Tab)
@@ -129,10 +129,10 @@ public struct CGKeyCodes {
 	public static let rightArrow = CGKeyCode(kVK_RightArrow)
 	public static let downArrow = CGKeyCode(kVK_DownArrow)
 	public static let upArrow = CGKeyCode(kVK_UpArrow)
-	
+
 	// MARK: - ISO keyboards only
 	public static let isoSection = CGKeyCode(kVK_ISO_Section)
-	
+
 	// MARK: - JIS keyboards only
 	public static let jisYen = CGKeyCode(kVK_JIS_Yen)
 	public static let jisUnderscore = CGKeyCode(kVK_JIS_Underscore)

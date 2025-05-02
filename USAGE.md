@@ -33,31 +33,31 @@ extension MyConnectionController: VNCConnectionDelegate {
         // TODO: Update/show/hide progress indicator depending on connectionState.status
         // TODO: Destroy framebuffer view and disconnect delegate if the connection was closed
     }
-    
+
     func connection(_ connection: VNCConnection,
                     credentialFor authenticationType: VNCAuthenticationType,
                     completion: @escaping (VNCCredential?) -> Void) {
         // TODO: Provide credential for authenticationType
         completion(nil)
     }
-    
+
     func connection(_ connection: VNCConnection,
                     didCreateFramebuffer framebuffer: VNCFramebuffer) {
         // TODO: Create a framebuffer view and add it to the view hierarchy
     }
-    
+
     func connection(_ connection: VNCConnection,
                     didResizeFramebuffer framebuffer: VNCFramebuffer) {
         // TODO: Resize your previously created framebuffer view
     }
-    
+
     func connection(_ connection: VNCConnection,
                     didUpdateFramebuffer framebuffer: VNCFramebuffer,
                     x: UInt16, y: UInt16,
                     width: UInt16, height: UInt16) {
         // TODO: Update the image in your framebuffer view
     }
-    
+
     func connection(_ connection: VNCConnection,
                     didUpdateCursor cursor: VNCCursor) {
         // TODO: Update the local cursor shown in the framebuffer view
@@ -76,7 +76,7 @@ func connection(_ connection: VNCConnection,
                 credentialFor authenticationType: VNCAuthenticationType,
                 completion: @escaping (VNCCredential?) -> Void) {
     let credential: VNCCredential?
-    
+
     if authenticationType.requiresUsername {
         // TODO: Ask user to provide credential data
         credential = VNCUsernamePasswordCredential(username: "MyUser",
@@ -87,7 +87,7 @@ func connection(_ connection: VNCConnection,
     } else {
         credential = nil
     }
-    
+
     completion(credential)
 }
 ```
@@ -144,7 +144,7 @@ func connection(_ connection: VNCConnection,
                 didUpdateFramebuffer framebuffer: VNCFramebuffer,
                 x: UInt16, y: UInt16,
                 width: UInt16, height: UInt16) {
-    // TODO: Only invalidate the part of the image that was updated, indicated by the x, y, width and height parameters 
+    // TODO: Only invalidate the part of the image that was updated, indicated by the x, y, width and height parameters
     self.view.layer?.contents = framebuffer.cgImage
 }
 ```

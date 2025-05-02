@@ -26,7 +26,7 @@ public extension VNCError {
 		case zrlePaletteRLELengthOverflow
 		case zrleUnexpectedRLEStreamEnd
 		case unexpectedExtendedServerCutTextAction(action: UInt32)
-		
+
 		// MARK: - LocalizedError
 		public var errorDescription: String? {
 			// TODO: Localize

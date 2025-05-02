@@ -7,13 +7,13 @@ import Foundation
 public struct VNCRegion: Equatable {
 	public let location: VNCPoint
 	public let size: VNCSize
-	
+
 	public init(location: VNCPoint,
 				size: VNCSize) {
 		self.location = location
 		self.size = size
 	}
-	
+
 	public init(x: UInt16, y: UInt16,
 				width: UInt16, height: UInt16) {
 		self.location = .init(x: x, y: y)
@@ -31,10 +31,10 @@ extension VNCRegion: Hashable {
 public extension VNCRegion {
 	static let zero: Self = .init(location: .zero,
 								  size: .zero)
-	
+
 	var x: UInt16 { location.x }
 	var y: UInt16 { location.y }
-	
+
 	var width: UInt16 { size.width }
 	var height: UInt16 { size.height }
 }

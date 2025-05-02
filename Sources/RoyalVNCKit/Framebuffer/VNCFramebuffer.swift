@@ -26,14 +26,14 @@ import AppKit
 public final class VNCFramebuffer: NSObjectOrAnyObject {
 	// MARK: - Public Properties
 	public let size: VNCSize
-	
+
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
 	@objc(size)
 #endif
 	public let cgSize: CGSize
 #endif
-	
+
 	public let fullRegion: VNCRegion
 
 #if canImport(CoreGraphics)
@@ -52,14 +52,14 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	public let buffer: UnsafeMutableRawPointer
 	private let bufferLock = Spinlock()
 #endif
-    
+
     public let surfaceByteCount: Int
-	
+
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	public private(set) var screens: [VNCScreen]
-	
+
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -67,22 +67,22 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 		guard let depth = VNCConnection.Settings.ColorDepth(rawValue: .init(sourceProperties.colorDepth)) else {
 			fatalError("Failed to convert color depth")
 		}
-		
+
 		return depth
 	}
-	
+
 	// MARK: - Internal Properties
 	let sourcePixelFormat: VNCProtocol.PixelFormat
 	weak var delegate: VNCFramebufferDelegate?
 	let logger: VNCLogger
-	
+
 	let sourceProperties: Properties
 	let destinationProperties: Properties
-	
+
 	let needsColorConversion: Bool
-	
+
 	private(set) var colorMap: ColorMap?
-	
+
 #if canImport(CoreGraphics)
 	// MARK: - Private Properties
 	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
@@ -92,7 +92,7 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	private static let surfaceLockOptionsReadOnly: IOSurfaceLockOptions = [ .readOnly ]
 	private static let surfaceLockOptionsReadWrite: IOSurfaceLockOptions = [ ]
 #endif
-	
+
 	private let width: Int
 	private let height: Int
 
@@ -102,66 +102,66 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 #endif
 
 	private var framebufferHasBeenUpdatedAtLeastOnce = false
-	
+
 	init(logger: VNCLogger,
 		 size: VNCSize,
 		 screens: [VNCScreen],
 		 pixelFormat: VNCProtocol.PixelFormat) throws {
 		let width = Int(size.width)
 		let height = Int(size.height)
-		
+
 		self.size = size
 
 #if canImport(CoreGraphics)
 		self.cgSize = size.cgSize
 #endif
-		
+
 		self.fullRegion = .init(location: .zero, size: size)
 
 #if canImport(CoreGraphics)
 		self.cgFullRegion = .init(origin: .zero, size: size.cgSize)
 #endif
-		
+
 		self.width = width
 		self.height = height
-		
+
 		self.screens = screens.isEmpty
 			? [ .init(id: 1, frame: .init(location: .zero, size: size)) ]
 			: screens
-		
+
 		self.logger = logger
 		self.sourcePixelFormat = pixelFormat
-		
+
 		let sourceProperties = Properties(pixelFormat: pixelFormat,
 										  width: width)
-		
+
 		let destinationProperties = Properties.internalProperties(width: width)
-		
+
 		self.sourceProperties = sourceProperties
 		self.destinationProperties = destinationProperties
-		
+
 		self.needsColorConversion = sourceProperties.bytesPerPixel != destinationProperties.bytesPerPixel ||
 									sourceProperties.bitsPerPixel != destinationProperties.bitsPerPixel
-		
+
 #if canImport(CoreImage)
 		self.ciContext = .init(options: [
 			.allowLowPower: true,
 			.outputColorSpace: Self.rgbColorSpace,
 			.outputPremultiplied: false
 		])
-		
+
 		self.ciImageOptions = [
 			.colorSpace: Self.rgbColorSpace
 		]
 #endif
-		
+
 		let bufferLength = width * height * destinationProperties.bytesPerPixel
-        
+
         self.surfaceByteCount = bufferLength
-		
+
 #if canImport(IOSurface)
 		let cvPixelFormat = kCVPixelFormatType_32BGRA
-		
+
 		guard let surface = IOSurface(properties: [
 			.width: width,
 			.height: height,
@@ -172,13 +172,13 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 		]) else {
 			throw VNCError.protocol(.framebufferFailedToCreateIOSurface)
 		}
-		
+
 		self.surface = surface
 #else
 		let buffer = UnsafeMutableRawPointer.allocate(byteCount: bufferLength,
                                                       alignment: MemoryLayout<UInt8>.alignment)
 
-		buffer.initializeMemory(as: UInt8.self, 
+		buffer.initializeMemory(as: UInt8.self,
 								repeating: 0,
 								count: bufferLength)
 
@@ -203,13 +203,13 @@ public extension VNCFramebuffer {
 		guard framebufferHasBeenUpdatedAtLeastOnce else {
 			return nil
 		}
-		
+
 		lockSurfaceReadOnly()
 		defer { unlockSurfaceReadOnly() }
-		
+
 		let image = CIImage(ioSurface: surface,
 							options: ciImageOptions)
-		
+
 		return image
 	}
 #endif
@@ -222,7 +222,7 @@ public extension VNCFramebuffer {
 		guard let ciImage = ciImage else {
 			return nil
 		}
-		
+
 		guard let finalImage = ciContext.createCGImage(ciImage,
                                                        from: ciImage.extent,
                                                        format: .BGRA8,
@@ -230,25 +230,25 @@ public extension VNCFramebuffer {
                                                        deferred: true) else {
 			return nil
 		}
-		
+
 //		logger.logDebug("CGImage.alphaInfo: \(finalImage.alphaInfo.rawValue)")
-		
+
 		return finalImage
 	}
 #endif
-	
+
 #if os(macOS)
     @objc
     var nsImage: NSImage? {
         guard let ciImage = ciImage else {
             return nil
         }
-        
+
         let rep = NSCIImageRep(ciImage: ciImage)
-        
+
         let finalImage = NSImage(size: rep.size)
         finalImage.addRepresentation(rep)
-        
+
         return finalImage
     }
 #endif
@@ -259,97 +259,97 @@ extension VNCFramebuffer {
 	func update(region: VNCRegion,
 				data: inout Data) {
 		logger.logDebug("Framebuffer Update Region \(region)")
-		
+
 		guard isValidRegion(region) else {
 			logger.logError("Invalid region: \(region)")
-			
+
 			return
 		}
-		
+
 		lockSurfaceReadWrite()
 		updatePixelBufferWithData(&data, forRegion: region)
 		unlockSurfaceReadWrite()
 	}
-	
+
 	func copy(region sourceRegion: VNCRegion,
 			  to destinationRegion: VNCRegion) {
 		logger.logDebug("Framebuffer Copy Region \(sourceRegion) to \(destinationRegion)")
-		
+
 		guard isValidRegion(sourceRegion) else {
 			logger.logError("Invalid region: \(sourceRegion)")
-			
+
 			return
 		}
-		
+
 		guard isValidRegion(destinationRegion) else {
 			logger.logError("Invalid region: \(destinationRegion)")
-			
+
 			return
 		}
-		
+
 		lockSurfaceReadWrite()
 		copyPixelBufferRegion(sourceRegion, to: destinationRegion)
 		unlockSurfaceReadWrite()
 	}
-	
+
 	func fill(region: VNCRegion,
 			  withPixel pixelData: inout Data) {
 		logger.logDebug("Framebuffer Fill Region \(region)")
-		
+
 		guard isValidRegion(region) else {
 			logger.logError("Invalid region: \(region)")
-			
+
 			return
 		}
-		
+
 		lockSurfaceReadWrite()
 		fillPixelBufferWithPixel(&pixelData, forRegion: region)
 		unlockSurfaceReadWrite()
 	}
-	
+
 	func updateColorMap(_ entries: VNCProtocol.SetColourMapEntries) {
 		let colorMap = ColorMap(entries: entries)
-		
+
 		self.colorMap = colorMap
 	}
-	
+
 	func decodeCursor(image: inout Data,
 					  mask: inout Data,
 					  size: VNCSize,
 					  hotspot: VNCPoint) -> VNCCursor {
 		let destinationBitsPerPixel = destinationProperties.bitsPerPixel
 		let destinationBytesPerPixel = destinationProperties.bytesPerPixel
-		
+
 		let bitsPerComponent = Int(8)
-		
+
 		let cursorWidth = Int(size.width)
 		let cursorHeight = Int(size.height)
-		
+
 		let destinationLength = cursorWidth * cursorHeight * destinationBytesPerPixel
 		let destinationMaxAlpha = UInt8(destinationProperties.alphaMax)
-		
+
 		// Decode to RGBA
 		var destinationData = Data(repeating: 0, count: destinationLength)
 
 		var fullyTransparent = true
-		
+
 		image.withUnsafeBytes { sourcePixelDataPtr in
 			for row in 0..<cursorHeight {
 				let sourceRowOffset = sourceOffsetOf(row: row, width: cursorWidth)
 				let destinationRowOffset = destinationOffsetOf(row: row, width: cursorWidth)
-				
+
 				for column in 0..<cursorWidth {
 					let sourceColumnOffset = sourceOffsetOf(column: column)
 					let destinationColumnOffset = destinationOffsetOf(column: column)
-					
+
 					let sourceOffset = sourceRowOffset + sourceColumnOffset
 					let destinationOffset = destinationRowOffset + destinationColumnOffset
-					
+
 					let destinationPixel = destinationPixelWith(sourcePixelData: sourcePixelDataPtr,
 																sourcePixelDataOffset: sourceOffset)
-					
+
                     let maskIdx = row * Int((Double(cursorWidth) / 8.0).rounded(.up)) + Int((Double(column) / 8.0).rounded(.down))
-					
+
 					let destinationAlpha: UInt8 = (mask[maskIdx] << (column % 8)) & 0x80 != 0
 						? destinationMaxAlpha
 						: 0
@@ -358,18 +358,18 @@ extension VNCFramebuffer {
 					destinationData[destinationOffset + 1] = destinationPixel.green
 					destinationData[destinationOffset + 2] = destinationPixel.blue
 					destinationData[destinationOffset + 3] = destinationAlpha
-					
+
 					if fullyTransparent && destinationAlpha > 0 {
 						fullyTransparent = false
 					}
 				}
 			}
 		}
-		
+
 		guard !fullyTransparent else {
 			return .empty
 		}
-		
+
 		return .init(imageData: destinationData,
 					 size: size,
 					 hotspot: hotspot,
@@ -377,53 +377,53 @@ extension VNCFramebuffer {
 					 bitsPerPixel: destinationBitsPerPixel,
 					 bytesPerPixel: destinationBytesPerPixel)
 	}
-	
+
 	func didUpdate() {
 		notifyDelegateFramebufferDidUpdate()
 	}
-	
+
 	func didUpdate(region: VNCRegion) {
 		notifyDelegateFramebufferDidUpdate(region: region)
 	}
-	
+
 	func updateDesktopName(_ newDesktopName: String) {
 		notifyDelegateDesktopNameDidUpdate(newDesktopName)
 	}
-	
+
 	func updateCursor(_ cursor: VNCCursor) {
 		notifyDelegateCursorDidUpdate(cursor)
 	}
-	
+
 	func resize(to newSize: VNCSize) {
 		let newScreens: [VNCScreen] = [
 			.init(id: 0,
 				  frame: .init(location: .zero, size: newSize))
 		]
-		
+
 		resize(to: newSize,
 			   screens: newScreens)
 	}
-	
+
 	func resize(to newSize: VNCSize,
 				screens newScreens: [VNCProtocol.Screen]) {
 		let newVNCScreens = newScreens.map({ VNCScreen(screen: $0) })
-		
+
 		resize(to: newSize,
 			   screens: newVNCScreens)
 	}
-	
+
 	func resize(to newSize: VNCSize,
 				screens newScreens: [VNCScreen]) {
 		let sizeDidChange = newSize != size
 		let screensDidChange = newScreens != screens
-		
+
 		guard sizeDidChange || screensDidChange else {
 			// If the framebuffer size and screens are the same as before, there's nothing to do
 			return
 		}
-		
+
 		logger.logInfo("Desktop Size changed to \(newSize), number of screens: \(newScreens.count)")
-		
+
 		notifyDelegateSizeDidChange(newSize,
 									screens: newScreens)
 	}
@@ -440,72 +440,72 @@ private extension VNCFramebuffer {
 			// Nothing to do for empty rect
 			return
 		}
-		
+
 		let frameBufferWidth = width
-		
+
 		let regionWidth = Int(region.size.width)
 		let regionHeight = Int(region.size.height)
-		
+
 		let regionX = Int(region.location.x)
 		let regionY = Int(region.location.y)
-        
+
 		let sourceBytesPerPixel = sourceProperties.bytesPerPixel
 		let destinationBytesPerPixel = destinationProperties.bytesPerPixel
-		
+
 		let needsColorConversion = self.needsColorConversion
 		let logger = self.logger
-        
+
 		let fixedAlpha = UInt8(destinationProperties.alphaMax)
 		let alphaOffset = destinationBytesPerPixel - 1
-		
+
 		let sourceColumnLength = regionWidth * sourceBytesPerPixel
 		let destinationColumnLength = regionWidth * destinationBytesPerPixel
-		
+
         let targetBase = surfaceAddress
-		
+
 		data.withUnsafeBytes { sourcePixelDataPtr in
 			for row in 0..<regionHeight {
 				let sourceRowOffset = sourceOffsetOf(row: row, width: regionWidth)
 				let destinationRowOffset = destinationOffsetOf(row: row + regionY, width: frameBufferWidth)
-				
+
 				if !needsColorConversion { // Fast Path
 					let sourceColumnOffsetStart = sourceOffsetOf(column: 0)
 					let destinationColumnOffsetStart = destinationOffsetOf(column: 0 + regionX)
-					
+
 					let sourceOffset = sourceRowOffset + sourceColumnOffsetStart
 					let destinationOffset = destinationRowOffset + destinationColumnOffsetStart
-					
+
 					guard let source = sourcePixelDataPtr.baseAddress?.advanced(by: sourceOffset) else {
 						logger.logError("Failed to get baseAddress of data to update framebuffer with")
-						
+
 						return
 					}
-					
+
 					let target = targetBase.advanced(by: destinationOffset)
-					
+
 					target.copyMemory(from: source,
 									  byteCount: sourceColumnLength)
-					
+
 					let targetArr = target.assumingMemoryBound(to: UInt8.self)
-                    
+
                     var idx = alphaOffset
-                    
+
                     while idx < destinationColumnLength {
                         targetArr[idx] = fixedAlpha
-                        
+
                         idx += destinationBytesPerPixel
                     }
 				} else { // Slow Path
 					for column in 0..<regionWidth {
 						let sourceColumnOffset = sourceOffsetOf(column: column)
 						let destinationColumnOffset = destinationOffsetOf(column: column + regionX)
-						
+
 						let sourceOffset = sourceRowOffset + sourceColumnOffset
 						let destinationOffset = destinationRowOffset + destinationColumnOffset
-						
+
 						let destinationPixel = destinationPixelWith(sourcePixelData: sourcePixelDataPtr,
 																	sourcePixelDataOffset: sourceOffset)
-						
+
 						let target = targetBase.advanced(by: destinationOffset).assumingMemoryBound(to: UInt8.self)
 
 						target[0] = destinationPixel.blue
@@ -516,12 +516,12 @@ private extension VNCFramebuffer {
 				}
 			}
 		}
-		
+
 		if !framebufferHasBeenUpdatedAtLeastOnce {
 			framebufferHasBeenUpdatedAtLeastOnce = true
 		}
 	}
-	
+
 	func fillPixelBufferWithPixel(_ pixelData: inout Data,
 								  forRegion region: VNCRegion) {
 		guard width > 0,
@@ -531,30 +531,30 @@ private extension VNCFramebuffer {
 			// Nothing to do for empty rect
 			return
 		}
-		
+
 		let sourceBytesPerPixel = sourceProperties.bytesPerPixel
 		let destinationBytesPerPixel = destinationProperties.bytesPerPixel
-		
+
 #if DEBUG
         guard pixelData.count == sourceBytesPerPixel else {
             return
         }
 #endif
-        
+
         let fixedAlpha = UInt8(destinationProperties.alphaMax)
-		
+
 		let frameBufferWidth = width
-		
+
 		let regionWidth = Int(region.size.width)
 		let regionHeight = Int(region.size.height)
-		
+
 		let regionX = Int(region.location.x)
 		let regionY = Int(region.location.y)
-		
+
 		let destinationColumnLength = regionWidth * destinationBytesPerPixel
-		
+
 		let destinationPixelData: Data
-		
+
 		if !needsColorConversion { // Fast Path
 			destinationPixelData = .init([
 				pixelData[0],
@@ -566,7 +566,7 @@ private extension VNCFramebuffer {
 			destinationPixelData = pixelData.withUnsafeBytes { sourcePixelDataPtr in
 				let destinationPixel = destinationPixelWith(sourcePixelData: sourcePixelDataPtr,
 															sourcePixelDataOffset: 0)
-				
+
 				return .init([
 					destinationPixel.blue,
 					destinationPixel.green,
@@ -575,36 +575,36 @@ private extension VNCFramebuffer {
 				])
 			}
 		}
-		
+
 		let targetBase = surfaceAddress
-		
+
 		destinationPixelData.withUnsafeBytes { destinationPixelDataBytesPtr in
 			guard let destinationPixelDataBytes = destinationPixelDataBytesPtr.baseAddress else { return }
-			
+
 			for row in 0..<regionHeight {
 				let destinationRowOffset = destinationOffsetOf(row: row + regionY, width: frameBufferWidth)
 				let destinationColumnOffsetStart = destinationOffsetOf(column: 0 + regionX)
-				
+
 				let destinationOffset = destinationRowOffset + destinationColumnOffsetStart
-				
+
                 var idx = destinationOffset
-                
+
                 while idx < destinationOffset + destinationColumnLength {
                     let target = targetBase.advanced(by: idx)
-                    
+
                     target.copyMemory(from: destinationPixelDataBytes,
                                       byteCount: destinationBytesPerPixel)
-                    
+
                     idx += destinationBytesPerPixel
                 }
 			}
 		}
-		
+
 		if !framebufferHasBeenUpdatedAtLeastOnce {
 			framebufferHasBeenUpdatedAtLeastOnce = true
 		}
 	}
-    
+
     func copyPixelBufferRegion(_ sourceRegion: VNCRegion,
                               to destinationRegion: VNCRegion) {
 		guard width > 0,
@@ -614,58 +614,58 @@ private extension VNCFramebuffer {
 			// Nothing to do for empty rect
 			return
 		}
-		
+
 		var data = bufferData(ofRegion: sourceRegion)
-		
+
 		updatePixelBufferWithData(&data,
 								  forRegion: destinationRegion)
     }
-	
+
 	func bufferData(ofRegion region: VNCRegion) -> Data {
 		let frameBufferWidth = width
-		
+
 		let regionWidth = Int(region.size.width)
 		let regionHeight = Int(region.size.height)
-		
+
 		let regionX = Int(region.location.x)
 		let regionY = Int(region.location.y)
-		
+
 		let buffer = surfaceAddress.assumingMemoryBound(to: UInt8.self)
-		
+
 		let bytesPerPixel = destinationProperties.bytesPerPixel
-		
+
 		let dataLength = regionWidth * regionHeight * bytesPerPixel
 		var data = Data(count: dataLength)
-		
+
 		let columnLength = regionWidth * bytesPerPixel
-		
+
 		let logger = self.logger
-		
+
 		data.withUnsafeMutableBytes {
 			guard let targetBase = $0.baseAddress else {
 				logger.logError("Failed to get baseAddress of target data to store framebuffer data in")
-				
+
 				return
 			}
-			
+
 			var idx = 0
-			
+
 			for row in regionY..<regionY + regionHeight {
 				let rowOffset = destinationOffsetOf(row: row, width: frameBufferWidth)
-				
+
 				let columnOffsetStart = destinationOffsetOf(column: regionX)
 				let offset = rowOffset + columnOffsetStart
-				
+
 				let source = buffer.advanced(by: offset)
 				let target = targetBase.advanced(by: idx)
-				
+
 				target.copyMemory(from: source,
 								  byteCount: columnLength)
-				
+
 				idx += columnLength
 			}
 		}
-		
+
 		return data
 	}
 }
@@ -690,12 +690,12 @@ private extension VNCFramebuffer {
 							width: width,
 							bytesPerPixel: sourceProperties.bytesPerPixel)
 	}
-	
+
 	func sourceOffsetOf(column: Int) -> Int {
 		PixelUtils.offsetOf(column: column,
 							bytesPerPixel: sourceProperties.bytesPerPixel)
 	}
-	
+
 	func sourceOffsetOf(point: VNCPoint) -> Int {
 		PixelUtils.offsetOf(point: point,
 							bytesPerRow: sourceProperties.bytesPerRow,
@@ -711,12 +711,12 @@ private extension VNCFramebuffer {
 							width: width,
 							bytesPerPixel: destinationProperties.bytesPerPixel)
     }
-    
+
     func destinationOffsetOf(column: Int) -> Int {
 		PixelUtils.offsetOf(column: column,
 							bytesPerPixel: destinationProperties.bytesPerPixel)
     }
-    
+
     func destinationOffsetOf(point: VNCPoint) -> Int {
 		PixelUtils.offsetOf(point: point,
 							bytesPerRow: destinationProperties.bytesPerRow,
@@ -739,61 +739,61 @@ extension VNCFramebuffer {
     func copyPixelDataToRGBA32(pixelDataSize: inout Int) -> UnsafeMutableRawPointer {
         lockSurfaceReadOnly()
         defer { unlockSurfaceReadOnly() }
-        
+
         pixelDataSize = surfaceByteCount
-        
+
         let rgbaDataCopy = Self.copyBGRAtoRGBA(srcBuffer: surfaceAddress,
                                                byteCount: pixelDataSize)
-        
+
         return rgbaDataCopy
     }
-    
+
     func copyPixelDataToRGBA32(destinationPixelBuffer: UnsafeMutableRawPointer) {
         lockSurfaceReadOnly()
         defer { unlockSurfaceReadOnly() }
-        
+
         Self.copyBGRAtoRGBA(srcBuffer: surfaceAddress,
                             dstBuffer: destinationPixelBuffer,
                             byteCount: surfaceByteCount)
     }
-    
+
     func destroyRGBA32PixelData(_ buffer: UnsafeMutableRawPointer) {
         buffer.deallocate()
     }
-    
+
     private static func copyBGRAtoRGBA(srcBuffer: UnsafeRawPointer,
                                        byteCount: Int) -> UnsafeMutableRawPointer {
         let dstBuffer = UnsafeMutableRawPointer.allocate(byteCount: byteCount,
                                                          alignment: MemoryLayout<UInt8>.alignment)
-        
+
         Self.copyBGRAtoRGBA(srcBuffer: srcBuffer,
                             dstBuffer: dstBuffer,
                             byteCount: byteCount)
-        
+
         return dstBuffer
     }
-    
+
     private static func copyBGRAtoRGBA(srcBuffer: UnsafeRawPointer,
                                        dstBuffer: UnsafeMutableRawPointer,
                                        byteCount: Int) {
 
         let src = srcBuffer.assumingMemoryBound(to: UInt8.self)
         let dst = dstBuffer.assumingMemoryBound(to: UInt8.self)
-        
+
         let pixelCount = byteCount / 4
         var i = 0
-        
+
         while i < pixelCount {
             let b = src[i * 4]
             let g = src[i * 4 + 1]
             let r = src[i * 4 + 2]
             let a = src[i * 4 + 3]
-            
+
             dst[i * 4] = r
             dst[i * 4 + 1] = g
             dst[i * 4 + 2] = b
             dst[i * 4 + 3] = a
-            
+
             i += 1
         }
     }
@@ -807,7 +807,7 @@ private extension VNCFramebuffer {
 		bufferLock.lock()
 #endif
 	}
-	
+
 	func unlockSurfaceReadOnly() {
 #if canImport(IOSurface)
 		surface.unlock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
@@ -815,7 +815,7 @@ private extension VNCFramebuffer {
 		bufferLock.unlock()
 #endif
 	}
-	
+
 	func lockSurfaceReadWrite() {
 #if canImport(IOSurface)
 		surface.lock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
@@ -823,7 +823,7 @@ private extension VNCFramebuffer {
 		bufferLock.lock()
 #endif
 	}
-	
+
 	func unlockSurfaceReadWrite() {
 #if canImport(IOSurface)
 		surface.unlock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
@@ -840,7 +840,7 @@ private extension VNCFramebuffer {
 		let regionY = Int(region.y)
 		let regionWidth = Int(region.width)
 		let regionHeight = Int(region.height)
-		
+
 		guard regionX >= 0,
 			  regionY >= 0,
 			  regionWidth >= 1,
@@ -849,7 +849,7 @@ private extension VNCFramebuffer {
 			  regionY + regionHeight <= height else {
 			return false
 		}
-		
+
 		return true
 	}
 }
@@ -860,22 +860,22 @@ private extension VNCFramebuffer {
 		delegate?.framebuffer(self,
 							  didUpdateRegion: fullRegion)
 	}
-	
+
 	func notifyDelegateFramebufferDidUpdate(region: VNCRegion) {
 		delegate?.framebuffer(self,
 							  didUpdateRegion: region)
 	}
-	
+
 	func notifyDelegateDesktopNameDidUpdate(_ newDesktopName: String) {
 		delegate?.framebuffer(self,
 							  didUpdateDesktopName: newDesktopName)
 	}
-	
+
 	func notifyDelegateCursorDidUpdate(_ cursor: VNCCursor) {
 		delegate?.framebuffer(self,
 							  didUpdateCursor: cursor)
 	}
-	
+
 	func notifyDelegateSizeDidChange(_ newSize: VNCSize,
 									 screens newScreens: [VNCScreen]) {
 		delegate?.framebuffer(self,
@@ -893,7 +893,7 @@ extension VNCFramebuffer {
 	// > convert -size {width}x{height} -depth 8 BGRA:{filename} {output}.png
 	func writeSurface() throws {
 		lockSurfaceReadOnly()
-		
+
 		let url = URL(filePath: "/tmp/framebuffer-\(width)x\(height)x\(destinationProperties.bytesPerPixel).\(Int(Date().timeIntervalSince1970)).raw")
 		let data = Data(bytes: buffer, count: width * height * destinationProperties.bytesPerPixel)
 		try data.write(to: url)

@@ -29,7 +29,7 @@ if args.count >= 2 {
 
 guard !hostname.isEmpty else {
     print("No hostname given")
-    
+
     exit(1)
 }
 
@@ -64,10 +64,10 @@ connection.connect()
 // Run loop until connection is disconnected
 while true {
     let connectionStatus = connection.connectionState.status
-    
+
     if connectionStatus == .disconnected {
         break
     }
-    
+
     platformSleep(forTimeInterval: 0.5)
 }

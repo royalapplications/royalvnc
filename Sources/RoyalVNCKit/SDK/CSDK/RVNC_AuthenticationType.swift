@@ -39,7 +39,7 @@ extension VNCAuthenticationType {
 @available(*, unavailable)
 public func rvnc_authentication_type_requires_username(_ authenticationType: RVNC_AUTHENTICATIONTYPE) -> Bool {
     let authenticationTypeSwift = authenticationType.swiftVNCAuthenticationType
-    
+
     return authenticationTypeSwift.requiresUsername
 }
 
@@ -48,6 +48,6 @@ public func rvnc_authentication_type_requires_username(_ authenticationType: RVN
 @available(*, unavailable)
 public func rvnc_authentication_type_requires_password(_ authenticationType: RVNC_AUTHENTICATIONTYPE) -> Bool {
     let authenticationTypeSwift = authenticationType.swiftVNCAuthenticationType
-    
+
     return authenticationTypeSwift.requiresPassword
 }

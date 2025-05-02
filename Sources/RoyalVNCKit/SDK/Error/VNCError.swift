@@ -8,7 +8,7 @@ public enum VNCError: Error, LocalizedError {
 	case `protocol`(_ underlyingError: ProtocolError)
 	case authentication(_ underlyingError: AuthenticationError)
 	case connection(_ underlyingError: ConnectionError)
-	
+
 	public var isAuthenticationError: Bool {
 		switch self {
 			case .authentication:
@@ -16,10 +16,10 @@ public enum VNCError: Error, LocalizedError {
 			default:
 				break
 		}
-		
+
 		return false
 	}
-	
+
 	public var shouldDisplayToUser: Bool {
 		switch self {
 			case .connection(let underlyingError):
@@ -34,10 +34,10 @@ public enum VNCError: Error, LocalizedError {
 			default:
 				break
 		}
-		
+
 		return true
 	}
-	
+
 	// MARK: - LocalizedError
 	public var errorDescription: String? {
 		// TODO: Localize
@@ -45,11 +45,11 @@ public enum VNCError: Error, LocalizedError {
 			case .protocol(let underlyingError):
 				return Self.combinedErrorDescription("A Protocol error occurred.",
 													 underlyingError: underlyingError)
-			
+
 			case .authentication(let underlyingError):
 				return Self.combinedErrorDescription("Authentication failed.",
 													 underlyingError: underlyingError)
-				
+
 			case .connection(let underlyingError):
 				return Self.combinedErrorDescription("The Connection was closed.",
 													 underlyingError: underlyingError)
@@ -61,13 +61,13 @@ extension VNCError {
 	static func combinedErrorDescription(_ baseErrorDescription: String,
 										 underlyingError: Error?) -> String {
 		let underlyingErrorDescription = underlyingError?.humanReadableDescription ?? ""
-		
+
 		guard underlyingErrorDescription != baseErrorDescription else {
 			return baseErrorDescription
 		}
-		
+
 		let fullDescription = "\(baseErrorDescription)\(underlyingErrorDescription.isEmpty ? "" : " \(underlyingErrorDescription)")"
-		
+
 		return fullDescription
 	}
 }
@@ -81,18 +81,18 @@ public final class _ObjC_VNCErrorUtils: NSObject {
 		guard let vncError = error as? VNCError else {
 			return false
 		}
-		
+
 		let should = vncError.shouldDisplayToUser
-		
+
 		return should
 	}
-	
+
     @objc
 	public static func isAuthenticationError(_ error: Error) -> Bool {
 		guard let vncError = error as? VNCError else {
 			return false
 		}
-		
+
 		switch vncError {
 			case .authentication:
 				return true

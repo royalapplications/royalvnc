@@ -13,20 +13,20 @@ public protocol VNCConnectionDelegate: AnyObject {
 #endif
 	func connection(_ connection: VNCConnection,
 					stateDidChange connectionState: VNCConnection.ConnectionState)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	func connection(_ connection: VNCConnection,
 					credentialFor authenticationType: VNCAuthenticationType,
 					completion: @escaping (_ credential: VNCCredential?) -> Void)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif
 	func connection(_ connection: VNCConnection,
 					didCreateFramebuffer framebuffer: VNCFramebuffer)
-	
+
 #if canImport(ObjectiveC)
     @objc
 #endif

@@ -12,7 +12,7 @@ public extension VNCPoint {
         self.x = .init(cgPoint.x)
         self.y = .init(cgPoint.y)
     }
-    
+
 	var cgPoint: CGPoint {
         .init(x: CGFloat(x),
               y: CGFloat(y))

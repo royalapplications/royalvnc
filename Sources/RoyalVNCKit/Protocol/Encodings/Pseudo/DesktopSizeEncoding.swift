@@ -16,7 +16,7 @@ extension VNCProtocol.DesktopSizeEncoding {
 				 connection: NetworkConnectionReading,
 				 logger: VNCLogger) async throws {
 		let newSize = rectangle.region.size
-		
+
 		framebuffer.resize(to: newSize)
 	}
 }

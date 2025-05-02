@@ -11,17 +11,17 @@ import Foundation
 // swiftlint:disable:next type_name
 public final class _ObjC_VNCKeyCode: NSObject {
 	// Must be kept in Sync with VNCKeyCode!
-	
+
     @objc
     public static let shift = X11KeySymbols.XK_Shift_L
     @objc
     public static let rightShift = X11KeySymbols.XK_Shift_R
-	
+
     @objc
     public static let control = X11KeySymbols.XK_Control_L
     @objc
     public static let rightControl = X11KeySymbols.XK_Control_R
-	
+
     @objc
     public static let option = X11KeySymbols.XK_Alt_L
     @objc
@@ -30,7 +30,7 @@ public final class _ObjC_VNCKeyCode: NSObject {
     public static let rightOption = X11KeySymbols.XK_Alt_R
     @objc
     public static let rightOptionForARD = X11KeySymbols.XK_Meta_R
-	
+
     @objc
     public static let command = X11KeySymbols.XK_Super_L
     @objc
@@ -39,7 +39,7 @@ public final class _ObjC_VNCKeyCode: NSObject {
     public static let rightCommand = X11KeySymbols.XK_Super_R
     @objc
     public static let rightCommandForARD = X11KeySymbols.XK_Hyper_R
-	
+
     @objc
     public static let `return` = X11KeySymbols.XK_Return
     @objc
@@ -70,7 +70,7 @@ public final class _ObjC_VNCKeyCode: NSObject {
     public static let home = X11KeySymbols.XK_Home
     @objc
     public static let insert = X11KeySymbols.XK_Insert
-	
+
     @objc
     public static let ansiKeypadClear = X11KeySymbols.XK_Clear
     @objc
@@ -87,7 +87,7 @@ public final class _ObjC_VNCKeyCode: NSObject {
     public static let ansiKeypadEnter = X11KeySymbols.XK_KP_Enter
     @objc
     public static let ansiKeypadDecimal = X11KeySymbols.XK_KP_Separator
-	
+
     @objc
     public static let f1 = X11KeySymbols.XK_F1
     @objc
@@ -133,38 +133,38 @@ public extension _ObjC_VNCKeyCode {
 	static func keyCodes(withAsciiCharacter asciiCharacter: UInt8) -> UInt32 {
 		return .init(asciiCharacter)
 	}
-	
+
     @objc
 	static func keyCodes(withString string: String) -> [UInt32] {
 		var objcKeyCodes = [UInt32]()
-		
+
 		for character in string {
 			let vncKeyCodes = VNCKeyCode.withCharacter(character)
-			
+
 			for vncKeyCode in vncKeyCodes {
 				objcKeyCodes.append(.init(vncKeyCode.rawValue))
 			}
 		}
-		
+
 		return objcKeyCodes
 	}
-	
+
     @objc
 	static func rawValue(ofKeyCode keyCode: UInt32,
 						 forAppleRemoteDesktop isARD: Bool) -> UInt32 {
 		return VNCKeyCode(keyCode).rawValue(forAppleRemoteDesktop: isARD)
 	}
-	
+
     @objc
 	static func hexDescription(ofKeyCode keyCode: UInt32) -> String {
 		return VNCKeyCode(keyCode).hexDescription
 	}
-	
+
     @objc
 	static func name(ofKeyCode keyCode: UInt32) -> String? {
 		return VNCKeyCode(keyCode).name
 	}
-	
+
     @objc
 	static func description(ofKeyCode keyCode: UInt32) -> String {
 		return VNCKeyCode(keyCode).description

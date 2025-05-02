@@ -16,7 +16,7 @@ enum Endianness {
 extension Endianness {
     static var current: Endianness = {
         let endianess: Endianness
-        
+
 #if !os(Linux) && !os(Windows)
         endianess = CFByteOrderGetCurrent() == .init(CFByteOrderLittleEndian.rawValue)
             ? .little
@@ -24,12 +24,12 @@ extension Endianness {
 #else
         let number: UInt32 = 0x12345678
         let converted = number.bigEndian
-        
+
         endianess = number == converted
             ? .big
             : .little
 #endif
-        
+
         return endianess
     }()
 }

@@ -22,7 +22,7 @@ final class Socket {
 #elseif canImport(WinSDK)
     private typealias NativeSocket = SOCKET
 #endif
-    
+
     private let nativeSocket: NativeSocket
 
     init(addressInfo: AddressInfo) throws(Errors) {
@@ -172,7 +172,7 @@ extension Socket {
                     } else {
                         underlyingErrorCodeStr = "N/A"
                     }
-                    
+
                     return "Socket creation failed (\(underlyingErrorCodeStr))"
                 case .connectFailed(let underlyingErrorCode):
                     return "Connect failed (\(underlyingErrorCode))"
