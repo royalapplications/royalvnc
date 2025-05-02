@@ -3,7 +3,7 @@ package com.royalapps.royalvnc
 class X11KeySymbol {
     companion object {
         val XK_VoidSymbol                  = 0xffffff  /* Void symbol */
-        
+
         // MARK: - XK_MISCELLANY
         /*
          * TTY function keys, cleverly chosen to map to ASCII, for convenience of
