@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
   <Folder Name="/Solution/">
     <File Path="Directory.Build.rsp" />
     <File Path="nuget-pack-dotnet.ps1" />
@@ -9,6 +9,7 @@
     <File Path="RoyalApps.RoyalVNCKit.native\native.nuspec" />
     <File Path="RoyalApps.RoyalVNCKit.native\windows.nuspec" />
     <File Path="RoyalApps.RoyalVNCKit.native\windows.SwiftRuntime.nuspec" />
+    <File Path=".editorconfig" />
   </Folder>
   <Project Path="RoyalApps.RoyalVNCKit.Demo\RoyalApps.RoyalVNCKit.Demo.csproj" />
   <Project Path="RoyalApps.RoyalVNCKit\RoyalApps.RoyalVNCKit.csproj" />
