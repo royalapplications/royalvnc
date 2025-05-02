@@ -5,34 +5,34 @@ plugins {
 }
 
 android {
-    namespace 'com.example.royalvncandroidtest'
-    compileSdk 35
+    namespace = 'com.example.royalvncandroidtest'
+    compileSdk = 35
 
     defaultConfig {
-        applicationId "com.example.royalvncandroidtest"
-        minSdk 28
-        targetSdk 35
-        versionCode 1
-        versionName "1.0"
+        applicationId = "com.example.royalvncandroidtest"
+        minSdk = 28
+        targetSdk = 35
+        versionCode = 1
+        versionName = "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = '11'
     }
     buildFeatures {
-        compose true
+        compose = true
     }
     packaging {
         jniLibs {
@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-    implementation 'net.java.dev.jna:jna:5.16.0@aar'
+    implementation variantOf(libs.jna) { artifactType("aar") }
     implementation libs.androidx.datastore.preferences
 
     implementation libs.androidx.core.ktx
