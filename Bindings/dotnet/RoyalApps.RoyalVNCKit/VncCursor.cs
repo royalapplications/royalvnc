@@ -25,7 +25,7 @@ public sealed unsafe class VncCursor : IDisposable
     public long BitsPerPixel => rvnc_cursor_bits_per_pixel_get(_instance);
     public long BytesPerPixel => rvnc_cursor_bytes_per_pixel_get(_instance);
     public long BytesPerRow => rvnc_cursor_bytes_per_row_get(_instance);
-    
+
     public ReadOnlySpan<byte> PixelData
     {
         get
@@ -36,7 +36,7 @@ public sealed unsafe class VncCursor : IDisposable
 
             if (_pixelData is null)
                 _pixelData = rvnc_cursor_pixel_data_get_copy(_instance);
-            
+
             Debug.Assert(_pixelData is not null);
             return new(_pixelData, length);
         }

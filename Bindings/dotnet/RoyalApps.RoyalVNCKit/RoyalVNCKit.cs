@@ -9,7 +9,7 @@ static unsafe partial class RoyalVNCKit
     // ReSharper disable once InconsistentNaming
     const string libRoyalVNCKit = nameof(RoyalVNCKit);
     const StringMarshalling Utf8Marshalling = StringMarshalling.Utf8;
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void LogDelegate(
         void* logger,
@@ -17,7 +17,7 @@ static unsafe partial class RoyalVNCKit
         LogLevel logLevel,
         string message
     );
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_logger_create(
@@ -32,7 +32,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial byte rvnc_authentication_type_requires_username(AuthenticationType authenticationType);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial byte rvnc_authentication_type_requires_password(AuthenticationType authenticationType);
@@ -77,7 +77,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_settings_destroy(void* settings);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_state_destroy(void* connectionState);
@@ -85,15 +85,15 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ConnectionStatus rvnc_connection_state_status_get(void* connectionState);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial string? rvnc_connection_state_error_description_get_copy(void* connectionState);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial byte rvnc_connection_state_error_should_display_to_user_get(void* connectionState);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial byte rvnc_connection_state_error_is_authentication_error_get(void* connectionState);
@@ -101,7 +101,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_framebuffer_size_width_get(void* framebuffer);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_framebuffer_size_height_get(void* framebuffer);
@@ -110,59 +110,59 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_framebuffer_pixel_data_get(void* framebuffer);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ulong rvnc_framebuffer_pixel_data_size_get(void* framebuffer);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial byte rvnc_cursor_is_empty_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_cursor_size_width_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_cursor_size_height_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_cursor_hotspot_x_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_cursor_hotspot_y_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial long rvnc_cursor_bits_per_component_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial long rvnc_cursor_bits_per_pixel_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial long rvnc_cursor_bytes_per_pixel_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial long rvnc_cursor_bytes_per_row_get(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_cursor_pixel_data_get_copy(void* cursor);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_cursor_pixel_data_destroy(void* pixelData);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ulong rvnc_cursor_pixel_data_size_get(void* cursor);
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void ConnectionStateDidChangeDelegate(
         void* connection,
@@ -183,7 +183,7 @@ static unsafe partial class RoyalVNCKit
         void* context,
         void* framebuffer
     );
-    
+
     [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void DidResizeFramebufferDelegate(
         void* connection,
@@ -223,7 +223,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_delegate_destroy(void* connectionDelegate);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_connection_create(
@@ -239,7 +239,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_connect(void* connection);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_disconnect(void* connection);
@@ -247,7 +247,7 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_update_color_depth(void* connection, ColorDepth colorDepth);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_delegate_set(void* connection, void* connectionDelegate);
@@ -255,11 +255,11 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_connection_context_get(void* connection);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_connection_state_get_copy(void* connection);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_connection_settings_get_copy(void* connection);
@@ -267,11 +267,11 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_move(void* connection, ushort x, ushort y);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_down(void* connection, MouseButton button, ushort x, ushort y);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_up(void* connection, MouseButton button, ushort x, ushort y);
@@ -279,13 +279,13 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_mouse_wheel(void* connection, MouseWheel wheel, ushort x, ushort y, uint steps);
-    
+
     // NOTE: key is an X11 keysym (eg. `XK_A` for the latin capital letter "A"). See the `KeySymbol` enum.
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void rvnc_connection_key_down(void* connection, KeySymbol key);
-    
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
-    internal static partial void rvnc_connection_key_up(void* connection, KeySymbol key);    
+    internal static partial void rvnc_connection_key_up(void* connection, KeySymbol key);
 }

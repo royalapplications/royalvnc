@@ -10,7 +10,7 @@ public readonly struct VncFramebufferRegion
     public ushort Y { get; }
     public ushort Width { get; }
     public ushort Height { get; }
-    
+
     internal VncFramebufferRegion(ushort x, ushort y, ushort width, ushort height)
     {
         Debug.Assert(width > 0);

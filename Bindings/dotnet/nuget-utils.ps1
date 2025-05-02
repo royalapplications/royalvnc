@@ -51,7 +51,7 @@ Write-Host "OS: ${HOST_OS}; NuGet RID: ${NUGET_RID}; arch: ${HOST_ARCH} (.NET), 
 function exec([scriptblock]$command) {
     $nl_indent = [Environment]::NewLine + '    '
     $exec_clean_rx = [regex]::new('`\s*$\s+', [System.Text.RegularExpressions.RegexOptions]'Multiline,CultureInvariant,NonBacktracking,ExplicitCapture')
-    
+
     $clean_command = $exec_clean_rx.Replace($command.ToString().Trim(), $nl_indent)
     $clean_command = ("@`"`n$clean_command`n`"@" | Invoke-Expression)
 

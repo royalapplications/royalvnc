@@ -13,7 +13,7 @@ public sealed unsafe class VncLogger : IDisposable
 {
     bool _isDisposed;
     internal void* Instance { get; private set; }
-    
+
     public VncLogEntryHandler? AddLogEntry { get; set; }
 
     internal VncLogger(VncContext context)
@@ -37,7 +37,7 @@ public sealed unsafe class VncLogger : IDisposable
     }
 
     static readonly LogDelegate LogEntryHandler = LogEntry;
-    
+
     static void LogEntry(
         void* logger,
         void* context,

@@ -34,14 +34,14 @@ static class Program
 
         using var vncSettings = new VncSettings(settings);
         using var connection = new VncConnection(vncSettings);
-        
+
         using var connectionDelegate = new VncConnectionDelegate();
         connectionDelegate.AuthenticationRequested = OnAuthenticationRequested;
         connectionDelegate.ConnectionStateChanged = OnConnectionStateChanged;
         connectionDelegate.FramebufferCreated = OnFramebufferCreated;
         connectionDelegate.FramebufferResized = OnFramebufferResized;
         connectionDelegate.FramebufferUpdated = OnFramebufferUpdated;
-        
+
         connection.Delegate = connectionDelegate;
         connection.Connect();
 
@@ -50,7 +50,7 @@ static class Program
             var status = connection.Status;
             if (status is ConnectionStatus.Disconnected)
                 break;
-            
+
             Thread.Sleep(millisecondsTimeout: 500);
         }
 
@@ -66,7 +66,7 @@ static class Program
             AuthenticationType.UltraVncMSLogonII => "UltraVNC MS Logon II",
             _ => $"Unknown({request.AuthenticationType:D})"
         };
-        
+
         WriteLine($"authenticationRequested: {type}");
 
         if (request.RequiresUsername)
@@ -77,7 +77,7 @@ static class Program
 
         return true;
     }
-    
+
     static void OnConnectionStateChanged(VncConnection connection, VncConnectionState state) =>
         WriteLine(state.DisplayErrorToUser
             ? $"connectionStateChanged: {state.Status} ({(state.IsAuthenticationError ? "authentication" : "")} error: {state.ErrorDescription})"
@@ -97,7 +97,7 @@ static class Program
         Write(prompt);
         return ReadLine()!;
     }
-    
+
     static string PromptAndReadPassword(string prompt)
     {
         Write(prompt);
@@ -110,7 +110,7 @@ static class Program
                 WriteLine();
                 break;
             }
-            
+
             if (info.Key is ConsoleKey.Backspace)
             {
                 if (sb.Length > 0)
@@ -120,13 +120,13 @@ static class Program
                 }
                 continue;
             }
-            
+
             Write("*");
             sb.Append(info.KeyChar);
         }
         return sb.ToString();
     }
-    
+
     readonly struct DemoSettings : IVncSettings
     {
         public string Hostname { get; init; }

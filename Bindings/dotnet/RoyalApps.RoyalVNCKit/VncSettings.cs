@@ -10,7 +10,7 @@ public interface IVncSettings
     public InputMode InputMode { get; }
     public ColorDepth ColorDepth { get; }
     public bool IsClipboardRedirectionEnabled { get; }
-    public bool IsDebugLoggingEnabled { get; } 
+    public bool IsDebugLoggingEnabled { get; }
     public bool IsScalingEnabled { get; }
     public bool IsShared { get; }
     public bool UseDisplayLink { get; }
@@ -19,7 +19,7 @@ public interface IVncSettings
 public sealed unsafe class VncSettings: IDisposable
 {
     bool _isDisposed;
-    
+
     internal void* Instance { get; private set; }
 
     internal VncSettings(void* instance)

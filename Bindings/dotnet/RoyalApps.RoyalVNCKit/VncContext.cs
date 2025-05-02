@@ -12,7 +12,7 @@ sealed unsafe class VncContext: IDisposable
     internal VncConnectionDelegate? ConnectionDelegate { get; set; }
     internal VncLogger? Logger { get; set; }
 
-    internal VncContext() 
+    internal VncContext()
     {
         var handle = GCHandle.Alloc(this, GCHandleType.Normal);
         var address = GCHandle.ToIntPtr(handle);
@@ -24,12 +24,12 @@ sealed unsafe class VncContext: IDisposable
     {
         if (pointer is null)
             return null;
-        
+
         var handle = GCHandle.FromIntPtr((nint)pointer);
-        
+
         if (!handle.IsAllocated)
             return null;
-        
+
         var context = handle.Target as VncContext;
 
         return context;

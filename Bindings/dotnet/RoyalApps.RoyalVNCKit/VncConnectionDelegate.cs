@@ -47,7 +47,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
     public VncFramebufferCreatedHandler? FramebufferCreated { get; set; }
     public VncFramebufferResizedHandler? FramebufferResized { get; set; }
     public VncFramebufferUpdatedHandler? FramebufferUpdated { get; set; }
-    
+
     VncConnectionDelegate(void* instance)
     {
         ArgumentNullException.ThrowIfNull(instance);
@@ -134,15 +134,15 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         var authType = rvnc_authentication_request_authentication_type_get(authenticationRequest);
         bool requiresUsername = rvnc_authentication_type_requires_username(authType).FromNativeBool();
         bool requiresPassword = rvnc_authentication_type_requires_password(authType).FromNativeBool();
-        
+
         var request = new AuthenticationRequest(authType, requiresUsername, requiresPassword);
-        
+
         if (!handler.Invoke(vncConnection, request) || (request.Username is null && request.Password is null))
         {
             rvnc_authentication_request_cancel(authenticationRequest);
             return;
         }
-        
+
         Debug.Assert(request.RequiresPassword);
 
         if (request.RequiresUsername)
@@ -150,7 +150,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         else
             rvnc_authentication_request_complete_with_password(authenticationRequest, request.Password ?? "");
     }
-    
+
     static readonly DidUpdateCursorDelegate DidUpdateCursorHandler = DidUpdateCursor;
     static void DidUpdateCursor(
         void* connection,
@@ -165,7 +165,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         var vncCursor = new VncCursor(cursor);
         handler.Invoke(vncConnection, vncCursor);
     }
-    
+
     static readonly DidCreateFramebufferDelegate DidCreateFramebufferHandler = DidCreateFramebuffer;
     static void DidCreateFramebuffer(
         void* connection,
@@ -180,7 +180,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         var vncFramebuffer = new VncFramebuffer(framebuffer);
         handler.Invoke(vncConnection, vncFramebuffer);
     }
-    
+
     static readonly DidResizeFramebufferDelegate DidResizeFramebufferHandler = DidResizeFramebuffer;
     static void DidResizeFramebuffer(
         void* connection,
@@ -195,7 +195,7 @@ public sealed unsafe class VncConnectionDelegate: IDisposable
         var vncFramebuffer = new VncFramebuffer(framebuffer);
         handler.Invoke(vncConnection, vncFramebuffer);
     }
-        
+
     static readonly DidUpdateFramebufferDelegate DidUpdateFramebufferHandler = DidUpdateFramebuffer;
     static void DidUpdateFramebuffer(
         void* connection,

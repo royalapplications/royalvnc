@@ -23,7 +23,7 @@ public enum KeySymbol : uint
 	XK_Sys_Req                       = 0xff15,
 	XK_Escape                        = 0xff1b,
 	XK_Delete                        = 0xffff,  /* Delete, rubout */
-	
+
 	/* International & multi-key character composition */
 
 	XK_Multi_key                     = 0xff20,  /* Multi-key character compose */

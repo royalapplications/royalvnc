@@ -28,7 +28,7 @@ public readonly unsafe ref struct VncFramebuffer
                 return ReadOnlySpan<byte>.Empty;
 
             var pixelData = rvnc_framebuffer_pixel_data_get(_instance);
-            
+
             Debug.Assert(pixelData is not null);
             return new(pixelData, length);
         }
