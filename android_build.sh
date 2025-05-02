@@ -2,7 +2,7 @@
 
 set -e
 
-SWIFT_ANDROID_SDK_BASE="${HOME}/.swiftpm/swift-sdks/swift-6.0.3-RELEASE-android-24-0.1.artifactbundle/swift-6.0.3-release-android-24-sdk/android-27c-sysroot/usr/lib"
+SWIFT_ANDROID_SDK_BASE="${HOME}/.swiftpm/swift-sdks/swift-6.1-RELEASE-android-24-0.1.artifactbundle/swift-6.1-release-android-24-sdk/android-27c-sysroot/usr/lib"
 SWIFT_ANDROID_SDK_ARM64="${SWIFT_ANDROID_SDK_BASE}/aarch64-linux-android"
 SWIFT_ANDROID_SDK_X86_64="${SWIFT_ANDROID_SDK_BASE}/x86_64-linux-android"
 
