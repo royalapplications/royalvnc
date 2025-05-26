@@ -70,7 +70,7 @@ jobs:
       VCPKG_DISABLE_METRICS: 1
       NUGET_BASE_VERSION: "0.0"
       ROYALVNC_BUILD_DEBUG: 0
-      SWIFT_VERSION: "6.1"
+      SWIFT_VERSION: "6.1.1"
 
     steps:
     - name: checkout
