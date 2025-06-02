@@ -28,8 +28,19 @@ extension VNCClipboard {
 	var text: String? {
 		get {
 #if os(macOS)
-			let text = pasteboard.string(forType: .string)
+            let pBoardType = pasteboard.availableType(from: [.string])
+            
+            guard let pBoardType,
+                  pBoardType == .string else {
+                return nil
+            }
+            
+			let text = pasteboard.string(forType: pBoardType)
 #elseif os(iOS)
+            guard pasteboard.hasStrings else {
+                return nil
+            }
+            
 			let text = pasteboard.string
 #else
 			let text: String? = nil
