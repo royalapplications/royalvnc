@@ -92,8 +92,11 @@ typedef void* _Nonnull (*rvnc_framebuffer_allocator_allocate)(rvnc_framebuffer_a
 typedef void (*rvnc_framebuffer_allocator_deallocate)(rvnc_framebuffer_allocator_t _Nonnull /* framebufferAllocator */,
                                                       void* _Nonnull /* buffer */);
 
+// NOTE: Argh... Need to hide this declaration from ObjC because otherwise we end up with a symbol collision in targets that include ObjC support.
+#if !defined(__OBJC__)
 extern rvnc_framebuffer_allocator_t _Nonnull rvnc_framebuffer_allocator_create(rvnc_framebuffer_allocator_allocate _Nonnull allocate,
                                                                                rvnc_framebuffer_allocator_deallocate _Nonnull deallocate);
+#endif
 
 extern void rvnc_framebuffer_allocator_destroy(rvnc_framebuffer_allocator_t _Nonnull framebufferAllocator);
 
