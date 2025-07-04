@@ -1,31 +1,70 @@
 using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using static RoyalApps.RoyalVNCKit.RoyalVNCKit;
 
 namespace RoyalApps.RoyalVNCKit;
 
 public sealed unsafe class VncConnection: IDisposable
 {
+    static readonly ConcurrentDictionary<nuint, VncFramebufferAllocator> FramebufferAllocators = new();
+
     bool _isDisposed;
     void* _instance;
+    void* _framebufferAllocator;
 
-    VncConnection(void* instance)
+    public VncConnection(VncSettings settings)
     {
-        ArgumentNullException.ThrowIfNull(instance);
-        _instance = instance;
-    }
-
-    public VncConnection(VncSettings settings) : this(CreateInstance(settings))
-    {
+        ArgumentNullException.ThrowIfNull(settings);
+        _instance = CreateInstance(settings, null);
         Context!.Connection = this;
     }
 
-    static void* CreateInstance(VncSettings settings)
+    public VncConnection(VncSettings settings, VncFramebufferAllocator allocator)
     {
         ArgumentNullException.ThrowIfNull(settings);
+        ArgumentNullException.ThrowIfNull(allocator);
+        _framebufferAllocator = rvnc_framebuffer_allocator_create(AllocateFramebuffer, DeallocateFramebuffer);
+        bool added = FramebufferAllocators.TryAdd((nuint)_framebufferAllocator, allocator);
+        Debug.Assert(added);
+        _instance = CreateInstance(settings, _framebufferAllocator);
+        Context!.Connection = this;
+        return;
+
+        static void* AllocateFramebuffer(void* allocator, nuint size)
+        {
+            if (!FramebufferAllocators.TryGetValue((nuint)allocator, out var dnAllocator))
+            {
+                Debug.Fail($"Allocator instance for 0x{(nuint)allocator:x} not found");
+                return null;
+            }
+
+            var span = dnAllocator.Allocate(size);
+            Debug.Assert((nuint)span.Length == size);
+            fixed (byte* b = span)
+                return b;
+        }
+
+        static void DeallocateFramebuffer(void* allocator, void* buffer)
+        {
+            if (!FramebufferAllocators.TryGetValue((nuint)allocator, out var dnAllocator))
+            {
+                Debug.Fail($"Allocator instance for 0x{(nuint)allocator:x} not found");
+                return;
+            }
+
+            var span = new ReadOnlySpan<byte>(buffer, 1);
+            dnAllocator.Deallocate(span);
+        }
+    }
+
+    static void* CreateInstance(VncSettings settings, void* framebufferAllocator)
+    {
+        Debug.Assert(settings is not null);
         var context = new VncContext();
         var logger = new VncLogger(context);
         context.Logger = logger;
-        return rvnc_connection_create(settings.Instance, logger.Instance, context.Instance);
+        return rvnc_connection_create(settings.Instance, logger.Instance, framebufferAllocator, context.Instance);
     }
 
     VncContext? Context
@@ -153,6 +192,14 @@ public sealed unsafe class VncConnection: IDisposable
         context?.Dispose();
 
         _isDisposed = true;
+
+        if (_framebufferAllocator is not null)
+        {
+            bool removed = FramebufferAllocators.TryRemove((nuint)_framebufferAllocator, out _);
+            rvnc_framebuffer_allocator_destroy(_framebufferAllocator);
+            _framebufferAllocator = null;
+            Debug.Assert(removed);
+        }
 
         if (_instance is null)
             return;

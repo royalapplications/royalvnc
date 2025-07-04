@@ -18,6 +18,18 @@ static unsafe partial class RoyalVNCKit
         string message
     );
 
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void* AllocateFramebuffer(
+        void* framebufferAllocator,
+        nuint size
+    );
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    internal delegate void DeallocateFramebuffer(
+        void* framebufferAllocator,
+        void* buffer
+    );
+
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_logger_create(
@@ -105,6 +117,17 @@ static unsafe partial class RoyalVNCKit
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial ushort rvnc_framebuffer_size_height_get(void* framebuffer);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void* rvnc_framebuffer_allocator_create(
+        AllocateFramebuffer allocate,
+        DeallocateFramebuffer deallocate
+    );
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_framebuffer_allocator_destroy(void* framebufferAllocator);
 
     // NOTE: This always returns 32-bit BGRA data.
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
@@ -229,6 +252,7 @@ static unsafe partial class RoyalVNCKit
     internal static partial void* rvnc_connection_create(
         void* settings,
         void* logger,
+        void* framebufferAllocator,
         void* context
     );
 
