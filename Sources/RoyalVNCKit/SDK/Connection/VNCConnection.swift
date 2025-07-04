@@ -41,6 +41,8 @@ public final class VNCConnection: NSObjectOrAnyObject {
 	@objc
 #endif
 	public let logger: VNCLogger
+    
+    public let framebufferAllocator: VNCFramebufferAllocator?
 
 	// MARK: - Private Properties
 	private let queue = DispatchQueue(label: "com.royalapps.royalvnc.connectionqueue",
@@ -170,15 +172,14 @@ public final class VNCConnection: NSObjectOrAnyObject {
 	// MARK: - Public Initializers
     public init(settings: Settings,
                 logger: VNCLogger,
+                framebufferAllocator: VNCFramebufferAllocator?,
                 context: UnsafeMutableRawPointer?) {
         self.settings = settings
 
         logger.isDebugLoggingEnabled = settings.isDebugLoggingEnabled
 
         self.logger = logger
-
         self.context = context
-
         self.sharedZStream = .init()
 
         let clipboard = VNCClipboard()
@@ -188,8 +189,8 @@ public final class VNCConnection: NSObjectOrAnyObject {
                                                    tolerance: 0.15)
 
         self.clipboard = clipboard
-
         self.clipboardMonitor = clipboardMonitor
+        self.framebufferAllocator = framebufferAllocator
 
         super.init()
 
@@ -203,6 +204,7 @@ public final class VNCConnection: NSObjectOrAnyObject {
                             logger: VNCLogger) {
         self.init(settings: settings,
                   logger: logger,
+                  framebufferAllocator: nil,
                   context: nil)
 	}
 
@@ -213,8 +215,16 @@ public final class VNCConnection: NSObjectOrAnyObject {
         self.init(settings: settings,
                   context: nil)
 	}
+    
+    public convenience init(settings: Settings,
+                            framebufferAllocator: VNCFramebufferAllocator?) {
+        self.init(settings: settings,
+                  framebufferAllocator: framebufferAllocator,
+                  context: nil)
+    }
 
     public convenience init(settings: Settings,
+                            framebufferAllocator: VNCFramebufferAllocator?,
                             context: UnsafeMutableRawPointer?) {
 #if canImport(OSLog)
         let logger = VNCOSLogLogger()
@@ -224,6 +234,14 @@ public final class VNCConnection: NSObjectOrAnyObject {
 
         self.init(settings: settings,
                   logger: logger,
+                  framebufferAllocator: framebufferAllocator,
+                  context: context)
+    }
+    
+    public convenience init(settings: Settings,
+                            context: UnsafeMutableRawPointer?) {
+        self.init(settings: settings,
+                  framebufferAllocator: nil,
                   context: context)
     }
 

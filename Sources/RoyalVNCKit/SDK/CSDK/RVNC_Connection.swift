@@ -29,6 +29,7 @@ extension VNCConnection {
 @available(*, unavailable)
 public func rvnc_connection_create(_ settings: rvnc_settings_t,
                                    _ logger: rvnc_logger_t?,
+                                   _ framebufferAllocator: rvnc_framebuffer_allocator_t?,
                                    _ context: rvnc_context_t?) -> rvnc_connection_t {
     let loggerSwift: VNCLogger_C?
 
@@ -36,6 +37,14 @@ public func rvnc_connection_create(_ settings: rvnc_settings_t,
         loggerSwift = VNCLogger_C.fromPointer(logger)
     } else {
         loggerSwift = nil
+    }
+    
+    let framebufferAllocatorSwift: VNCFramebufferAllocator_C?
+    
+    if let framebufferAllocator {
+        framebufferAllocatorSwift = VNCFramebufferAllocator_C.fromPointer(framebufferAllocator)
+    } else {
+        framebufferAllocatorSwift = nil
     }
 
     let settingsSwift = VNCConnection.Settings.fromPointer(settings)
@@ -45,9 +54,11 @@ public func rvnc_connection_create(_ settings: rvnc_settings_t,
     if let loggerSwift {
         connection = VNCConnection(settings: settingsSwift,
                                    logger: loggerSwift,
+                                   framebufferAllocator: framebufferAllocatorSwift,
                                    context: context)
     } else {
         connection = VNCConnection(settings: settingsSwift,
+                                   framebufferAllocator: framebufferAllocatorSwift,
                                    context: context)
     }
 

@@ -66,6 +66,7 @@ typedef void* rvnc_authentication_request_t;
 typedef void* rvnc_settings_t;
 typedef void* rvnc_connection_state_t;
 typedef void* rvnc_framebuffer_t;
+typedef void* rvnc_framebuffer_allocator_t;
 typedef void* rvnc_connection_t;
 typedef void* rvnc_connection_delegate_t;
 typedef void* rvnc_cursor_t;
@@ -81,6 +82,21 @@ typedef void (*rvnc_logger_delegate_log)(rvnc_logger_t _Nonnull /* logger */,
 extern rvnc_logger_t _Nonnull rvnc_logger_create(rvnc_logger_delegate_log _Nonnull log,
                                                  rvnc_context_t _Nullable context);
 extern void rvnc_logger_destroy(rvnc_logger_t _Nonnull logger);
+
+
+#pragma mark - Framebuffer Allocator
+
+typedef void* _Nonnull (*rvnc_framebuffer_allocator_allocate)(rvnc_framebuffer_allocator_t _Nonnull /* framebufferAllocator */,
+                                                              size_t /* size */);
+
+typedef void (*rvnc_framebuffer_allocator_deallocate)(rvnc_framebuffer_allocator_t _Nonnull /* framebufferAllocator */,
+                                                      void* _Nonnull /* buffer */);
+
+extern rvnc_framebuffer_allocator_t _Nonnull rvnc_framebuffer_allocator_create(rvnc_framebuffer_allocator_allocate _Nonnull allocate,
+                                                                               rvnc_framebuffer_allocator_deallocate _Nonnull deallocate);
+
+extern void rvnc_framebuffer_allocator_destroy(rvnc_framebuffer_allocator_t _Nonnull framebufferAllocator);
+
 
 
 #pragma mark - Authentication Type
@@ -209,6 +225,7 @@ extern void rvnc_connection_delegate_destroy(rvnc_connection_delegate_t _Nonnull
 
 extern rvnc_connection_t _Nonnull rvnc_connection_create(rvnc_settings_t _Nonnull settings,
                                                          rvnc_logger_t _Nullable logger,
+                                                         rvnc_framebuffer_allocator_t _Nullable framebufferAllocator,
                                                          rvnc_context_t _Nullable context);
 
 extern void rvnc_connection_destroy(rvnc_connection_t _Nonnull connection);

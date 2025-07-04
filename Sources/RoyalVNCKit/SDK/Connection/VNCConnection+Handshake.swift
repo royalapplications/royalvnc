@@ -300,7 +300,8 @@ private extension VNCConnection {
         let newFramebuffer = try VNCFramebuffer(logger: logger,
                                                 size: framebufferSize,
                                                 screens: [ ],
-                                                pixelFormat: clientPixelFormat)
+                                                pixelFormat: clientPixelFormat,
+                                                allocator: framebufferAllocator)
 
 		newFramebuffer.delegate = self
 

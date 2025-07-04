@@ -43,7 +43,8 @@ extension VNCConnection {
             newFramebuffer = try VNCFramebuffer(logger: logger,
                                                 size: size,
                                                 screens: screens,
-                                                pixelFormat: pixelFormat)
+                                                pixelFormat: pixelFormat,
+                                                allocator: framebufferAllocator)
 		} catch {
 			handleBreakingError(error)
 

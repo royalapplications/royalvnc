@@ -168,6 +168,29 @@ void loggerDelegate_log(rvnc_logger_t logger,
 }
 
 
+//#pragma mark - Framebuffer Allocator implementation (optional!)
+//
+//void* framebufferAllocator_allocate(rvnc_framebuffer_allocator_t framebufferAllocator,
+//                                    size_t size) {
+//    if (size <= 0) {
+//        return NULL;
+//    }
+//    
+//    void* buffer = malloc(size);
+//    
+//    return buffer;
+//}
+//
+//void framebufferAllocator_deallocate(rvnc_framebuffer_allocator_t framebufferAllocator,
+//                                     void* buffer) {
+//    if (!buffer) {
+//        return;
+//    }
+//    
+//    free(buffer);
+//}
+
+
 #pragma mark - Connection Delegate implementation
 
 void delegate_connectionStateDidChange(rvnc_connection_t connection,
@@ -356,6 +379,11 @@ int main(int argc, char *argv[]) {
     // Create logger
     rvnc_logger_t logger = rvnc_logger_create(loggerDelegate_log,
                                               context);
+    
+    // Create framebuffer allocator (optional!)
+//    rvnc_framebuffer_allocator_t framebufferAllocator = rvnc_framebuffer_allocator_create(framebufferAllocator_allocate,
+//                                                                                          framebufferAllocator_deallocate);
+    rvnc_framebuffer_allocator_t framebufferAllocator = NULL;
 
     // Create settings
     rvnc_settings_t settings = rvnc_settings_create(enableDebugLogging,
@@ -371,6 +399,7 @@ int main(int argc, char *argv[]) {
     // Create connection
     rvnc_connection_t connection = rvnc_connection_create(settings,
                                                           logger,
+                                                          framebufferAllocator, // optional!
                                                           context);
 
     // Create connection delegate
@@ -405,6 +434,7 @@ int main(int argc, char *argv[]) {
     rvnc_connection_destroy(connection);
     rvnc_connection_delegate_destroy(connectionDelegate);
     rvnc_settings_destroy(settings);
+    rvnc_framebuffer_allocator_destroy(framebufferAllocator);
     rvnc_logger_destroy(logger);
     free(context);
 

@@ -43,16 +43,8 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	public let cgFullRegion: CGRect
 #endif
 
-#if canImport(IOSurface)
-#if canImport(ObjectiveC)
-	@objc
-#endif
-	public let surface: IOSurface
-#else
-	public let buffer: UnsafeMutableRawPointer
-	private let bufferLock = Spinlock()
-#endif
-
+    public let allocator: VNCFramebufferAllocator
+    public let surfaceAddress: UnsafeMutableRawPointer
     public let surfaceByteCount: Int
 
 #if canImport(ObjectiveC)
@@ -106,7 +98,8 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	init(logger: VNCLogger,
 		 size: VNCSize,
 		 screens: [VNCScreen],
-		 pixelFormat: VNCProtocol.PixelFormat) throws {
+		 pixelFormat: VNCProtocol.PixelFormat,
+         allocator: VNCFramebufferAllocator?) throws {
 		let width = Int(size.width)
 		let height = Int(size.height)
 
@@ -154,48 +147,37 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 			.colorSpace: Self.rgbColorSpace
 		]
 #endif
+        
+        self.surfaceByteCount = width * height * destinationProperties.bytesPerPixel
 
-		let bufferLength = width * height * destinationProperties.bytesPerPixel
-
-        self.surfaceByteCount = bufferLength
-
+        if let allocator {
+            self.allocator = allocator
+        } else {
 #if canImport(IOSurface)
-		let cvPixelFormat = kCVPixelFormatType_32BGRA
-
-		guard let surface = IOSurface(properties: [
-			.width: width,
-			.height: height,
-			.pixelFormat: cvPixelFormat,
-			.bytesPerElement: destinationProperties.bytesPerPixel,
-			.bytesPerRow: destinationProperties.bytesPerRow,
-			.allocSize: bufferLength
-		]) else {
-			throw VNCError.protocol(.framebufferFailedToCreateIOSurface)
-		}
-
-		self.surface = surface
+            self.allocator = VNCFramebufferIOSurfaceAllocator(
+                width: width,
+                height: height,
+                bytesPerPixel: destinationProperties.bytesPerPixel,
+                bytesPerRow: destinationProperties.bytesPerRow
+            )
+#elseif canImport(Glibc) || canImport(Android) || canImport(WinSDK)
+            self.allocator = VNCFramebufferMallocAllocator()
 #else
-		let buffer = UnsafeMutableRawPointer.allocate(byteCount: bufferLength,
-                                                      alignment: MemoryLayout<UInt8>.alignment)
-
-		buffer.initializeMemory(as: UInt8.self,
-								repeating: 0,
-								count: bufferLength)
-
-		self.buffer = buffer
+            fatalError("Unsupported platform")
 #endif
+        }
+        
+        self.surfaceAddress = try self.allocator.allocate(size: surfaceByteCount)
 	}
 
 	deinit {
-#if !canImport(IOSurface)
-		self.buffer.deallocate()
-#endif
+        allocator.deallocate(buffer: surfaceAddress)
 	}
 }
 
 // MARK: - Public APIs
 public extension VNCFramebuffer {
-#if canImport(CoreImage)
+#if canImport(CoreImage) && canImport(IOSurface) && canImport(CoreVideo)
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -203,14 +185,28 @@ public extension VNCFramebuffer {
 		guard framebufferHasBeenUpdatedAtLeastOnce else {
 			return nil
 		}
-
-		lockSurfaceReadOnly()
-		defer { unlockSurfaceReadOnly() }
-
-		let image = CIImage(ioSurface: surface,
-							options: ciImageOptions)
-
-		return image
+        
+        lockSurfaceReadOnly()
+        defer { unlockSurfaceReadOnly() }
+        
+        let image: CIImage
+        
+        if let ioSurfaceAllocator = self.allocator as? VNCFramebufferIOSurfaceAllocator,
+           let surface = ioSurfaceAllocator.surface {
+            image = .init(ioSurface: surface,
+                          options: ciImageOptions)
+        } else {
+            let data = Data(bytes: surfaceAddress,
+                            count: surfaceByteCount)
+            
+            image = .init(bitmapData: data,
+                          bytesPerRow: destinationProperties.bytesPerRow,
+                          size: self.size.cgSize,
+                          format: .BGRA8,
+                          colorSpace: Self.rgbColorSpace)
+        }
+        
+        return image
 	}
 #endif
 
@@ -724,17 +720,6 @@ private extension VNCFramebuffer {
     }
 }
 
-// MARK: - Surface Access
-extension VNCFramebuffer {
-    var surfaceAddress: UnsafeMutableRawPointer {
-#if canImport(IOSurface)
-        surface.baseAddress
-#else
-        buffer
-#endif
-    }
-}
-
 extension VNCFramebuffer {
     func copyPixelDataToRGBA32(pixelDataSize: inout Int) -> UnsafeMutableRawPointer {
         lockSurfaceReadOnly()
@@ -801,35 +786,19 @@ extension VNCFramebuffer {
 
 private extension VNCFramebuffer {
 	func lockSurfaceReadOnly() {
-#if canImport(IOSurface)
-		surface.lock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
-#else
-		bufferLock.lock()
-#endif
+        allocator.lockReadOnly()
 	}
 
 	func unlockSurfaceReadOnly() {
-#if canImport(IOSurface)
-		surface.unlock(options: Self.surfaceLockOptionsReadOnly, seed: nil)
-#else
-		bufferLock.unlock()
-#endif
+        allocator.unlockReadOnly()
 	}
 
 	func lockSurfaceReadWrite() {
-#if canImport(IOSurface)
-		surface.lock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
-#else
-		bufferLock.lock()
-#endif
+        allocator.lockReadWrite()
 	}
 
 	func unlockSurfaceReadWrite() {
-#if canImport(IOSurface)
-		surface.unlock(options: Self.surfaceLockOptionsReadWrite, seed: nil)
-#else
-		bufferLock.unlock()
-#endif
+        allocator.unlockReadWrite()
 	}
 }
 
