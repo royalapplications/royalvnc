@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 class VNCFramebufferAllocator_C: VNCFramebufferAllocator {
 #if canImport(Glibc) || canImport(Android) || canImport(WinSDK)
@@ -76,10 +76,9 @@ extension VNCFramebufferAllocator_C {
 }
 
 @_cdecl("rvnc_framebuffer_allocator_create")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_framebuffer_allocator_create(_ allocate: rvnc_framebuffer_allocator_allocate,
-                                              _ deallocate: rvnc_framebuffer_allocator_deallocate) -> rvnc_framebuffer_allocator_t {
+@_used
+func rvnc_framebuffer_allocator_create(_ allocate: rvnc_framebuffer_allocator_allocate,
+                                       _ deallocate: rvnc_framebuffer_allocator_deallocate) -> rvnc_framebuffer_allocator_t {
     let allocator = VNCFramebufferAllocator_C(
         allocateFunc: allocate,
         deallocateFunc: deallocate
@@ -89,9 +88,8 @@ public func rvnc_framebuffer_allocator_create(_ allocate: rvnc_framebuffer_alloc
 }
 
 @_cdecl("rvnc_framebuffer_allocator_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_framebuffer_allocator_destroy(_ allocator: rvnc_framebuffer_allocator_t) {
+@_used
+func rvnc_framebuffer_allocator_destroy(_ allocator: rvnc_framebuffer_allocator_t) {
     VNCFramebufferAllocator_C.autoreleasePointer(allocator)
 }
 

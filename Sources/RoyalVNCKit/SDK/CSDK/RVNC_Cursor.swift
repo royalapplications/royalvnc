@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 extension VNCCursor {
     func retainedPointer() -> rvnc_cursor_t {
@@ -25,77 +25,67 @@ extension VNCCursor {
 }
 
 @_cdecl("rvnc_cursor_is_empty_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_is_empty_get(_ cursor: rvnc_cursor_t) -> Bool {
+@_used
+func rvnc_cursor_is_empty_get(_ cursor: rvnc_cursor_t) -> Bool {
     VNCCursor.fromPointer(cursor)
         .isEmpty
 }
 
 @_cdecl("rvnc_cursor_size_width_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_size_width_get(_ cursor: rvnc_cursor_t) -> UInt16 {
+@_used
+func rvnc_cursor_size_width_get(_ cursor: rvnc_cursor_t) -> UInt16 {
     VNCCursor.fromPointer(cursor)
         .size.width
 }
 
 @_cdecl("rvnc_cursor_size_height_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_size_height_get(_ cursor: rvnc_cursor_t) -> UInt16 {
+@_used
+func rvnc_cursor_size_height_get(_ cursor: rvnc_cursor_t) -> UInt16 {
     VNCCursor.fromPointer(cursor)
         .size.height
 }
 
 @_cdecl("rvnc_cursor_hotspot_x_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_hotspot_x_get(_ cursor: rvnc_cursor_t) -> UInt16 {
+@_used
+func rvnc_cursor_hotspot_x_get(_ cursor: rvnc_cursor_t) -> UInt16 {
     VNCCursor.fromPointer(cursor)
         .hotspot.x
 }
 
 @_cdecl("rvnc_cursor_hotspot_y_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_hotspot_y_get(_ cursor: rvnc_cursor_t) -> UInt16 {
+@_used
+func rvnc_cursor_hotspot_y_get(_ cursor: rvnc_cursor_t) -> UInt16 {
     VNCCursor.fromPointer(cursor)
         .hotspot.y
 }
 
 @_cdecl("rvnc_cursor_bits_per_component_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_bits_per_component_get(_ cursor: rvnc_cursor_t) -> Int64 {
+@_used
+func rvnc_cursor_bits_per_component_get(_ cursor: rvnc_cursor_t) -> Int64 {
     .init(VNCCursor.fromPointer(cursor).bitsPerComponent)
 }
 
 @_cdecl("rvnc_cursor_bits_per_pixel_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_bits_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int64 {
+@_used
+func rvnc_cursor_bits_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int64 {
     .init(VNCCursor.fromPointer(cursor).bitsPerPixel)
 }
 
 @_cdecl("rvnc_cursor_bytes_per_pixel_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_bytes_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int64 {
+@_used
+func rvnc_cursor_bytes_per_pixel_get(_ cursor: rvnc_cursor_t) -> Int64 {
     .init(VNCCursor.fromPointer(cursor).bytesPerPixel)
 }
 
 @_cdecl("rvnc_cursor_bytes_per_row_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_bytes_per_row_get(_ cursor: rvnc_cursor_t) -> Int64 {
+@_used
+func rvnc_cursor_bytes_per_row_get(_ cursor: rvnc_cursor_t) -> Int64 {
     .init(VNCCursor.fromPointer(cursor).bytesPerRow)
 }
 
 @_cdecl("rvnc_cursor_pixel_data_get_copy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_pixel_data_get_copy(_ cursor: rvnc_cursor_t) -> UnsafeMutableRawPointer? {
+@_used
+func rvnc_cursor_pixel_data_get_copy(_ cursor: rvnc_cursor_t) -> UnsafeMutableRawPointer? {
     let cursorSwift = VNCCursor.fromPointer(cursor)
     let data = cursorSwift.imageData
     let size = data.count
@@ -113,16 +103,14 @@ public func rvnc_cursor_pixel_data_get_copy(_ cursor: rvnc_cursor_t) -> UnsafeMu
 }
 
 @_cdecl("rvnc_cursor_pixel_data_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_pixel_data_destroy(_ pixelData: UnsafeMutableRawPointer) {
+@_used
+func rvnc_cursor_pixel_data_destroy(_ pixelData: UnsafeMutableRawPointer) {
     pixelData.deallocate()
 }
 
 @_cdecl("rvnc_cursor_pixel_data_size_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_cursor_pixel_data_size_get(_ cursor: rvnc_cursor_t) -> UInt64 {
+@_used
+func rvnc_cursor_pixel_data_size_get(_ cursor: rvnc_cursor_t) -> UInt64 {
     let cursorSwift = VNCCursor.fromPointer(cursor)
     let data = cursorSwift.imageData
     let size = data.count

@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 extension RVNC_INPUTMODE {
     var swiftInputMode: VNCConnection.Settings.InputMode {
@@ -57,17 +57,18 @@ extension VNCConnection.Settings {
 }
 
 @_cdecl("rvnc_settings_create")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
-                                 _ hostname: UnsafePointer<CChar>,
-                                 _ port: UInt16,
-                                 _ isShared: Bool,
-                                 _ isScalingEnabled: Bool,
-                                 _ useDisplayLink: Bool,
-                                 _ inputMode: RVNC_INPUTMODE,
-                                 _ isClipboardRedirectionEnabled: Bool,
-                                 _ colorDepth: RVNC_COLORDEPTH) -> rvnc_settings_t {
+@_used
+func rvnc_settings_create(
+    _ isDebugLoggingEnabled: Bool,
+    _ hostname: UnsafePointer<CChar>,
+    _ port: UInt16,
+    _ isShared: Bool,
+    _ isScalingEnabled: Bool,
+    _ useDisplayLink: Bool,
+    _ inputMode: RVNC_INPUTMODE,
+    _ isClipboardRedirectionEnabled: Bool,
+    _ colorDepth: RVNC_COLORDEPTH
+) -> rvnc_settings_t {
     let hostnameStr = String(cString: hostname)
 
     let inputModeSwift = inputMode.swiftInputMode
@@ -88,8 +89,7 @@ public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
 }
 
 @_cdecl("rvnc_settings_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_settings_destroy(_ settings: rvnc_settings_t) {
+@_used
+func rvnc_settings_destroy(_ settings: rvnc_settings_t) {
     VNCConnection.Settings.autoreleasePointer(settings)
 }

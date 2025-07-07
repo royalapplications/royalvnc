@@ -105,7 +105,12 @@ let package = Package(
             ],
 
             cSettings: cSettings,
-            swiftSettings: [ .swiftLanguageMode(swiftLanguageMode) ]
+            swiftSettings: [
+                .swiftLanguageMode(swiftLanguageMode),
+                
+                // Required to be able to use `@_used`
+                .enableExperimentalFeature("SymbolLinkageMarkers")
+            ]
         ),
 
         d3desTarget,

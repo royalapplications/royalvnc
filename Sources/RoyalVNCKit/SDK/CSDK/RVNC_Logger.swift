@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 final class VNCLogger_C: VNCLogger {
     fileprivate let context: rvnc_context_t?
@@ -68,10 +68,9 @@ extension VNCLogger_C {
 }
 
 @_cdecl("rvnc_logger_create")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_logger_create(_ log: rvnc_logger_delegate_log,
-                               _ context: rvnc_context_t?) -> rvnc_logger_t {
+@_used
+func rvnc_logger_create(_ log: rvnc_logger_delegate_log,
+                        _ context: rvnc_context_t?) -> rvnc_logger_t {
     let logger = VNCLogger_C(context: context,
                              logHandler: log)
 
@@ -79,8 +78,7 @@ public func rvnc_logger_create(_ log: rvnc_logger_delegate_log,
 }
 
 @_cdecl("rvnc_logger_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_logger_destroy(_ logger: rvnc_logger_t) {
+@_used
+func rvnc_logger_destroy(_ logger: rvnc_logger_t) {
     VNCLogger_C.autoreleasePointer(logger)
 }

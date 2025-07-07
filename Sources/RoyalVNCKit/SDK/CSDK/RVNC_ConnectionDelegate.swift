@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 extension VNCConnectionDelegate_C {
     func retainedPointer() -> rvnc_connection_delegate_t {
@@ -25,9 +25,8 @@ extension VNCConnectionDelegate_C {
 }
 
 @_cdecl("rvnc_connection_delegate_create")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_delegate_create(
+@_used
+func rvnc_connection_delegate_create(
     _ connectionStateDidChange: rvnc_connection_delegate_connection_state_did_change,
     _ authenticate: rvnc_connection_delegate_authenticate,
     _ didCreateFramebuffer: rvnc_connection_delegate_did_create_framebuffer,
@@ -48,9 +47,8 @@ public func rvnc_connection_delegate_create(
 }
 
 @_cdecl("rvnc_connection_delegate_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_delegate_destroy(_ connectionDelegate: rvnc_connection_delegate_t) {
+@_used
+func rvnc_connection_delegate_destroy(_ connectionDelegate: rvnc_connection_delegate_t) {
     VNCConnectionDelegate_C.autoreleasePointer(connectionDelegate)
 }
 

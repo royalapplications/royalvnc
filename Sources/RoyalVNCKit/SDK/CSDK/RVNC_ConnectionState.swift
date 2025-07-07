@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import RoyalVNCKitC
+internal import RoyalVNCKitC
 
 extension VNCConnection.Status {
     var cConnectionStatus: RVNC_CONNECTION_STATUS {
@@ -40,16 +40,14 @@ extension VNCConnection.ConnectionState {
 }
 
 @_cdecl("rvnc_connection_state_destroy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_state_destroy(_ connectionState: rvnc_connection_state_t) {
+@_used
+func rvnc_connection_state_destroy(_ connectionState: rvnc_connection_state_t) {
     VNCConnection.ConnectionState.autoreleasePointer(connectionState)
 }
 
 @_cdecl("rvnc_connection_state_status_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_state_status_get(_ connectionState: rvnc_connection_state_t) -> RVNC_CONNECTION_STATUS {
+@_used
+func rvnc_connection_state_status_get(_ connectionState: rvnc_connection_state_t) -> RVNC_CONNECTION_STATUS {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let status = connectionStateSwift.status
     let cStatus = status.cConnectionStatus
@@ -58,9 +56,8 @@ public func rvnc_connection_state_status_get(_ connectionState: rvnc_connection_
 }
 
 @_cdecl("rvnc_connection_state_error_description_get_copy")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_state_error_description_get_copy(_ connectionState: rvnc_connection_state_t) -> UnsafeMutablePointer<CChar>? {
+@_used
+func rvnc_connection_state_error_description_get_copy(_ connectionState: rvnc_connection_state_t) -> UnsafeMutablePointer<CChar>? {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let error = connectionStateSwift.error
 
@@ -75,9 +72,8 @@ public func rvnc_connection_state_error_description_get_copy(_ connectionState: 
 }
 
 @_cdecl("rvnc_connection_state_error_should_display_to_user_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_state_error_should_display_to_user_get(_ connectionState: rvnc_connection_state_t) -> Bool {
+@_used
+func rvnc_connection_state_error_should_display_to_user_get(_ connectionState: rvnc_connection_state_t) -> Bool {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let error = connectionStateSwift.error
 
@@ -89,9 +85,8 @@ public func rvnc_connection_state_error_should_display_to_user_get(_ connectionS
 }
 
 @_cdecl("rvnc_connection_state_error_is_authentication_error_get")
-@_spi(RoyalVNCKitC)
-@available(*, unavailable)
-public func rvnc_connection_state_error_is_authentication_error_get(_ connectionState: rvnc_connection_state_t) -> Bool {
+@_used
+func rvnc_connection_state_error_is_authentication_error_get(_ connectionState: rvnc_connection_state_t) -> Bool {
     let connectionStateSwift = VNCConnection.ConnectionState.fromPointer(connectionState)
     let error = connectionStateSwift.error
 
