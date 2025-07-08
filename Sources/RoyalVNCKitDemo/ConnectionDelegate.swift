@@ -20,6 +20,8 @@ final class ConnectionDelegate: VNCConnectionDelegate {
                 connectionStateString = "Disconnecting"
             case .disconnected:
                 connectionStateString = "Disconnected"
+            @unknown default:
+                fatalError("Unknown connection status: \(connectionState.status)")
         }
 
         connection.logger.logDebug("connection stateDidChange: \(connectionStateString)")
@@ -37,6 +39,8 @@ final class ConnectionDelegate: VNCConnectionDelegate {
                 authenticationTypeString = "Apple Remote Desktop"
             case .ultraVNCMSLogonII:
                 authenticationTypeString = "UltraVNC MS Logon II"
+            @unknown default:
+                fatalError("Unknown authentication type: \(authenticationType)")
         }
 
         connection.logger.logDebug("connection credentialFor: \(authenticationTypeString)")
