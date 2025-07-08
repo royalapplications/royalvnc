@@ -8,6 +8,7 @@ public extension VNCConnection {
 #if canImport(ObjectiveC)
 	@objc(VNCConnectionStatus)
 #endif
+    @frozen
 	enum Status: Int {
 		case disconnected
 		case connecting
