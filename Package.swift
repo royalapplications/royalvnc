@@ -105,7 +105,14 @@ let package = Package(
             ],
 
             cSettings: cSettings,
-            swiftSettings: [ .swiftLanguageMode(swiftLanguageMode) ]
+            
+            swiftSettings: [
+                .swiftLanguageMode(swiftLanguageMode),
+                
+                .unsafeFlags([
+                    "-enable-library-evolution"
+                ])
+            ]
         ),
 
         d3desTarget,
