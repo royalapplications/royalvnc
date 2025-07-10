@@ -23,7 +23,8 @@
     <file src="$SWIFT_RT_DIR$\libswift_RegexParser.so" target="runtimes/$NUGET_RID$/native/libswift_RegexParser.so" />
     <file src="$SWIFT_RT_DIR$\libswift_StringProcessing.so" target="runtimes/$NUGET_RID$/native/libswift_StringProcessing.so" />
     <file src="$SWIFT_RT_DIR$\libswiftCore.so" target="runtimes/$NUGET_RID$/native/libswiftCore.so" />
-    <file src="$SWIFT_RT_DIR$\libswiftGlibc.so" target="runtimes/$NUGET_RID$/native/libswiftGlibc.so" />
     <file src="$SWIFT_RT_DIR$\libswiftDispatch.so" target="runtimes/$NUGET_RID$/native/libswiftDispatch.so" />
+    <file src="$SWIFT_RT_DIR$\libswiftGlibc.so" target="runtimes/$NUGET_RID$/native/libswiftGlibc.so" />
+    <file src="$SWIFT_RT_DIR$\libswiftSynchronization.so" target="runtimes/$NUGET_RID$/native/libswiftSynchronization.so" />
   </files>
 </package>
