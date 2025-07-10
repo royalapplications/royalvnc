@@ -16,11 +16,13 @@ exec { dotnet build --configuration $CONFIGURATION $DEMO_DIR }
 $NATIVE_DIR = Join-Path $REPO_ROOT 'Bindings/dotnet/RoyalApps.RoyalVNCKit.native' -Resolve
 $NUSPEC_FILE = Join-Path $NATIVE_DIR 'native.nuspec' -Resolve
 
-if ($HOST_OS -eq 'windows') {
-    $NUSPEC_FILE = Join-Path $NATIVE_DIR 'windows.nuspec' -Resolve
+if ($HOST_OS -eq 'windows' -or $HOST_OS -eq 'linux') {
+    $NUSPEC_FILE = Join-Path $NATIVE_DIR 'windows+linux.nuspec' -Resolve
 
-    $SWIFT_CRT_PATH = (Get-Command swiftCRT.dll -ErrorAction Stop).Source
-    $SWIFT_RT_DIR = Split-Path $SWIFT_CRT_PATH -Parent
+    $swiftTargetJson = & swift -print-target-info | Out-String
+    $swiftTarget = ConvertFrom-Json $swiftTargetJson
+
+    $SWIFT_RT_DIR = $swiftTarget.paths.runtimeLibraryPaths[0]
     Write-Host "Auto-detected Swift runtime dir: ${SWIFT_RT_DIR}"
 
     $NUGET_SWIFT_RT_VERSION = $env:NUGET_SWIFT_RT_VERSION
@@ -39,7 +41,7 @@ if ($HOST_OS -eq 'windows') {
 
     exec {
         dotnet pack "${NATIVE_DIR}/native.pkgproj" `
-        "-p:NuspecFile=${NATIVE_DIR}/windows.SwiftRuntime.nuspec" `
+        "-p:NuspecFile=${NATIVE_DIR}/SwiftRuntime-${HOST_OS}.nuspec" `
         "-p:NuspecBasePath=${NATIVE_DIR}" `
         "-p:NuspecProperties=`"NUGET_GIT_COMMIT=${NUGET_GIT_COMMIT};NUGET_RID=${NUGET_RID};SWIFT_RT_DIR=${SWIFT_RT_DIR};NUGET_SWIFT_RT_VERSION=${NUGET_SWIFT_RT_VERSION}`""
     }

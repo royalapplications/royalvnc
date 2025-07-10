@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/01/nuspec.xsd">
+  <metadata minClientVersion="4.0">
+    <id>RoyalApps.RoyalVNCKit.native.SwiftRuntime.$NUGET_RID$</id>
+    <version>$NUGET_SWIFT_RT_VERSION$</version>
+    <authors>RoyalApps</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>RoyalApps_1024.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/royalapplications/royalvnc</projectUrl>
+    <description>Internal implementation package not meant for direct consumption. Do not reference directly.</description>
+    <tags>RoyalApps RoyalVNCKit VNC native SwiftRuntime</tags>
+    <repository type="git" url="https://github.com/royalapplications/royalvnc.git" commit="$NUGET_GIT_COMMIT$" />
+  </metadata>
+  <files>
+    <file src="README.md" target="/README.md" />
+    <file src="..\RoyalApps_1024.png" target="/RoyalApps_1024.png" />
+    <file src="$SWIFT_RT_DIR$\libBlocksRuntime.so" target="runtimes/$NUGET_RID$/native/libBlocksRuntime.so" />
+    <file src="$SWIFT_RT_DIR$\libdispatch.so" target="runtimes/$NUGET_RID$/native/libdispatch.so" />
+    <file src="$SWIFT_RT_DIR$\libFoundationEssentials.so" target="runtimes/$NUGET_RID$/native/libFoundationEssentials.so" />
+    <file src="$SWIFT_RT_DIR$\libswift_Concurrency.so" target="runtimes/$NUGET_RID$/native/libswift_Concurrency.so" />
+    <file src="$SWIFT_RT_DIR$\libswift_RegexParser.so" target="runtimes/$NUGET_RID$/native/libswift_RegexParser.so" />
+    <file src="$SWIFT_RT_DIR$\libswift_StringProcessing.so" target="runtimes/$NUGET_RID$/native/libswift_StringProcessing.so" />
+    <file src="$SWIFT_RT_DIR$\libswiftCore.so" target="runtimes/$NUGET_RID$/native/libswiftCore.so" />
+    <file src="$SWIFT_RT_DIR$\libswiftGlibc.so" target="runtimes/$NUGET_RID$/native/libswiftGlibc.so" />
+    <file src="$SWIFT_RT_DIR$\libswiftDispatch.so" target="runtimes/$NUGET_RID$/native/libswiftDispatch.so" />
+  </files>
+</package>
