@@ -374,7 +374,7 @@ int main(int argc, char *argv[]) {
     const bool enableDebugLogging = true;
 
     // Create context
-    Context* context = malloc(sizeof(Context));
+    Context* context = calloc(1, sizeof(Context));
 
     // Create logger
     rvnc_logger_t logger = rvnc_logger_create(loggerDelegate_log,
