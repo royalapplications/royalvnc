@@ -14,7 +14,7 @@ import Darwin
 import Android
 #endif
 
-final class Socket {
+final class Socket: Sendable {
     let addressInfo: AddressInfo
 
 #if canImport(Glibc) || canImport(Darwin) || canImport(Android)

@@ -14,7 +14,7 @@ import Darwin
 import Android
 #endif
 
-final class AddressInfo {
+final class AddressInfo: @unchecked Sendable {
     private let addrInfo: UnsafeMutablePointer<addrinfo>
 
     init(host: String,
