@@ -11,7 +11,7 @@ extension VNCFramebuffer {
 
 		init(entries: VNCProtocol.SetColourMapEntries) {
 			var colors = [LocalPixel]()
-
+            
 			for idx in Int(entries.firstColour)..<entries.colors.count {
 				let entry = entries.colors[idx]
 				let localPixel = LocalPixel(red: entry.redUInt8,

@@ -20,13 +20,16 @@ import IOSurface
 import AppKit
 #endif
 
+/// Represents a framebuffer for a VNC session, managing pixel data, updates, and screen layout.
 #if canImport(ObjectiveC)
 @objc(VNCFramebuffer)
 #endif
 public final class VNCFramebuffer: NSObjectOrAnyObject {
 	// MARK: - Public Properties
+    /// The framebuffer's size in pixels.
 	public let size: VNCSize
 
+    /// The framebuffer's size in pixels.
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
 	@objc(size)
@@ -34,8 +37,10 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	public let cgSize: CGSize
 #endif
 
-	public let fullRegion: VNCRegion
+    /// A `VNCRegion` that covers the entire framebuffer.
+    public let fullRegion: VNCRegion
 
+    /// A `CGRect` that covers the entire framebuffer.
 #if canImport(CoreGraphics)
 #if canImport(ObjectiveC)
 	@objc(fullRegion)
@@ -43,15 +48,22 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	public let cgFullRegion: CGRect
 #endif
 
+    /// The memory allocator used to manage the framebuffer's pixel data.
     public let allocator: VNCFramebufferAllocator
+    
+    /// A pointer to the start of the framebuffer's pixel memory.
     public let surfaceAddress: UnsafeMutableRawPointer
+    
+    /// The total number of bytes in the framebuffer's pixel memory.
     public let surfaceByteCount: Int
 
+    /// The list of logical screens represented in this framebuffer.
 #if canImport(ObjectiveC)
 	@objc
 #endif
 	public private(set) var screens: [VNCScreen]
 
+    /// The color depth of the framebuffer.
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -178,6 +190,7 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 // MARK: - Public APIs
 public extension VNCFramebuffer {
 #if canImport(CoreImage) && canImport(IOSurface) && canImport(CoreVideo)
+    /// A Core Image representation of the framebuffer contents, if available.
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -211,6 +224,7 @@ public extension VNCFramebuffer {
 #endif
 
 #if canImport(CoreImage)
+    /// A Core Graphics image representation of the framebuffer contents, if available.
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -234,6 +248,7 @@ public extension VNCFramebuffer {
 #endif
 
 #if os(macOS)
+    /// An AppKit image representation of the framebuffer contents, for macOS.
     @objc
     var nsImage: NSImage? {
         guard let ciImage = ciImage else {
