@@ -126,7 +126,7 @@ jobs:
       run: |
         cd "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include"
         type arm64intr.h
-        git apply "${{ github.workspace }}\fix-swift-arm64-winsdk-conflict.patch"
+        "C:\Program Files\Git\bin\git.exe" apply "${{ github.workspace }}\fix-swift-arm64-winsdk-conflict.patch"
 
     - name: build RoyalVNCKit
       if: "success() && matrix.env.OS != 'apple'"
