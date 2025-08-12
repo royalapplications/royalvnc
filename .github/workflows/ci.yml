@@ -49,6 +49,7 @@ jobs:
               NUGET_RID: "win-x64"
               NUGET_PACK_DOTNET_LIB: "1"
               BUILD_TOOLS_ARCH: "amd64"
+              SWIFT_INSTALLER_ARGS: ""
 
           - name: "Windows ARM64"
             os: windows-11-arm
@@ -56,6 +57,8 @@ jobs:
               OS: "windows"
               NUGET_RID: "win-arm64"
               BUILD_TOOLS_ARCH: "arm64"
+              SWIFT_INSTALLER_ARGS: "OptionsInstallWindowsPlatform=0 OptionsInstallWindowsSDKARM64=0 OptionsInstallWindowsSDKAMD64=0"
+
 
     runs-on: "${{ matrix.os }}"
 
@@ -101,7 +104,7 @@ jobs:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
         build_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
-        installer-args: "OptionsInstallWindowsPlatform=0 OptionsInstallWindowsSDKARM64=0 OptionsInstallWindowsSDKAMD64=0"
+        installer-args: "${{ matrix.env.SWIFT_INSTALLER_ARGS }}"
 
     # build RoyalVNCKit
 
