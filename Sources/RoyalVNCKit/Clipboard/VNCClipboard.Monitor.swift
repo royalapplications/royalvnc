@@ -4,10 +4,6 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if canImport(ucrt)
-import ucrt
-#endif
-
 import Dispatch
 
 #if os(macOS)

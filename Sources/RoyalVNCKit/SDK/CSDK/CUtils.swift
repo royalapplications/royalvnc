@@ -4,8 +4,8 @@ import FoundationEssentials
 import Foundation
 #endif
 
-#if canImport(ucrt)
-import ucrt
+#if canImport(WinSDK)
+import WinSDK
 #endif
 
 #if canImport(Glibc)
@@ -18,7 +18,7 @@ import Android
 
 extension String {
     func duplicateCString() -> UnsafeMutablePointer<CChar>? {
-#if canImport(ucrt)
+#if canImport(WinSDK)
         // avoid: warning: 'strdup' is deprecated: The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _strdup
         return _strdup(self)
 #else
