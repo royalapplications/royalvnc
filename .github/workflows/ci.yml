@@ -96,7 +96,7 @@ jobs:
 
     - name: setup Swift (Windows)
       if: "success() && matrix.env.OS == 'windows'"
-      uses: compnerd/gha-setup-swift@v0.3.0
+      uses: compnerd/gha-setup-swift@17be5ca66ad69b44177f01b6b0b23575d3d7791a
       with:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
