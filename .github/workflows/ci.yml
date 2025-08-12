@@ -101,6 +101,7 @@ jobs:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
         build_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
+        installer-args: "OptionsInstallWindowsSDKAMD64=0 OptionsInstallWindowsSDKARM64=0 OptionsInstallWindowsSDKX86=0"
 
     # build RoyalVNCKit
 
