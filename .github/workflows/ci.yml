@@ -90,21 +90,21 @@ jobs:
       run: |
         sudo xcode-select --switch /Applications/Xcode_16.2.app
 
-    - name: setup VC++ environment (Windows)
-      if: "success() && matrix.env.OS == 'windows'"
-      uses: compnerd/gha-setup-vsdevenv@v6
-      with:
-        arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
-        host_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
+    #- name: setup VC++ environment (Windows)
+    #  if: "success() && matrix.env.OS == 'windows'"
+    #  uses: compnerd/gha-setup-vsdevenv@v6
+    #  with:
+    #    arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
+    #    host_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
 
     - name: setup Swift (Windows)
       if: "success() && matrix.env.OS == 'windows'"
-      uses: compnerd/gha-setup-swift@17be5ca66ad69b44177f01b6b0b23575d3d7791a
+      uses: compnerd/gha-setup-swift@0.3.0
       with:
         branch: "swift-${{ env.SWIFT_VERSION }}-release"
         tag: "${{ env.SWIFT_VERSION }}-RELEASE"
         build_arch: "${{ matrix.env.BUILD_TOOLS_ARCH }}"
-        installer-args: "${{ matrix.env.SWIFT_INSTALLER_ARGS }}"
+        #installer-args: "${{ matrix.env.SWIFT_INSTALLER_ARGS }}"
 
     # build RoyalVNCKit
 
