@@ -124,9 +124,9 @@ jobs:
       if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
       shell: "cmd"
       run: |
-        cd "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include"
-        type arm64intr.h
-        "C:\Program Files\Git\bin\git.exe" apply "${{ github.workspace }}\fix-swift-arm64-winsdk-conflict.patch"
+        type "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include\arm64intr.h"
+        copy /y arm64intr_fix-swift-arm64-winsdk-conflict.h "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include\arm64intr.h"
+        type "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include\arm64intr.h"
 
     - name: build RoyalVNCKit
       if: "success() && matrix.env.OS != 'apple'"
