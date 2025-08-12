@@ -122,8 +122,10 @@ jobs:
 
     - name: patch out Swift arm64 intrinsics (Windows arm64)
       if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
+      shell: "cmd"
       run: |
-        cd "$env:LocalAppData\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include"
+        cd "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include"
+        type arm64intr.h
         git apply "${{ github.workspace }}\fix-swift-arm64-winsdk-conflict.patch"
 
     - name: build RoyalVNCKit
