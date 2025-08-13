@@ -74,13 +74,13 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
 
     # setup build environment
 
     - uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '10.0.x'
 
     - name: setup environment (Apple)
       if: "success() && matrix.env.OS == 'apple'"
