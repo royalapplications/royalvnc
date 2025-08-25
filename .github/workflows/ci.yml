@@ -49,6 +49,7 @@ jobs:
               NUGET_RID: "win-x64"
               NUGET_PACK_DOTNET_LIB: "1"
               BUILD_TOOLS_ARCH: "amd64"
+              WINSDK_VERSION: ""
 
           - name: "Windows ARM64"
             os: windows-11-arm
@@ -56,6 +57,7 @@ jobs:
               OS: "windows"
               NUGET_RID: "win-arm64"
               BUILD_TOOLS_ARCH: "arm64"
+              WINSDK_VERSION: "10.0.22621.0"
 
     runs-on: "${{ matrix.os }}"
 
@@ -119,14 +121,6 @@ jobs:
           .build/arm64-apple-macosx/release/libRoyalVNCKit.dylib \
           .build/x86_64-apple-macosx/release/libRoyalVNCKit.dylib \
           -output .build/universal-apple-macosx/release/libRoyalVNCKit.dylib
-
-    - name: patch out Swift arm64 intrinsics (Windows arm64)
-      if: "success() && matrix.env.NUGET_RID == 'win-arm64'"
-      shell: "cmd"
-      run: |
-        type "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include\arm64intr.h"
-        copy /y arm64intr_fix-swift-arm64-winsdk-conflict.h "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include\arm64intr.h"
-        type "%LocalAppData%\Programs\Swift\Toolchains\${{ env.SWIFT_VERSION }}+Asserts\usr\lib\swift\clang\include\arm64intr.h"
 
     - name: build RoyalVNCKit
       if: "success() && matrix.env.OS != 'apple'"
