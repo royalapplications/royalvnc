@@ -1,4 +1,4 @@
-name: CI
+name: Win-arm64
 
 on:
   workflow_dispatch: # and manually-triggered runs
