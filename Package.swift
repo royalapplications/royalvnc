@@ -86,6 +86,10 @@ let package = Package(
         .executable(name: "RoyalVNCKitDemo",
                     targets: [ "RoyalVNCKitDemo" ])
     ],
+    
+    dependencies: [
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.9.0")
+    ],
 
     targets: [
         .target(
@@ -101,7 +105,8 @@ let package = Package(
                 .byName(name: d3desTarget.name),
                 .byName(name: libtommathTarget.name),
                 .byName(name: libtomcryptTarget.name),
-                .byName(name: zTarget.name)
+                .byName(name: zTarget.name),
+                .byName(name: "CryptoSwift")
             ],
 
             cSettings: cSettings,
