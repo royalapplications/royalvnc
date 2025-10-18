@@ -5,10 +5,7 @@ import PackageDescription
 let swiftLanguageMode = SwiftLanguageMode.v5
 
 let cSettings: [CSetting]
-let libtomCSettings: [CSetting]
 let zTarget: Target
-
-let disableShorten64To32Warning = "-Wno-shorten-64-to-32"
 
 #if os(Windows)
 // Sources\libtommath\bignumshim.c:28:10: warning: 'mp_read_unsigned_bin' is deprecated: replaced by mp_from_ubin [-Wdeprecated-declarations]
@@ -26,14 +23,6 @@ cSettings = [
     ])
 ]
 
-libtomCSettings = [
-    .unsafeFlags([
-        disableShorten64To32Warning,
-        disableDeprecatedDeclarationsWarning,
-        disableInconsistentDllImportWarning
-    ])
-]
-
 zTarget = Target.target(name: "Z", path: "Sources/zlib-1.3.1", cSettings: [
     .define("STDC"),
     .define("HAVE_STDARG_H"),
@@ -46,22 +35,10 @@ zTarget = Target.target(name: "Z", path: "Sources/zlib-1.3.1", cSettings: [
 #else
 cSettings = .init()
 
-libtomCSettings = [
-    .unsafeFlags([
-        disableShorten64To32Warning
-    ])
-]
-
 zTarget = Target.target(name: "Z", linkerSettings: [
     .linkedLibrary("z")
 ])
 #endif
-
-let libtommathTarget = Target.target(name: "libtommath",
-                                     cSettings: libtomCSettings)
-
-let libtomcryptTarget = Target.target(name: "libtomcrypt",
-                                      cSettings: libtomCSettings)
 
 let d3desTarget = Target.target(name: "d3des")
 
@@ -103,8 +80,6 @@ let package = Package(
             dependencies: [
                 "RoyalVNCKitC",
                 .byName(name: d3desTarget.name),
-                .byName(name: libtommathTarget.name),
-                .byName(name: libtomcryptTarget.name),
                 .byName(name: zTarget.name),
                 .byName(name: "CryptoSwift")
             ],
@@ -121,8 +96,6 @@ let package = Package(
         ),
 
         d3desTarget,
-        libtommathTarget,
-        libtomcryptTarget,
         zTarget,
 
         .executableTarget(
