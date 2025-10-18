@@ -6,6 +6,8 @@ let swiftLanguageMode = SwiftLanguageMode.v5
 let zTarget: Target
 
 #if os(Windows)
+let disableDeprecatedDeclarationsWarning = "-Wno-deprecated-declarations"
+
 zTarget = Target.target(name: "Z", path: "Sources/zlib-1.3.1", cSettings: [
     .define("STDC"),
     .define("HAVE_STDARG_H"),
