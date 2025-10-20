@@ -48,7 +48,9 @@ let package = Package(
     ],
     
     dependencies: [
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.9.0")
+        // TODO: Switch back to main repo once our FoundationEssentials changes are merged upstream
+        .package(url: "https://github.com/royalapplications/CryptoSwift.git", branch: "foundationessentials")
+//        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.9.0")
     ],
 
     targets: [
