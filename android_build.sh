@@ -26,9 +26,6 @@ declare -a SWIFT_NDK_LIBS=(
 declare -a SWIFT_SDK_LIBS=(
 	"libBlocksRuntime.so"
 	"libdispatch.so"
-	"libFoundation.so" # TODO
-	"libFoundationInternationalization.so" # TODO
-	"lib_FoundationICU.so" # TODO
 	"libFoundationEssentials.so"
 	"libswift_Builtin_float.so"
 	"libswift_Concurrency.so"
