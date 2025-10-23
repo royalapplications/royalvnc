@@ -24,6 +24,7 @@ data class VncConnection(
             val ptr = RoyalVNCKit.rvnc_connection_create(
                 settings.ptr,
                 logger?.ptr,
+                null,
                 null
             )
 

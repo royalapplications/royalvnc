@@ -395,6 +395,7 @@ object RoyalVNCKit {
     external fun rvnc_connection_create(
         settings: Pointer /* rvnc_settings_t */,
         logger: Pointer? /* rvnc_logger_t */,
+        framebufferAllocator: Pointer? /* rvnc_framebuffer_allocator_t */,
         context: Pointer? /* rvnc_context_t */
     ): Pointer /* rvnc_connection_t */
 
