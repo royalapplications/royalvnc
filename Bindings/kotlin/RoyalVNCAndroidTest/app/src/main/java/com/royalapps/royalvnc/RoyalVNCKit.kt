@@ -3,6 +3,7 @@ package com.royalapps.royalvnc
 import com.sun.jna.*
 import com.sun.jna.ptr.*
 import java.nio.ByteBuffer
+import android.util.Log
 
 // Enums
 
@@ -133,7 +134,13 @@ object RoyalVNCKit {
 
     init {
         val nativeLibName = "RoyalVNCKit"
-        Native.register(RoyalVNCKit::class.java, nativeLibName)
+
+        try {
+            Native.register(RoyalVNCKit::class.java, nativeLibName)
+        } catch (e: Throwable) {
+            Log.e("[${nativeLibName}]", "Error while loading native library", e)
+        }
+
     }
 
 
