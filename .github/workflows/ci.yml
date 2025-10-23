@@ -50,12 +50,12 @@ jobs:
               NUGET_PACK_DOTNET_LIB: "1"
               BUILD_TOOLS_ARCH: "amd64"
 
-          # - name: "Windows ARM64"
-          #   os: windows-11-arm
-          #   env:
-          #     OS: "windows"
-          #     NUGET_RID: "win-arm64"
-          #     BUILD_TOOLS_ARCH: "arm64"
+          - name: "Windows ARM64"
+            os: windows-11-arm
+            env:
+              OS: "windows"
+              NUGET_RID: "win-arm64"
+              BUILD_TOOLS_ARCH: "arm64"
 
     runs-on: "${{ matrix.os }}"
 
