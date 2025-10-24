@@ -12,28 +12,30 @@ SWIFT_ANDROID_NDK_ARM64="${SWIFT_ANDROID_NDK_BASE}/aarch64-linux-android"
 SWIFT_ANDROID_SDK_BASE="${SWIFT_ANDROID_ROOT}/swift-resources/usr/lib"
 SWIFT_ANDROID_SDK_ARM64="${SWIFT_ANDROID_SDK_BASE}/swift-aarch64/android"
 
-KOTLIN_TARGET_JNI_BASE="Bindings/kotlin/RoyalVNCAndroidTest/app/src/main/jniLibs"
-KOTLIN_TARGET_JNI_ARM64="${KOTLIN_TARGET_JNI_BASE}/arm64-v8a"
+KOTLIN_PROJECT_DIR="Bindings/kotlin/RoyalVNCAndroidTest"
 
-declare -a SWIFT_NDK_LIBS=(
-	"${ANDROID_API_LEVEL}/libz.so"
-	"libc++_shared.so"
+declare -a ROYALVNC_LIBS=(
+	"${SWIFT_ANDROID_NDK_ARM64}/${ANDROID_API_LEVEL}/libz.so"
 )
 
-declare -a SWIFT_SDK_LIBS=(
-	"libBlocksRuntime.so"
-	"libdispatch.so"
-	"libFoundationEssentials.so"
-	"libswift_Builtin_float.so"
-	"libswift_Concurrency.so"
-	"libswift_math.so"
-	"libswift_RegexParser.so"
-	"libswift_StringProcessing.so"
-	"libswiftAndroid.so"
-	"libswiftCore.so"
-	"libswiftDispatch.so"
-	"libswiftRegexBuilder.so"
-	"libswiftSynchronization.so"
+declare -a SWIFT_RUNTIME_LIBS=(
+	# NDK C++
+	"${SWIFT_ANDROID_NDK_ARM64}/libc++_shared.so"
+
+	# Swift SDK for Android
+	"${SWIFT_ANDROID_SDK_ARM64}/libBlocksRuntime.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libdispatch.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libFoundationEssentials.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswift_Builtin_float.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswift_Concurrency.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswift_math.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswift_RegexParser.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswift_StringProcessing.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswiftAndroid.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswiftCore.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswiftDispatch.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswiftRegexBuilder.so"
+	"${SWIFT_ANDROID_SDK_ARM64}/libswiftSynchronization.so"
 )
 
 echo "Building RoyalVNC for Android"
@@ -43,32 +45,63 @@ skip android build \
 	--android-api-level ${ANDROID_API_LEVEL} \
 	--arch aarch64
 
-echo "Cleaning Kotlin JNI ARM64 libraries"
-pushd "${KOTLIN_TARGET_JNI_ARM64}"
+# royalvnc module
+ROYALVNC_JNILIBS_DIR="${KOTLIN_PROJECT_DIR}/royalvnc/src/main/jniLibs/arm64-v8a"
+
+echo "Cleaning royalvnc JNI libraries"
+pushd "${ROYALVNC_JNILIBS_DIR}"
 rm -f *.so
 popd
 
-echo "Copying RoyalVNC ARM64 library"
+echo "Copying RoyalVNC library"
 cp -f \
 	.build/aarch64-unknown-linux-android${ANDROID_API_LEVEL}/release/libRoyalVNCKit.so \
-	"${KOTLIN_TARGET_JNI_ARM64}/"
+	"${ROYALVNC_JNILIBS_DIR}/"
 
-# Swift Libs
-echo "Copying Swift ARM64 libraries"
-for swift_sdk_lib in "${SWIFT_SDK_LIBS[@]}"
+echo "Copying RoyalVNC dependency libraries"
+for royalvnc_lib in "${ROYALVNC_LIBS[@]}"
 do
    cp -f \
-		"${SWIFT_ANDROID_SDK_ARM64}/${swift_sdk_lib}" \
-		"${KOTLIN_TARGET_JNI_ARM64}/"
+		"${royalvnc_lib}" \
+		"${ROYALVNC_JNILIBS_DIR}/"
 done
 
-# NDK Libs
-echo "Copying NDK ARM64 libraries"
-for swift_ndk_lib in "${SWIFT_NDK_LIBS[@]}"
+echo "Building royalvnc-release.aar"
+pushd "${KOTLIN_PROJECT_DIR}"
+./gradlew :royalvnc:assembleRelease
+popd
+
+ROYALVNC_AAR_FILE="${KOTLIN_PROJECT_DIR}/royalvnc/build/outputs/aar/royalvnc-release.aar"
+if [[ ! -f "${ROYALVNC_AAR_FILE}" ]]; then
+	echo "Error: cannot find ${ROYALVNC_AAR_FILE}"
+	exit 1
+fi
+
+# swiftRuntime module
+SWIFTRUNTIME_JNILIBS_DIR="${KOTLIN_PROJECT_DIR}/swiftRuntime/src/main/jniLibs/arm64-v8a"
+
+echo "Cleaning swiftRuntime JNI libraries"
+pushd "${SWIFTRUNTIME_JNILIBS_DIR}"
+rm -f *.so
+popd
+
+echo "Copying Swift runtime libraries"
+for swiftRuntime_lib in "${SWIFT_RUNTIME_LIBS[@]}"
 do
    cp -f \
-		"${SWIFT_ANDROID_NDK_ARM64}/${swift_ndk_lib}" \
-		"${KOTLIN_TARGET_JNI_ARM64}/"
+		"${swiftRuntime_lib}" \
+		"${SWIFTRUNTIME_JNILIBS_DIR}/"
 done
+
+echo "Building swiftRuntime-release.aar"
+pushd "${KOTLIN_PROJECT_DIR}"
+./gradlew :swiftRuntime:assembleRelease
+popd
+
+SWIFTRUNTIME_AAR_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/outputs/aar/swiftRuntime-release.aar"
+if [[ ! -f "${SWIFTRUNTIME_AAR_FILE}" ]]; then
+	echo "Error: cannot find ${SWIFTRUNTIME_AAR_FILE}"
+	exit 1
+fi
 
 echo "All Done - Open Bindings/kotlin/RoyalVNCAndroidTest in Android Studio now"
