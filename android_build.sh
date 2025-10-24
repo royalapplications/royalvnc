@@ -72,7 +72,9 @@ pushd "${KOTLIN_PROJECT_DIR}"
 popd
 
 ROYALVNC_AAR_FILE="${KOTLIN_PROJECT_DIR}/royalvnc/build/outputs/aar/royalvnc-release.aar"
-if [[ ! -f "${ROYALVNC_AAR_FILE}" ]]; then
+if [[ -f "${ROYALVNC_AAR_FILE}" ]]; then
+	echo "Found ${ROYALVNC_AAR_FILE}"
+else
 	echo "Error: cannot find ${ROYALVNC_AAR_FILE}"
 	exit 1
 fi
@@ -99,7 +101,9 @@ pushd "${KOTLIN_PROJECT_DIR}"
 popd
 
 SWIFTRUNTIME_AAR_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/outputs/aar/swiftRuntime-release.aar"
-if [[ ! -f "${SWIFTRUNTIME_AAR_FILE}" ]]; then
+if [[ -f "${SWIFTRUNTIME_AAR_FILE}" ]]; then
+	echo "Found ${SWIFTRUNTIME_AAR_FILE}"
+else
 	echo "Error: cannot find ${SWIFTRUNTIME_AAR_FILE}"
 	exit 1
 fi
