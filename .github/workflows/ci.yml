@@ -177,20 +177,25 @@ jobs:
         path: |
           Bindings/dotnet/RoyalApps.RoyalVNCKit/bin/Release/RoyalApps.RoyalVNCKit.*.nupkg
     
-    # Kotlin bindings and Android artifacts
+    # Kotlin bindings and Android AAR artifacts
 
-    - name: build Android demo (Apple)
+    - name: install Android dependencies
       if: "success() && matrix.env.OS == 'apple'"
       run: |
         ./android_dependencies.sh
+
+    - name: build Android libraries
+      if: "success() && matrix.env.OS == 'apple'"
+      run: |
         ./android_build.sh
 
-    - name: publish Android jniLibs (Apple)
+    - name: publish Android artifacts
       if: "success() && matrix.env.OS == 'apple'"
       uses: actions/upload-artifact@v4
       with:
-        name: "RoyalVNCAndroidTest"
+        name: "royalvnc-android-arm64-aar"
         retention-days: 5
         if-no-files-found: "error"
         path: |
-          Bindings/kotlin/RoyalVNCAndroidTest/app/src/main/jniLibs/*/*.so
+          Bindings/kotlin/RoyalVNCAndroidTest/royalvnc/build/outputs/aar/royalvnc-release.aar
+          Bindings/kotlin/RoyalVNCAndroidTest/swiftRuntime/build/outputs/aar/swiftRuntime-release.aar
