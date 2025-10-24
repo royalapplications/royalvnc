@@ -39,6 +39,12 @@ It depends on [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift), [zlib
 - First-class error handling. The `VNCError` type divides all possible errors into three broad categories: Protocol, Authentication and Connection errors. There are helper functions to retrieve human-readable descriptions for all errors and a convenience functions that allows the SDK consumer to distinguish between errors that should be displayed to the user and ones that shouldn't.
 - Headless CLI demos (one using Swift and another one using the C API) are included in the repository.
 - The repository also contains C# bindings so the library can be used with .NET.
+- The repository also contains Kotlin bindings which make the library usable in Android projects. To set up the Android development environment (only supported on macOS currently):
+  - Install Java 11 or later, ensuring the `java` executable is added to the `PATH`
+  - Install Android Studio and ensure the `ANDROID_HOME` environment variable is exposed to your shell (see https://developer.android.com/tools/variables)
+  - Run `./android_dependencies.sh` to install the Android tooling and SDKs for Android
+  - Run `./android_build.sh` which builds the RoyalVNCKit native library and lays out its depedencies
+  - Open `Bindings/kotlin/RoyalVNCAndroidTest` in Android Studio to build and run the demo app
 - [This repository](https://github.com/royalapplications/royalvnc-demo) contains Demo/Sample clients for macOS (one written in Swift, one in Objective-C) and iOS/iPadOS.
 
 ## Usage
