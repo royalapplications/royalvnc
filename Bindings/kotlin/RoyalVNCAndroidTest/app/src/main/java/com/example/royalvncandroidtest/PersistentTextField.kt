@@ -2,6 +2,7 @@ package com.example.royalvncandroidtest
 
 import android.content.*
 import androidx.compose.foundation.text.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.text.input.*
@@ -62,7 +63,7 @@ fun PersistentTextField(
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         keyboardOptions = KeyboardOptions(
             keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text,
-            autoCorrect = keyboardAutoCorrect,
+            autoCorrectEnabled = keyboardAutoCorrect,
             capitalization = keyboardCapitalization
         )
     )
