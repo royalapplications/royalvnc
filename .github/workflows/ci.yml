@@ -176,3 +176,21 @@ jobs:
         if-no-files-found: "error"
         path: |
           Bindings/dotnet/RoyalApps.RoyalVNCKit/bin/Release/RoyalApps.RoyalVNCKit.*.nupkg
+    
+    # Kotlin bindings and Android artifacts
+
+    - name: build Android demo (Apple)
+      if: "success() && matrix.env.OS == 'apple'"
+      run: |
+        ./android_dependencies.sh
+        ./android_build.sh
+
+    - name: publish Android jniLibs (Apple)
+      if: "success() && matrix.env.OS == 'apple'"
+      uses: actions/upload-artifact@v4
+      with:
+        name: "RoyalVNCAndroidTest"
+        retention-days: 5
+        if-no-files-found: "error"
+        path: |
+          Bindings/kotlin/RoyalVNCAndroidTest/app/src/main/jniLibs/*/*.so
