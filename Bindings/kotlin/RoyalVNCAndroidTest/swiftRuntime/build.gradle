@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'com.royalapps.swiftruntime.jni'
+    namespace 'com.royalapps.swiftruntime_android'
     compileSdk {
         version = release(36)
     }
