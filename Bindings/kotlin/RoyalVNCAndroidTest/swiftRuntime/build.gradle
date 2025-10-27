@@ -1,32 +1,68 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id('maven-publish')
 }
 
+group = 'com.royalapps'
+def mavenArtifactId = 'swiftruntime_android'
+version = '6.2.0'
+
 android {
-    namespace 'com.royalapps.swiftruntime_android'
+    namespace "${group}.${mavenArtifactId}"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        minSdk 29
+        minSdk = 29
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = '11'
+    }
+
+    publishing {
+        singleVariant('release') {}
     }
 }
 
 dependencies {
     implementation libs.androidx.core.ktx
+}
+
+// https://developer.android.com/build/publish-library/upload-library#create-pub
+publishing {
+    publications {
+        release(MavenPublication) {
+            artifactId = mavenArtifactId
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'local'
+            url = layout.buildDirectory.dir('local')
+        }
+    }
+}
+
+// https://developer.android.com/build/publish-library/upload-library#local-repo
+tasks.register('publishRepoBundle', Zip) {
+    def publishTask = tasks.named('publishReleasePublicationToLocalRepository')
+    from publishTask.map { it.getRepository().getUrl() }
+    archiveFileName.set("${mavenArtifactId}.zip")
 }

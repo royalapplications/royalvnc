@@ -66,16 +66,16 @@ do
 		"${ROYALVNC_JNILIBS_DIR}/"
 done
 
-echo "Building royalvnc-release.aar"
+echo "Building royalvnc.aar Maven bundle"
 pushd "${KOTLIN_PROJECT_DIR}"
-./gradlew :royalvnc:assembleRelease
+./gradlew :royalvnc:publishMavenBundle
 popd
 
-ROYALVNC_AAR_FILE="${KOTLIN_PROJECT_DIR}/royalvnc/build/outputs/aar/royalvnc-release.aar"
-if [[ -f "${ROYALVNC_AAR_FILE}" ]]; then
-	echo "Found ${ROYALVNC_AAR_FILE}"
+ROYALVNC_BUNDLE_FILE="${KOTLIN_PROJECT_DIR}/royalvnc/build/distributions/royalvnc.zip"
+if [[ -f "${ROYALVNC_BUNDLE_FILE}" ]]; then
+	echo "Found ${ROYALVNC_BUNDLE_FILE}"
 else
-	echo "Error: cannot find ${ROYALVNC_AAR_FILE}"
+	echo "Error: cannot find ${ROYALVNC_BUNDLE_FILE}"
 	exit 1
 fi
 
@@ -95,16 +95,16 @@ do
 		"${SWIFTRUNTIME_JNILIBS_DIR}/"
 done
 
-echo "Building swiftRuntime-release.aar"
+echo "Building swiftRuntime.aar Maven bundle"
 pushd "${KOTLIN_PROJECT_DIR}"
-./gradlew :swiftRuntime:assembleRelease
+./gradlew :swiftRuntime:publishMavenBundle
 popd
 
-SWIFTRUNTIME_AAR_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/outputs/aar/swiftRuntime-release.aar"
-if [[ -f "${SWIFTRUNTIME_AAR_FILE}" ]]; then
-	echo "Found ${SWIFTRUNTIME_AAR_FILE}"
+SWIFTRUNTIME_BUNDLE_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/distributions/swiftRuntime.zip"
+if [[ -f "${SWIFTRUNTIME_BUNDLE_FILE}" ]]; then
+	echo "Found ${SWIFTRUNTIME_BUNDLE_FILE}"
 else
-	echo "Error: cannot find ${SWIFTRUNTIME_AAR_FILE}"
+	echo "Error: cannot find ${SWIFTRUNTIME_BUNDLE_FILE}"
 	exit 1
 fi
 

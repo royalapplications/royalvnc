@@ -1,33 +1,42 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id('maven-publish')
 }
 
+group = 'com.royalapps'
+def mavenArtifactId = 'royalvnc'
+version = '1.0.1'
+
 android {
-    namespace 'com.royalapps.royalvnc'
+    namespace "${group}.${mavenArtifactId}"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        minSdk 29
+        minSdk = 29
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
         jvmTarget = '11'
+    }
+
+    publishing {
+        singleVariant('release') {}
     }
 }
 
@@ -39,4 +48,31 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+}
+
+// https://developer.android.com/build/publish-library/upload-library#create-pub
+publishing {
+    publications {
+        release(MavenPublication) {
+            artifactId = mavenArtifactId
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'local'
+            url = layout.buildDirectory.dir('local')
+        }
+    }
+}
+
+// https://developer.android.com/build/publish-library/upload-library#local-repo
+tasks.register('publishRepoBundle', Zip) {
+    def publishTask = tasks.named('publishReleasePublicationToLocalRepository')
+    from publishTask.map { it.getRepository().getUrl() }
+    archiveFileName.set("${mavenArtifactId}.zip")
 }
