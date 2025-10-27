@@ -100,7 +100,7 @@ pushd "${KOTLIN_PROJECT_DIR}"
 ./gradlew :swiftRuntime:publishMavenBundle
 popd
 
-SWIFTRUNTIME_BUNDLE_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/distributions/swiftRuntime.zip"
+SWIFTRUNTIME_BUNDLE_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/distributions/swiftRuntime_android.zip"
 if [[ -f "${SWIFTRUNTIME_BUNDLE_FILE}" ]]; then
 	echo "Found ${SWIFTRUNTIME_BUNDLE_FILE}"
 else

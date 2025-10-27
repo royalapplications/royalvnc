@@ -198,4 +198,4 @@ jobs:
         if-no-files-found: "error"
         path: |
           Bindings/kotlin/RoyalVNCAndroidTest/royalvnc/build/distributions/royalvnc.zip
-          Bindings/kotlin/RoyalVNCAndroidTest/swiftRuntime/build/distributions/swiftRuntime.zip
+          Bindings/kotlin/RoyalVNCAndroidTest/swiftRuntime/build/distributions/swiftRuntime_android.zip
