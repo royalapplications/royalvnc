@@ -61,7 +61,7 @@ publishing {
 }
 
 // https://developer.android.com/build/publish-library/upload-library#local-repo
-tasks.register('publishRepoBundle', Zip) {
+tasks.register('publishMavenBundle', Zip) {
     def publishTask = tasks.named('publishReleasePublicationToLocalRepository')
     from publishTask.map { it.getRepository().getUrl() }
     archiveFileName.set("${mavenArtifactId}.zip")
