@@ -14,10 +14,6 @@ SWIFT_ANDROID_SDK_ARM64="${SWIFT_ANDROID_SDK_BASE}/swift-aarch64/android"
 
 KOTLIN_PROJECT_DIR="Bindings/kotlin/RoyalVNCAndroidTest"
 
-declare -a ROYALVNC_LIBS=(
-	"${SWIFT_ANDROID_NDK_ARM64}/${ANDROID_API_LEVEL}/libz.so"
-)
-
 declare -a SWIFT_RUNTIME_LIBS=(
 	# NDK C++
 	"${SWIFT_ANDROID_NDK_ARM64}/libc++_shared.so"
@@ -57,14 +53,6 @@ echo "Copying RoyalVNC library"
 cp -f \
 	.build/aarch64-unknown-linux-android${ANDROID_API_LEVEL}/release/libRoyalVNCKit.so \
 	"${ROYALVNC_JNILIBS_DIR}/"
-
-echo "Copying RoyalVNC dependency libraries"
-for royalvnc_lib in "${ROYALVNC_LIBS[@]}"
-do
-   cp -f \
-		"${royalvnc_lib}" \
-		"${ROYALVNC_JNILIBS_DIR}/"
-done
 
 echo "Building royalvnc.aar Maven bundle"
 pushd "${KOTLIN_PROJECT_DIR}"
