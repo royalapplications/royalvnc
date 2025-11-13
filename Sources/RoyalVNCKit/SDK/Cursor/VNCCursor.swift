@@ -87,6 +87,23 @@ public final class VNCCursor: NSObjectOrAnyObject {
 	}
 }
 
+public extension VNCCursor {
+    func copyPixelDataToRGBA32(destinationPixelBuffer: UnsafeMutableRawPointer) {
+        let byteCount = self.imageData.count
+        
+        self.imageData.withUnsafeBytes { ptr in
+            guard let ptrAddr = ptr.baseAddress else {
+                return
+            }
+            
+            // TODO: This assumes BGRA32 which might not be the case.
+            GraphicsUtils.copyBGRAtoRGBA(srcBuffer: ptrAddr,
+                                         dstBuffer: destinationPixelBuffer,
+                                         byteCount: byteCount)
+        }
+    }
+}
+
 #if canImport(CoreGraphics)
 public extension VNCCursor {
 #if canImport(ObjectiveC)

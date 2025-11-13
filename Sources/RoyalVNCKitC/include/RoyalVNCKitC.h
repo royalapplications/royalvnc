@@ -430,6 +430,14 @@ extern void rvnc_cursor_pixel_data_destroy(void* _Nonnull pixelData);
  */
 extern uint64_t rvnc_cursor_pixel_data_size_get(rvnc_cursor_t _Nonnull cursor);
 
+/**
+ * Copies the cursor's pixel data to a pre-allocated RGBA32 destination buffer.
+ * \param cursor The cursor instance.
+ * \param destinationPixelBuffer Pointer to the destination buffer.
+ */
+extern void rvnc_cursor_copy_pixel_data_to_rgba32_buffer(rvnc_cursor_t _Nonnull cursor,
+                                                         void* _Nonnull destinationPixelBuffer);
+
 
 #pragma mark - Connection Delegate
 

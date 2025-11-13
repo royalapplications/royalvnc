@@ -751,10 +751,12 @@ extension VNCFramebuffer {
     func copyPixelDataToRGBA32(destinationPixelBuffer: UnsafeMutableRawPointer) {
         lockSurfaceReadOnly()
         defer { unlockSurfaceReadOnly() }
-
-        Self.copyBGRAtoRGBA(srcBuffer: surfaceAddress,
-                            dstBuffer: destinationPixelBuffer,
-                            byteCount: surfaceByteCount)
+        
+        GraphicsUtils.copyBGRAtoRGBA(
+            srcBuffer: surfaceAddress,
+            dstBuffer: destinationPixelBuffer,
+            byteCount: surfaceByteCount
+        )
     }
 
     func destroyRGBA32PixelData(_ buffer: UnsafeMutableRawPointer) {
@@ -766,36 +768,13 @@ extension VNCFramebuffer {
         let dstBuffer = UnsafeMutableRawPointer.allocate(byteCount: byteCount,
                                                          alignment: MemoryLayout<UInt8>.alignment)
 
-        Self.copyBGRAtoRGBA(srcBuffer: srcBuffer,
-                            dstBuffer: dstBuffer,
-                            byteCount: byteCount)
+        GraphicsUtils.copyBGRAtoRGBA(
+            srcBuffer: srcBuffer,
+            dstBuffer: dstBuffer,
+            byteCount: byteCount
+        )
 
         return dstBuffer
-    }
-
-    private static func copyBGRAtoRGBA(srcBuffer: UnsafeRawPointer,
-                                       dstBuffer: UnsafeMutableRawPointer,
-                                       byteCount: Int) {
-
-        let src = srcBuffer.assumingMemoryBound(to: UInt8.self)
-        let dst = dstBuffer.assumingMemoryBound(to: UInt8.self)
-
-        let pixelCount = byteCount / 4
-        var i = 0
-
-        while i < pixelCount {
-            let b = src[i * 4]
-            let g = src[i * 4 + 1]
-            let r = src[i * 4 + 2]
-            let a = src[i * 4 + 3]
-
-            dst[i * 4] = r
-            dst[i * 4 + 1] = g
-            dst[i * 4 + 2] = b
-            dst[i * 4 + 3] = a
-
-            i += 1
-        }
     }
 }
 

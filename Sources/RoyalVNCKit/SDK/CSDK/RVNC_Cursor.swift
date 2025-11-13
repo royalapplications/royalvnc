@@ -129,3 +129,12 @@ public func rvnc_cursor_pixel_data_size_get(_ cursor: rvnc_cursor_t) -> UInt64 {
 
     return .init(size)
 }
+
+@_cdecl("rvnc_cursor_copy_pixel_data_to_rgba32_buffer")
+@_spi(RoyalVNCKitC)
+@available(*, unavailable)
+public func rvnc_cursor_copy_pixel_data_to_rgba32_buffer(_ cursor: rvnc_cursor_t,
+                                                         _ destinationPixelBuffer: UnsafeMutableRawPointer) {
+    VNCCursor.fromPointer(cursor)
+        .copyPixelDataToRGBA32(destinationPixelBuffer: destinationPixelBuffer)
+}
