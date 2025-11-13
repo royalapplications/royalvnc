@@ -321,6 +321,11 @@ object RoyalVNCKit {
         cursor: Pointer /* rvnc_cursor_t */
     ): Long /* uint64_t */
 
+    external fun rvnc_cursor_copy_pixel_data_to_rgba32_buffer(
+        cursor: Pointer /* rvnc_cursor_t */,
+        destinationPixelBuffer: ByteBuffer /* void* */
+    )
+
 
     // Connection Delegate
 

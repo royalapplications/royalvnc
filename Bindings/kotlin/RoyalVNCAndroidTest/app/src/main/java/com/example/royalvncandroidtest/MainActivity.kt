@@ -281,5 +281,11 @@ class MainActivity :
         cursor: VncCursor
     ) {
         Log.d(_logTag, "didUpdateCursor (width: ${cursor.width}; height: ${cursor.height})")
+
+        val cursorPixelBuffer = VncCursorPixelBuffer(cursor)
+        val bitmap = cursorPixelBuffer.getBitmap(cursor)
+        val imageBitmap = bitmap.asImageBitmap()
+
+        // TODO: Show cursor bitmap
     }
 }

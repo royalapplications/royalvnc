@@ -1,6 +1,7 @@
 package com.royalapps.royalvnc
 
 import com.sun.jna.*
+import java.nio.ByteBuffer
 
 data class VncCursor(
     internal val ptr: Pointer /* rvnc_cursor_t */
@@ -52,6 +53,15 @@ data class VncCursor(
 
     val pixelDataSize: Long
         get() = RoyalVNCKit.rvnc_cursor_pixel_data_size_get(ptr)
+
+    fun copyPixelDataToRGBA32Buffer(destination: ByteBuffer) {
+        require(destination.isDirect)
+
+        RoyalVNCKit.rvnc_cursor_copy_pixel_data_to_rgba32_buffer(
+            ptr,
+            destination
+        )
+    }
 
     override fun close() {
         if (_isClosed) {
