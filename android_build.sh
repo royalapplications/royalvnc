@@ -83,9 +83,20 @@ do
 		"${SWIFTRUNTIME_JNILIBS_DIR}/"
 done
 
+echo "Swift version"
+SWIFT_VERSION=$(swift --version)
+# 
+if [[ "${SWIFT_VERSION}" =~ Swift\ version\ ([0-9]+\.[0-9]+(\.[0-9]+)?) ]]; then
+	SWIFT_RT_VERSION="${BASH_REMATCH[1]}"
+	echo "SWIFT_RT_VERSION detected: ${SWIFT_RT_VERSION}"
+else
+	echo "Cannot parse SWIFT_VERSION: ${SWIFT_RT_VERSION}"
+	exit 1
+fi
+
 echo "Building swiftRuntime.aar Maven bundle"
 pushd "${KOTLIN_PROJECT_DIR}"
-./gradlew :swiftRuntime:publishMavenBundle
+SWIFT_RT_VERSION=$SWIFT_RT_VERSION ./gradlew :swiftRuntime:publishMavenBundle
 popd
 
 SWIFTRUNTIME_BUNDLE_FILE="${KOTLIN_PROJECT_DIR}/swiftRuntime/build/distributions/swiftRuntime_android.zip"
