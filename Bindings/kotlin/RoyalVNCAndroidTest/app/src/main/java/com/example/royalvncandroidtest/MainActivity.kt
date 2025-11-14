@@ -296,8 +296,7 @@ class MainActivity :
                 _cursorImage.value = null
             }
         } else {
-            val cursorPixelBuffer = VncCursorPixelBuffer(cursor)
-            val bitmap = cursorPixelBuffer.getBitmap(cursor)
+            val bitmap = cursor.getBitmap()
 
             runOnUiThread {
                 _cursorImage.value = bitmap.asImageBitmap()

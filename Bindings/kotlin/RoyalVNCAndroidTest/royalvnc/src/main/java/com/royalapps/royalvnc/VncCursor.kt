@@ -1,5 +1,7 @@
 package com.royalapps.royalvnc
 
+import android.graphics.Bitmap
+import androidx.core.graphics.createBitmap
 import com.sun.jna.*
 import java.nio.ByteBuffer
 
@@ -54,13 +56,23 @@ data class VncCursor(
     val pixelDataSize: Long
         get() = RoyalVNCKit.rvnc_cursor_pixel_data_size_get(ptr)
 
-    fun copyPixelDataToRGBA32Buffer(destination: ByteBuffer) {
-        require(destination.isDirect)
+    fun getBitmap(): Bitmap {
+        val buffer = ByteBuffer.allocateDirect(pixelDataSize.toInt())
+
+        val bitmap = createBitmap(
+            width.toInt(),
+            height.toInt(),
+            Bitmap.Config.ARGB_8888
+        )
 
         RoyalVNCKit.rvnc_cursor_copy_pixel_data_to_rgba32_buffer(
             ptr,
-            destination
+            buffer
         )
+
+        bitmap.copyPixelsFromBuffer(buffer)
+
+        return bitmap
     }
 
     override fun close() {

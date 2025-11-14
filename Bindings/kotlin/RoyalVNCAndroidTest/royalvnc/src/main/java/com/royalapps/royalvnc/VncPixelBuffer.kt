@@ -24,24 +24,3 @@ class VncPixelBuffer(framebuffer: VncFramebuffer) {
         return bitmap
     }
 }
-
-class VncCursorPixelBuffer(cursor: VncCursor) {
-    private val buffer = ByteBuffer.allocateDirect(cursor.pixelDataSize.toInt())
-    private val width = cursor.width.toInt()
-    private val height = cursor.height.toInt()
-
-    private var bitmap = createBitmap(
-        width,
-        height,
-        Bitmap.Config.ARGB_8888
-    )
-
-    fun getBitmap(cursor: VncCursor): Bitmap {
-        buffer.rewind()
-
-        cursor.copyPixelDataToRGBA32Buffer(buffer)
-        bitmap.copyPixelsFromBuffer(buffer)
-
-        return bitmap
-    }
-}
