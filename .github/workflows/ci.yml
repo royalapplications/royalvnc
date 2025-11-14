@@ -37,7 +37,7 @@ jobs:
               NUGET_RID: "linux-x64"
 
           - name: "macOS ARM64"
-            os: macos-14
+            os: macos-latest
             env:
               OS: "apple"
               NUGET_RID: "osx"
