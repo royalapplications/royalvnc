@@ -26,7 +26,8 @@ class MainActivity :
 
     private var _port: Short = 5900
 
-    private var _image: MutableState<ImageBitmap?> = mutableStateOf(null)
+    private var _framebufferImage: MutableState<ImageBitmap?> = mutableStateOf(null)
+    private var _cursorImage: MutableState<ImageBitmap?> = mutableStateOf(null)
 
     private val _logTag = "RVNC"
 
@@ -96,10 +97,17 @@ class MainActivity :
                             Text(if (_isConnected.value) "Disconnect" else "Connect")
                         }
 
-                        _image.value?.let {
+                        _framebufferImage.value?.let {
                             Image(
                                 bitmap = it,
                                 contentDescription = "Remote Screen"
+                            )
+                        }
+
+                        _cursorImage.value?.let {
+                            Image(
+                                bitmap = it,
+                                contentDescription = "Mouse Cursor"
                             )
                         }
                     }
@@ -206,7 +214,8 @@ class MainActivity :
             }
 
             if (connectionStatus == VncConnectionStatus.DISCONNECTED) {
-                _image.value = null
+                _cursorImage.value = null
+                _framebufferImage.value = null
 
                 _connection?.close()
                 _connection = null
@@ -267,11 +276,11 @@ class MainActivity :
             val bitmap = it.getBitmap(framebuffer)
 
             runOnUiThread {
-                _image.value = bitmap.asImageBitmap()
+                _framebufferImage.value = bitmap.asImageBitmap()
             }
         } ?: run {
             runOnUiThread {
-                _image.value = null
+                _framebufferImage.value = null
             }
         }
     }
@@ -282,10 +291,17 @@ class MainActivity :
     ) {
         Log.d(_logTag, "didUpdateCursor (width: ${cursor.width}; height: ${cursor.height})")
 
-        val cursorPixelBuffer = VncCursorPixelBuffer(cursor)
-        val bitmap = cursorPixelBuffer.getBitmap(cursor)
-        val imageBitmap = bitmap.asImageBitmap()
+        if (cursor.empty) {
+            runOnUiThread {
+                _cursorImage.value = null
+            }
+        } else {
+            val cursorPixelBuffer = VncCursorPixelBuffer(cursor)
+            val bitmap = cursorPixelBuffer.getBitmap(cursor)
 
-        // TODO: Show cursor bitmap
+            runOnUiThread {
+                _cursorImage.value = bitmap.asImageBitmap()
+            }
+        }
     }
 }
