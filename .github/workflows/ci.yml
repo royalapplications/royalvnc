@@ -74,7 +74,7 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
 
     # setup build environment
 
@@ -160,7 +160,7 @@ jobs:
 
     - name: publish native NuGet packages
       if: "success() && matrix.env.NUGET_RID != ''"
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: "RoyalApps.RoyalVNCKit.native.${{ matrix.env.NUGET_RID }}"
         retention-days: 5
@@ -170,7 +170,7 @@ jobs:
 
     - name: publish NuGet package
       if: "success() && matrix.env.NUGET_PACK_DOTNET_LIB == '1'"
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: "RoyalApps.RoyalVNCKit"
         retention-days: 5
@@ -192,7 +192,7 @@ jobs:
 
     - name: publish Android artifacts
       if: "success() && matrix.env.OS == 'apple'"
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: "royalvnc-android-arm64"
         retention-days: 5
