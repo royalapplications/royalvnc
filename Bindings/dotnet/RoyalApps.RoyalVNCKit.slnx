@@ -6,12 +6,12 @@
     <File Path="nuget-test-aot.ps1" />
     <File Path="nuget-utils.ps1" />
     <File Path="RoyalApps_1024.png" />
-    <File Path="RoyalApps.RoyalVNCKit.native\native.nuspec" />
+    <File Path="RoyalApps.RoyalVNCKit.native/native.nuspec" />
     <File Path=".editorconfig" />
-    <File Path="RoyalApps.RoyalVNCKit.native\SwiftRuntime-linux.nuspec" />
-    <File Path="RoyalApps.RoyalVNCKit.native\SwiftRuntime-windows.nuspec" />
-    <File Path="RoyalApps.RoyalVNCKit.native\windows+linux.nuspec" />
+    <File Path="RoyalApps.RoyalVNCKit.native/SwiftRuntime-linux.nuspec" />
+    <File Path="RoyalApps.RoyalVNCKit.native/SwiftRuntime-windows.nuspec" />
+    <File Path="RoyalApps.RoyalVNCKit.native/windows+linux.nuspec" />
   </Folder>
-  <Project Path="RoyalApps.RoyalVNCKit.Demo\RoyalApps.RoyalVNCKit.Demo.csproj" />
-  <Project Path="RoyalApps.RoyalVNCKit\RoyalApps.RoyalVNCKit.csproj" />
+  <Project Path="RoyalApps.RoyalVNCKit.Demo/RoyalApps.RoyalVNCKit.Demo.csproj" />
+  <Project Path="RoyalApps.RoyalVNCKit/RoyalApps.RoyalVNCKit.csproj" />
 </Solution>
