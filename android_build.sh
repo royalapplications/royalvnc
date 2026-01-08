@@ -4,7 +4,7 @@ set -e
 
 ANDROID_API_LEVEL="29"
 
-SWIFT_ANDROID_ROOT="${HOME}/Library/org.swift.swiftpm/swift-sdks/swift-6.2-RELEASE-android-0.1.artifactbundle/swift-android"
+SWIFT_ANDROID_ROOT="${HOME}/Library/org.swift.swiftpm/swift-sdks/swift-6.2.3-RELEASE_android.artifactbundle/swift-android"
 
 SWIFT_ANDROID_NDK_BASE="${SWIFT_ANDROID_ROOT}/ndk-sysroot/usr/lib"
 SWIFT_ANDROID_NDK_ARM64="${SWIFT_ANDROID_NDK_BASE}/aarch64-linux-android"
