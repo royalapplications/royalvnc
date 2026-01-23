@@ -85,7 +85,7 @@ jobs:
     - name: setup environment (Apple)
       if: "success() && matrix.env.OS == 'apple'"
       run: |
-        sudo xcode-select --switch /Applications/Xcode_26.1.app
+        sudo xcode-select --switch /Applications/Xcode_26.2.app
         swift --version
 
     - name: setup VC++ environment (Windows)
