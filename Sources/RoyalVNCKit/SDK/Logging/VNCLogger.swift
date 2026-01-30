@@ -16,7 +16,7 @@ public protocol VNCLogger: AnyObject {
 #if canImport(ObjectiveC)
     @objc
 #endif
-	func logDebug(_ message: String)
+	func logDebug(_ message: @autoclosure () -> String)
 
 #if canImport(ObjectiveC)
     @objc

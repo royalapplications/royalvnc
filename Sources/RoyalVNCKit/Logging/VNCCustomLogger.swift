@@ -44,10 +44,10 @@ public final class VNCCustomLogger: VNCLogger {
 
     /// Logs a debug message if debug logging is enabled.
     /// - Parameter message: The debug message to log.
-    public func logDebug(_ message: String) {
+    public func logDebug(_ message: @autoclosure () -> String) {
         guard isDebugLoggingEnabled else { return }
 
-        logDebugHandler(message)
+        logDebugHandler(message())
     }
 
     /// Logs an informational message.

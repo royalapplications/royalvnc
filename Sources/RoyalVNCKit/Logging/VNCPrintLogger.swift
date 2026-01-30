@@ -14,10 +14,10 @@ public final class VNCPrintLogger: VNCLogger {
 
     /// Logs a debug message if debug logging is enabled.
     /// - Parameter message: The debug message to log.
-    public func logDebug(_ message: String) {
+    public func logDebug(_ message: @autoclosure () -> String) {
         guard isDebugLoggingEnabled else { return }
 
-        log(debugMessage(message))
+        log(debugMessage(message()))
     }
 
     /// Logs an informational message.
