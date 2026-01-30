@@ -39,10 +39,10 @@ extension VNCProtocol {
 }
 
 extension VNCProtocol.TightEncoding {
-	func decodeRectangle(_ rectangle: VNCProtocol.Rectangle,
-							 framebuffer: VNCFramebuffer,
-							 connection: NetworkConnectionReading,
-							 logger: VNCLogger) async throws {
+    func decodeRectangle(_ rectangle: VNCProtocol.Rectangle,
+                         framebuffer: VNCFramebuffer,
+                         connection: NetworkConnectionReading,
+                         logger: VNCLogger) async throws {
 		let width = Int(rectangle.width)
 		let height = Int(rectangle.height)
 
@@ -71,16 +71,19 @@ extension VNCProtocol.TightEncoding {
 			var pixelData = try await connection.read(length: tPixelSize)
 
 			if tPixelSize != bytesPerPixel {
-				pixelData = try Self.convertTPixelData(pixelData,
-										pixelFormat: pixelFormat,
-										bytesPerPixel: bytesPerPixel,
-										tPixelSize: tPixelSize)
+                pixelData = try Self.convertTPixelData(
+                    pixelData,
+                    pixelFormat: pixelFormat,
+                    bytesPerPixel: bytesPerPixel,
+                    tPixelSize: tPixelSize
+                )
 			}
 
 			framebuffer.fill(region: rectangle.region,
 							 withPixel: &pixelData)
 
 			framebuffer.didUpdate(region: rectangle.region)
+            
 			return
 		}
 
@@ -90,19 +93,23 @@ extension VNCProtocol.TightEncoding {
 			}
 
 			let jpegLength = try await readCompactLength(connection: connection)
-			let jpegData = try await readBuffered(connection: connection,
-										 length: jpegLength)
+            
+            let jpegData = try await readBuffered(connection: connection,
+                                                  length: jpegLength)
 
-			var decoded = try Self.decodeImageData(jpegData,
-											 width: width,
-											 height: height,
-											 pixelFormat: pixelFormat,
-											 bytesPerPixel: bytesPerPixel)
+            var decoded = try Self.decodeImageData(
+                jpegData,
+                width: width,
+                height: height,
+                pixelFormat: pixelFormat,
+                bytesPerPixel: bytesPerPixel
+            )
 
-			framebuffer.update(region: rectangle.region,
-							 data: &decoded)
+            framebuffer.update(region: rectangle.region,
+                               data: &decoded)
 
 			framebuffer.didUpdate(region: rectangle.region)
+            
 			return
 		}
 
@@ -112,57 +119,71 @@ extension VNCProtocol.TightEncoding {
 			}
 
 			let pngLength = try await readCompactLength(connection: connection)
-			let pngData = try await readBuffered(connection: connection,
-										 length: pngLength)
+            
+            let pngData = try await readBuffered(connection: connection,
+                                                 length: pngLength)
 
-			var decoded = try Self.decodeImageData(pngData,
-											 width: width,
-											 height: height,
-											 pixelFormat: pixelFormat,
-											 bytesPerPixel: bytesPerPixel)
+            var decoded = try Self.decodeImageData(
+                pngData,
+                width: width,
+                height: height,
+                pixelFormat: pixelFormat,
+                bytesPerPixel: bytesPerPixel
+            )
 
 			framebuffer.update(region: rectangle.region,
-							 data: &decoded)
+                               data: &decoded)
 
 			framebuffer.didUpdate(region: rectangle.region)
+            
 			return
 		}
 
 		let streamId = Int((control >> 4) & 0x03)
 		let explicitFilter = (control & 0x40) != 0
-		let filterId: UInt8 = explicitFilter
+        
+		let filterID = explicitFilter
 			? try await connection.readUInt8()
 			: TightFilter.copy.rawValue
 
-		switch filterId {
+		switch filterID {
 			case TightFilter.copy.rawValue:
 				let expectedSize = width * height * tPixelSize
-				var rawData = try await readTightData(connection: connection,
-											 expectedSize: expectedSize,
-											 streamId: streamId,
-											 logger: logger)
+                
+                var rawData = try await readTightData(
+                    connection: connection,
+                    expectedSize: expectedSize,
+                    streamId: streamId,
+                    logger: logger
+                )
 
 				if tPixelSize != bytesPerPixel {
-					rawData = try Self.convertTPixelData(rawData,
-												pixelFormat: pixelFormat,
-												bytesPerPixel: bytesPerPixel,
-												tPixelSize: tPixelSize)
+                    rawData = try Self.convertTPixelData(
+                        rawData,
+                        pixelFormat: pixelFormat,
+                        bytesPerPixel: bytesPerPixel,
+                        tPixelSize: tPixelSize
+                    )
 				}
 
-				framebuffer.update(region: rectangle.region,
-									 data: &rawData)
+                framebuffer.update(region: rectangle.region,
+                                   data: &rawData)
 
 			case TightFilter.palette.rawValue:
 				let paletteSize = Int(try await connection.readUInt8()) + 1
 				let paletteBytes = paletteSize * tPixelSize
 
 				let rawPaletteData = try await connection.read(length: paletteBytes)
-				let paletteData = try Self.convertPaletteData(rawPaletteData,
-													 pixelFormat: pixelFormat,
-													 bytesPerPixel: bytesPerPixel,
-													 tPixelSize: tPixelSize)
+                
+                let paletteData = try Self.convertPaletteData(
+                    rawPaletteData,
+                    pixelFormat: pixelFormat,
+                    bytesPerPixel: bytesPerPixel,
+                    tPixelSize: tPixelSize
+                )
 
 				let indexDataSize: Int
+                
 				if paletteSize == 2 {
 					let bytesPerRow = (width + 7) / 8
 					indexDataSize = bytesPerRow * height
@@ -170,43 +191,52 @@ extension VNCProtocol.TightEncoding {
 					indexDataSize = width * height
 				}
 
-				let indices = try await readTightData(connection: connection,
-											 expectedSize: indexDataSize,
-											 streamId: streamId,
-											 logger: logger)
+                let indices = try await readTightData(
+                    connection: connection,
+                    expectedSize: indexDataSize,
+                    streamId: streamId,
+                    logger: logger
+                )
 
-				var decoded = try Self.expandPalette(indices: indices,
-											 palette: paletteData,
-											 paletteSize: paletteSize,
-											 width: width,
-											 height: height,
-											 bytesPerPixel: bytesPerPixel)
+                var decoded = try Self.expandPalette(
+                    indices: indices,
+                    palette: paletteData,
+                    paletteSize: paletteSize,
+                    width: width,
+                    height: height,
+                    bytesPerPixel: bytesPerPixel
+                )
 
-				framebuffer.update(region: rectangle.region,
-									 data: &decoded)
+                framebuffer.update(region: rectangle.region,
+                                   data: &decoded)
 
 			case TightFilter.gradient.rawValue:
 				guard tPixelSize == 3 else {
-					throw VNCError.protocol(.notImplemented(feature: "Tight Gradient filter for current pixel format"))
+					throw VNCError.protocol(.notImplemented(feature: "Tight Gradient Filter for current pixel format"))
 				}
 
 				let expectedSize = width * height * tPixelSize
-				let filteredData = try await readTightData(connection: connection,
-											 expectedSize: expectedSize,
-											 streamId: streamId,
-											 logger: logger)
+                
+                let filteredData = try await readTightData(
+                    connection: connection,
+                    expectedSize: expectedSize,
+                    streamId: streamId,
+                    logger: logger
+                )
 
-				var decoded = try Self.decodeGradient(filteredData,
-											 width: width,
-											 height: height,
-											 pixelFormat: pixelFormat,
-											 bytesPerPixel: bytesPerPixel)
+                var decoded = try Self.decodeGradient(
+                    filteredData,
+                    width: width,
+                    height: height,
+                    pixelFormat: pixelFormat,
+                    bytesPerPixel: bytesPerPixel
+                )
 
-				framebuffer.update(region: rectangle.region,
-									 data: &decoded)
+                framebuffer.update(region: rectangle.region,
+                                   data: &decoded)
 
 			default:
-				throw VNCError.protocol(.notImplemented(feature: "Tight filter id \(filterId)"))
+				throw VNCError.protocol(.notImplemented(feature: "Tight Filter ID \(filterID)"))
 		}
 
 		framebuffer.didUpdate(region: rectangle.region)
@@ -229,6 +259,7 @@ private extension VNCProtocol.TightEncoding {
 	func resetZStreamsIfNeeded(control: UInt8) {
 		for idx in 0..<4 {
 			let mask = UInt8(1 << idx)
+            
 			if (control & mask) != 0 {
 				zStreams[idx] = ZlibStream()
 			}
@@ -260,9 +291,12 @@ private extension VNCProtocol.TightEncoding {
 		}
 
 		let chunkSize = 1024 * 16
-		let data = try await connection.readBuffered(length: length,
-										 minimumChunkSize: 1,
-										 maximumChunkSize: chunkSize)
+        
+        let data = try await connection.readBuffered(
+            length: length,
+            minimumChunkSize: 1,
+            maximumChunkSize: chunkSize
+        )
 
 		guard data.count == length else {
 			throw VNCError.protocol(.invalidData)
@@ -271,17 +305,21 @@ private extension VNCProtocol.TightEncoding {
 		return data
 	}
 
-	func readTightData(connection: NetworkConnectionReading,
-					  expectedSize: Int,
-					  streamId: Int,
-					  logger: VNCLogger) async throws -> Data {
+    func readTightData(
+        connection: NetworkConnectionReading,
+        expectedSize: Int,
+        streamId: Int,
+        logger: VNCLogger
+    ) async throws -> Data {
 		guard expectedSize > 0 else {
 			return .init()
 		}
 
 		if expectedSize < 12 {
-			let data = try await readBuffered(connection: connection,
-										 length: expectedSize)
+            let data = try await readBuffered(
+                connection: connection,
+                length: expectedSize
+            )
 
 			return data
 		}
@@ -290,51 +328,62 @@ private extension VNCProtocol.TightEncoding {
 
 		guard compressedLength > 0 else {
 			logger.logDebug("Tight: Compressed length is 0")
+            
 			throw VNCError.protocol(.invalidData)
 		}
 
-		let compressedData = try await readBuffered(connection: connection,
-										 length: compressedLength)
+        let compressedData = try await readBuffered(
+            connection: connection,
+            length: compressedLength
+        )
 
 		do {
-			return try zStreams[streamId].decompressedData(compressedData: compressedData,
-															 uncompressedSize: .init(expectedSize))
+            return try zStreams[streamId].decompressedData(
+                compressedData: compressedData,
+                uncompressedSize: .init(expectedSize)
+            )
 		} catch {
 			throw VNCError.protocol(.frameDecode(encodingType: encodingType, underlyingError: error))
 		}
 	}
 
 	static func tightPixelSize(pixelFormat: VNCProtocol.PixelFormat) -> Int {
-		if pixelFormat.trueColor,
-		   pixelFormat.bitsPerPixel == 32,
-		   pixelFormat.depth == 24,
-		   pixelFormat.redMax == 255,
-		   pixelFormat.greenMax == 255,
-		   pixelFormat.blueMax == 255 {
-			return 3
-		}
+        if pixelFormat.trueColor,
+           pixelFormat.bitsPerPixel == 32,
+           pixelFormat.depth == 24,
+           pixelFormat.redMax == 255,
+           pixelFormat.greenMax == 255,
+           pixelFormat.blueMax == 255 {
+            return 3
+        }
 
 		return Int(pixelFormat.bitsPerPixel / 8)
 	}
 
-	static func convertPaletteData(_ paletteData: Data,
-								  pixelFormat: VNCProtocol.PixelFormat,
-								  bytesPerPixel: Int,
-								  tPixelSize: Int) throws -> Data {
+    static func convertPaletteData(
+        _ paletteData: Data,
+        pixelFormat: VNCProtocol.PixelFormat,
+        bytesPerPixel: Int,
+        tPixelSize: Int
+    ) throws -> Data {
 		guard tPixelSize != bytesPerPixel else {
 			return paletteData
 		}
 
-		return try convertTPixelData(paletteData,
-								 pixelFormat: pixelFormat,
-								 bytesPerPixel: bytesPerPixel,
-								 tPixelSize: tPixelSize)
+        return try convertTPixelData(
+            paletteData,
+            pixelFormat: pixelFormat,
+            bytesPerPixel: bytesPerPixel,
+            tPixelSize: tPixelSize
+        )
 	}
 
-	static func convertTPixelData(_ data: Data,
-								 pixelFormat: VNCProtocol.PixelFormat,
-								 bytesPerPixel: Int,
-								 tPixelSize: Int) throws -> Data {
+    static func convertTPixelData(
+        _ data: Data,
+        pixelFormat: VNCProtocol.PixelFormat,
+        bytesPerPixel: Int,
+        tPixelSize: Int
+    ) throws -> Data {
 		guard tPixelSize == 3 else {
 			throw VNCError.protocol(.notImplemented(feature: "Tight TPIXEL size \(tPixelSize) conversion"))
 		}
@@ -356,17 +405,21 @@ private extension VNCProtocol.TightEncoding {
 				let green = data[inputIndex + 1]
 				let blue = data[inputIndex + 2]
 
-				let pixelValue = packPixelValue(red: red,
-										 green: green,
-										 blue: blue,
-										 pixelFormat: pixelFormat)
+                let pixelValue = packPixelValue(
+                    red: red,
+                    green: green,
+                    blue: blue,
+                    pixelFormat: pixelFormat
+                )
 
 				let offset = pixelIndex * bytesPerPixel
 
-				storePixelValue(pixelValue,
-								 bitsPerPixel: bitsPerPixel,
-								 targetPtr: convertedPtr.baseAddress,
-								 offset: offset)
+                storePixelValue(
+                    pixelValue,
+                    bitsPerPixel: bitsPerPixel,
+                    targetPtr: convertedPtr.baseAddress,
+                    offset: offset
+                )
 
 				inputIndex += tPixelSize
 			}
@@ -375,12 +428,14 @@ private extension VNCProtocol.TightEncoding {
 		return converted
 	}
 
-	static func expandPalette(indices: Data,
-							 palette: Data,
-							 paletteSize: Int,
-							 width: Int,
-							 height: Int,
-							 bytesPerPixel: Int) throws -> Data {
+    static func expandPalette(
+        indices: Data,
+        palette: Data,
+        paletteSize: Int,
+        width: Int,
+        height: Int,
+        bytesPerPixel: Int
+    ) throws -> Data {
 		let pixelCount = width * height
 		var output = Data(count: pixelCount * bytesPerPixel)
 		var invalidIndex = false
@@ -404,24 +459,30 @@ private extension VNCProtocol.TightEncoding {
 						let sourceOffset = paletteIndex * bytesPerPixel
 						let destinationOffset = (row * width + column) * bytesPerPixel
 
-						let target = outputBase.advanced(by: destinationOffset).assumingMemoryBound(to: UInt8.self)
-						palette.copyBytes(to: target,
-									 from: sourceOffset..<sourceOffset + bytesPerPixel)
+						let target = outputBase.advanced(by: destinationOffset)
+                            .assumingMemoryBound(to: UInt8.self)
+                        
+                        palette.copyBytes(to: target,
+                                          from: sourceOffset..<sourceOffset + bytesPerPixel)
 					}
 				}
 			} else {
 				for idx in 0..<pixelCount {
 					let paletteIndex = Int(indices[idx])
+                    
 					guard paletteIndex < paletteSize else {
 						invalidIndex = true
 						return
 					}
+                    
 					let sourceOffset = paletteIndex * bytesPerPixel
 					let destinationOffset = idx * bytesPerPixel
 
-					let target = outputBase.advanced(by: destinationOffset).assumingMemoryBound(to: UInt8.self)
-					palette.copyBytes(to: target,
-									 from: sourceOffset..<sourceOffset + bytesPerPixel)
+					let target = outputBase.advanced(by: destinationOffset)
+                        .assumingMemoryBound(to: UInt8.self)
+                    
+                    palette.copyBytes(to: target,
+                                      from: sourceOffset..<sourceOffset + bytesPerPixel)
 				}
 			}
 		}
@@ -433,11 +494,13 @@ private extension VNCProtocol.TightEncoding {
 		return output
 	}
 
-	static func decodeGradient(_ data: Data,
-							 width: Int,
-							 height: Int,
-							 pixelFormat: VNCProtocol.PixelFormat,
-							 bytesPerPixel: Int) throws -> Data {
+    static func decodeGradient(
+        _ data: Data,
+        width: Int,
+        height: Int,
+        pixelFormat: VNCProtocol.PixelFormat,
+        bytesPerPixel: Int
+    ) throws -> Data {
 		guard data.count == width * height * 3 else {
 			throw VNCError.protocol(.invalidData)
 		}
@@ -500,15 +563,20 @@ private extension VNCProtocol.TightEncoding {
 					leftB = valueB
 
 					let offset = (row * width + column) * bytesPerPixel
-					let pixelValue = packPixelValue(red: UInt8(valueR),
-											 green: UInt8(valueG),
-											 blue: UInt8(valueB),
-											 pixelFormat: pixelFormat)
+                    
+                    let pixelValue = packPixelValue(
+                        red: UInt8(valueR),
+                        green: UInt8(valueG),
+                        blue: UInt8(valueB),
+                        pixelFormat: pixelFormat
+                    )
 
-					storePixelValue(pixelValue,
-								 bitsPerPixel: bitsPerPixel,
-								 targetPtr: outputBase,
-								 offset: offset)
+                    storePixelValue(
+                        pixelValue,
+                        bitsPerPixel: bitsPerPixel,
+                        targetPtr: outputBase,
+                        offset: offset
+                    )
 				}
 
 				swap(&previousR, &currentR)
@@ -526,12 +594,14 @@ private extension VNCProtocol.TightEncoding {
 		return output
 	}
 
-	static func decodeImageData(_ data: Data,
-								 width: Int,
-								 height: Int,
-								 pixelFormat: VNCProtocol.PixelFormat,
-								 bytesPerPixel: Int) throws -> Data {
-		#if canImport(ImageIO) && canImport(CoreGraphics)
+    static func decodeImageData(
+        _ data: Data,
+        width: Int,
+        height: Int,
+        pixelFormat: VNCProtocol.PixelFormat,
+        bytesPerPixel: Int
+    ) throws -> Data {
+#if canImport(ImageIO) && canImport(CoreGraphics)
 		let cfData = data as CFData
 
 		guard let imageSource = CGImageSourceCreateWithData(cfData, nil),
@@ -555,17 +625,20 @@ private extension VNCProtocol.TightEncoding {
 				return false
 			}
 
-			guard let context = CGContext(data: baseAddress,
-									 width: width,
-									 height: height,
-									 bitsPerComponent: 8,
-									 bytesPerRow: bytesPerRow,
-									 space: colorSpace,
-									 bitmapInfo: bitmapInfo.rawValue) else {
+            guard let context = CGContext(
+                data: baseAddress,
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bytesPerRow: bytesPerRow,
+                space: colorSpace,
+                bitmapInfo: bitmapInfo.rawValue
+            ) else {
 				return false
 			}
 
-			context.draw(image, in: CGRect(x: 0, y: 0, width: width, height: height))
+            context.draw(image,
+                         in: CGRect(x: 0, y: 0, width: width, height: height))
 
 			return true
 		}
@@ -590,32 +663,39 @@ private extension VNCProtocol.TightEncoding {
 				let green = rgbaData[inputIndex + 1]
 				let blue = rgbaData[inputIndex + 2]
 
-				let pixelValue = packPixelValue(red: red,
-										 green: green,
-										 blue: blue,
-										 pixelFormat: pixelFormat)
+                let pixelValue = packPixelValue(
+                    red: red,
+                    green: green,
+                    blue: blue,
+                    pixelFormat: pixelFormat
+                )
 
 				let offset = idx * bytesPerPixel
 
-				storePixelValue(pixelValue,
-								 bitsPerPixel: bitsPerPixel,
-								 targetPtr: outputBase,
-								 offset: offset)
+                storePixelValue(
+                    pixelValue,
+                    bitsPerPixel: bitsPerPixel,
+                    targetPtr: outputBase,
+                    offset: offset
+                )
 
 				inputIndex += 4
 			}
 		}
 
 		return output
-		#else
-		throw VNCError.protocol(.notImplemented(feature: "Tight image decoding requires ImageIO/CoreGraphics"))
-		#endif
+#else
+        // TODO: Implement for non-Apple platforms
+        throw VNCError.protocol(.notImplemented(feature: "Tight image decoding requires ImageIO/CoreGraphics"))
+#endif
 	}
 
-	static func packPixelValue(red: UInt8,
-								 green: UInt8,
-								 blue: UInt8,
-								 pixelFormat: VNCProtocol.PixelFormat) -> Int {
+    static func packPixelValue(
+        red: UInt8,
+        green: UInt8,
+        blue: UInt8,
+        pixelFormat: VNCProtocol.PixelFormat
+    ) -> Int {
 		let redScaled = scaleComponent(red, maxValue: Int(pixelFormat.redMax))
 		let greenScaled = scaleComponent(green, maxValue: Int(pixelFormat.greenMax))
 		let blueScaled = scaleComponent(blue, maxValue: Int(pixelFormat.blueMax))
@@ -625,8 +705,8 @@ private extension VNCProtocol.TightEncoding {
 		let blueShift = Int(pixelFormat.blueShift)
 
 		let pixelValue = (redScaled << redShift) |
-			(greenScaled << greenShift) |
-			(blueScaled << blueShift)
+                         (greenScaled << greenShift) |
+                         (blueScaled << blueShift)
 
 		return pixelValue
 	}
@@ -640,28 +720,30 @@ private extension VNCProtocol.TightEncoding {
 		return (Int(value) * maxValue + 127) / 255
 	}
 
-	static func storePixelValue(_ value: Int,
-							 bitsPerPixel: Int,
-							 targetPtr: UnsafeMutableRawPointer?,
-							 offset: Int) {
+    static func storePixelValue(
+        _ value: Int,
+        bitsPerPixel: Int,
+        targetPtr: UnsafeMutableRawPointer?,
+        offset: Int
+    ) {
 		guard let targetPtr else {
 			return
 		}
 
 		switch bitsPerPixel {
 			case 32:
-				targetPtr.storeBytes(of: UInt32(value),
-								 toByteOffset: offset,
-								 as: UInt32.self)
+                targetPtr.storeBytes(of: UInt32(value),
+                                     toByteOffset: offset,
+                                     as: UInt32.self)
 			case 16:
-				targetPtr.storeBytes(of: UInt16(value),
-								 toByteOffset: offset,
-								 as: UInt16.self)
-			case 8:
-				targetPtr.storeBytes(of: UInt8(value),
-								 toByteOffset: offset,
-								 as: UInt8.self)
-			default:
+                targetPtr.storeBytes(of: UInt16(value),
+                                     toByteOffset: offset,
+                                     as: UInt16.self)
+            case 8:
+                targetPtr.storeBytes(of: UInt8(value),
+                                     toByteOffset: offset,
+                                     as: UInt8.self)
+            default:
 				break
 		}
 	}
