@@ -86,7 +86,7 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	let needsColorConversion: Bool
     
     private var isBatchingUpdates = false
-    private var didUpdateDuringBatch = false
+    private var regionsUpdatedInBatch = [VNCRegion]()
 
 	private(set) var colorMap: ColorMap?
 
@@ -392,18 +392,10 @@ extension VNCFramebuffer {
 					 bytesPerPixel: destinationBytesPerPixel)
 	}
 
-	func didUpdate() {
-        guard !isBatchingUpdates else {
-            didUpdateDuringBatch = true
-            return
-        }
-        
-		notifyDelegateFramebufferDidUpdate()
-	}
-
 	func didUpdate(region: VNCRegion) {
         guard !isBatchingUpdates else {
-            didUpdateDuringBatch = true
+            regionsUpdatedInBatch.append(region)
+            
             return
         }
         
@@ -454,21 +446,20 @@ extension VNCFramebuffer {
     
     func beginBatchUpdates() {
         isBatchingUpdates = true
-        didUpdateDuringBatch = false
+        regionsUpdatedInBatch = .init()
     }
 
-    func endBatchUpdates(regions: [VNCRegion]) {
+    func endBatchUpdates() {
         guard isBatchingUpdates else {
             return
         }
-
+        
         isBatchingUpdates = false
         
-        guard didUpdateDuringBatch else {
-            return
-        }
-
-        for region in regions {
+        // NOTE: Only for debugging!
+//        logger.logInfo("regionsUpdatedInBatch: \(regionsUpdatedInBatch.count)")
+        
+        for region in regionsUpdatedInBatch {
             notifyDelegateFramebufferDidUpdate(region: region)
         }
     }

@@ -34,9 +34,7 @@ extension VNCProtocol.FramebufferUpdate {
         framebuffer.beginBatchUpdates()
         
         defer {
-            let updatedRegions = rectangles.map { $0.region }
-            
-            framebuffer.endBatchUpdates(regions: updatedRegions)
+            framebuffer.endBatchUpdates()
         }
 
 		for idx in 0..<numberOfRectangles {
