@@ -170,6 +170,8 @@ public final class VNCConnection: NSObjectOrAnyObject {
 			VNCPseudoEncodingType.cursor.rawValue,
 			// TODO: Implement
 //			VNCPseudoEncodingType.extendedClipboard.rawValue,
+            
+            // TODO: Make configurable
 			VNCPseudoEncodingType.compressionLevel6.rawValue
 		])
 
