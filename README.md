@@ -15,6 +15,7 @@ It depends on [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift), [zlib
 - UltraVNC MS-Logon II
 
 ### Encodings
+- Tight
 - Zlib
 - ZRLE
 - Hextile
@@ -25,6 +26,7 @@ It depends on [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift), [zlib
 ### Pseudo Encodings
 - LastRect
 - CompressionLevel
+- JpegCompressionLevel
 - DesktopName
 - Cursor
 - DesktopSize
@@ -56,4 +58,6 @@ See [Usage](USAGE.md).
 ## Credits
 - [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift) ([The CryptoSwift license](https://github.com/krzyzanowskim/CryptoSwift/blob/main/LICENSE))
 - [zlib](https://github.com/madler/zlib) ([zlib license](https://github.com/madler/zlib/blob/develop/LICENSE))
+- [Swift JPEG](https://github.com/tayloraswift/swift-jpeg) ([Apache License 2.0](https://github.com/tayloraswift/swift-jpeg/blob/master/LICENSE))
+- [Swift PNG](https://github.com/tayloraswift/swift-png) ([Apache License 2.0](https://github.com/tayloraswift/swift-png/blob/master/LICENSE))
 - D3DES (Public Domain, Copyright Richard Outerbridge)

@@ -4,13 +4,10 @@ import FoundationEssentials
 import Foundation
 #endif
 
-//#if canImport(CoreGraphics)
-//import CoreGraphics
-//#endif
-//
-//#if canImport(ImageIO)
-//import ImageIO
-//#endif
+#if canImport(CoreGraphics) && canImport(ImageIO)
+import CoreGraphics
+import ImageIO
+#endif
 
 #if canImport(JPEG)
 @_implementationOnly import JPEG
@@ -669,7 +666,6 @@ private extension VNCProtocol.TightEncoding {
 }
 
 private extension VNCProtocol.TightEncoding {
-    // TODO: Currently requires ImageIO and CoreGraphics so is only impolemented on Apple platforms
     static func decodeImageData(
         _ data: Data,
         imageType: TightImageType,
@@ -678,90 +674,90 @@ private extension VNCProtocol.TightEncoding {
         pixelFormat: VNCProtocol.PixelFormat,
         bytesPerPixel: Int
     ) throws -> Data {
-//#if canImport(ImageIO) && canImport(CoreGraphics)
-//        let cfData = data as CFData
-//
-//        guard let imageSource = CGImageSourceCreateWithData(cfData, nil),
-//              let image = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
-//            throw VNCError.protocol(.invalidData)
-//        }
-//
-//        guard image.width == width,
-//              image.height == height else {
-//            throw VNCError.protocol(.invalidData)
-//        }
-//
-//        let bytesPerRow = width * 4
-//        var rgbaData = Data(count: bytesPerRow * height)
-//
-//        let colorSpace = CGColorSpaceCreateDeviceRGB()
-//        let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(.init(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue))
-//
-//        let drawResult = rgbaData.withUnsafeMutableBytes { ptr -> Bool in
-//            guard let baseAddress = ptr.baseAddress else {
-//                return false
-//            }
-//
-//            guard let context = CGContext(
-//                data: baseAddress,
-//                width: width,
-//                height: height,
-//                bitsPerComponent: 8,
-//                bytesPerRow: bytesPerRow,
-//                space: colorSpace,
-//                bitmapInfo: bitmapInfo.rawValue
-//            ) else {
-//                return false
-//            }
-//
-//            context.draw(image,
-//                         in: CGRect(x: 0, y: 0, width: width, height: height))
-//
-//            return true
-//        }
-//
-//        guard drawResult else {
-//            throw VNCError.protocol(.invalidData)
-//        }
-//
-//        let pixelCount = width * height
-//        let bitsPerPixel = Int(pixelFormat.bitsPerPixel)
-//        var output = Data(count: pixelCount * bytesPerPixel)
-//
-//        output.withUnsafeMutableBytes { outputPtr in
-//            guard let outputBase = outputPtr.baseAddress else {
-//                return
-//            }
-//
-//            var inputIndex = 0
-//
-//            for idx in 0..<pixelCount {
-//                let red = rgbaData[inputIndex]
-//                let green = rgbaData[inputIndex + 1]
-//                let blue = rgbaData[inputIndex + 2]
-//
-//                let pixelValue = packPixelValue(
-//                    red: red,
-//                    green: green,
-//                    blue: blue,
-//                    pixelFormat: pixelFormat
-//                )
-//
-//                let offset = idx * bytesPerPixel
-//
-//                storePixelValue(
-//                    pixelValue,
-//                    bitsPerPixel: bitsPerPixel,
-//                    targetPtr: outputBase,
-//                    offset: offset
-//                )
-//
-//                inputIndex += 4
-//            }
-//        }
-//
-//        return output
-//#else
+#if canImport(ImageIO) && canImport(CoreGraphics)
+        let cfData = data as CFData
+
+        guard let imageSource = CGImageSourceCreateWithData(cfData, nil),
+              let image = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
+            throw VNCError.protocol(.invalidData)
+        }
+
+        guard image.width == width,
+              image.height == height else {
+            throw VNCError.protocol(.invalidData)
+        }
+
+        let bytesPerRow = width * 4
+        var rgbaData = Data(count: bytesPerRow * height)
+
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(.init(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue))
+
+        let drawResult = rgbaData.withUnsafeMutableBytes { ptr -> Bool in
+            guard let baseAddress = ptr.baseAddress else {
+                return false
+            }
+
+            guard let context = CGContext(
+                data: baseAddress,
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bytesPerRow: bytesPerRow,
+                space: colorSpace,
+                bitmapInfo: bitmapInfo.rawValue
+            ) else {
+                return false
+            }
+
+            context.draw(image,
+                         in: CGRect(x: 0, y: 0, width: width, height: height))
+
+            return true
+        }
+
+        guard drawResult else {
+            throw VNCError.protocol(.invalidData)
+        }
+
+        let pixelCount = width * height
+        let bitsPerPixel = Int(pixelFormat.bitsPerPixel)
+        var output = Data(count: pixelCount * bytesPerPixel)
+
+        output.withUnsafeMutableBytes { outputPtr in
+            guard let outputBase = outputPtr.baseAddress else {
+                return
+            }
+
+            var inputIndex = 0
+
+            for idx in 0..<pixelCount {
+                let red = rgbaData[inputIndex]
+                let green = rgbaData[inputIndex + 1]
+                let blue = rgbaData[inputIndex + 2]
+
+                let pixelValue = packPixelValue(
+                    red: red,
+                    green: green,
+                    blue: blue,
+                    pixelFormat: pixelFormat
+                )
+
+                let offset = idx * bytesPerPixel
+
+                storePixelValue(
+                    pixelValue,
+                    bitsPerPixel: bitsPerPixel,
+                    targetPtr: outputBase,
+                    offset: offset
+                )
+
+                inputIndex += 4
+            }
+        }
+
+        return output
+#else
         switch imageType {
         case .jpeg:
 #if canImport(JPEG)
@@ -786,7 +782,7 @@ private extension VNCProtocol.TightEncoding {
                 pixelFormat: pixelFormat
             )
 #else
-            throw VNCError.protocol(.notImplemented(feature: "Tight JPEG decoding requires swift-jpeg"))
+            throw VNCError.protocol(.notImplemented(feature: "Tight JPEG decoding requires swift-jpeg on non-Apple platforms"))
 #endif
 
         case .png:
@@ -812,10 +808,10 @@ private extension VNCProtocol.TightEncoding {
                 pixelFormat: pixelFormat
             )
 #else
-            throw VNCError.protocol(.notImplemented(feature: "Tight PNG decoding requires swift-png"))
+            throw VNCError.protocol(.notImplemented(feature: "Tight PNG decoding requires swift-png on non-Apple platforms"))
 #endif
         }
-//#endif
+#endif
     }
 }
 
@@ -841,6 +837,7 @@ private extension VNCProtocol.TightEncoding {
     }
 }
 
+#if !(canImport(ImageIO) && canImport(CoreGraphics))
 #if canImport(JPEG)
 extension VNCProtocol.TightEncoding.TightImageDataStream: JPEG.Bytestream.Source {}
 #endif
@@ -926,3 +923,4 @@ private extension VNCProtocol.TightEncoding {
     }
 #endif
 }
+#endif
