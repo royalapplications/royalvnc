@@ -457,15 +457,19 @@ extension VNCFramebuffer {
         didUpdateDuringBatch = false
     }
 
-    func endBatchUpdates() {
+    func endBatchUpdates(regions: [VNCRegion]) {
         guard isBatchingUpdates else {
             return
         }
 
         isBatchingUpdates = false
+        
+        guard didUpdateDuringBatch else {
+            return
+        }
 
-        if didUpdateDuringBatch {
-            notifyDelegateFramebufferDidUpdate()
+        for region in regions {
+            notifyDelegateFramebufferDidUpdate(region: region)
         }
     }
 }

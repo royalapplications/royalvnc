@@ -23,9 +23,6 @@ extension VNCProtocol.FramebufferUpdate {
 
 		logger.logDebug("Got \(numberOfRectangles) rectangles to read from framebuffer update")
 
-		framebuffer.beginBatchUpdates()
-		defer { framebuffer.endBatchUpdates() }
-
 #if DEBUG
 		if numberOfRectangles == 65535 {
 			logger.logDebug("Likely encountered a framebuffer update with LastRect")
@@ -33,6 +30,14 @@ extension VNCProtocol.FramebufferUpdate {
 #endif
 
 		var rectangles = [VNCProtocol.Rectangle]()
+        
+        framebuffer.beginBatchUpdates()
+        
+        defer {
+            let updatedRegions = rectangles.map { $0.region }
+            
+            framebuffer.endBatchUpdates(regions: updatedRegions)
+        }
 
 		for idx in 0..<numberOfRectangles {
 			logger.logDebug("Reading rectangle header \(idx + 1)/\(numberOfRectangles)")
