@@ -19,10 +19,15 @@ import ImageIO
 
 extension VNCProtocol {
 	final class TightEncoding: VNCFrameEncoding {
-		let encodingType = VNCFrameEncodingType.tight.rawValue
+#if canImport(CoreGraphics) && canImport(ImageIO)
+        private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
+        private static let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(.init(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue))
+#endif
+        
+        let encodingType = VNCFrameEncodingType.tight.rawValue
 
-		private var zStreams: [ZlibStream]
-
+        private var zStreams: [ZlibStream]
+        
 		init() {
 			self.zStreams = [
 				ZlibStream(),
@@ -689,10 +694,7 @@ private extension VNCProtocol.TightEncoding {
 
         let bytesPerRow = width * 4
         var rgbaData = Data(count: bytesPerRow * height)
-
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(.init(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue))
-
+        
         let drawResult = rgbaData.withUnsafeMutableBytes { ptr -> Bool in
             guard let baseAddress = ptr.baseAddress else {
                 return false
@@ -704,8 +706,8 @@ private extension VNCProtocol.TightEncoding {
                 height: height,
                 bitsPerComponent: 8,
                 bytesPerRow: bytesPerRow,
-                space: colorSpace,
-                bitmapInfo: bitmapInfo.rawValue
+                space: Self.rgbColorSpace,
+                bitmapInfo: Self.bitmapInfo.rawValue
             ) else {
                 return false
             }
