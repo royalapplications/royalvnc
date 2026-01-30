@@ -23,6 +23,9 @@ extension VNCProtocol.FramebufferUpdate {
 
 		logger.logDebug("Got \(numberOfRectangles) rectangles to read from framebuffer update")
 
+		framebuffer.beginBatchUpdates()
+		defer { framebuffer.endBatchUpdates() }
+
 #if DEBUG
 		if numberOfRectangles == 65535 {
 			logger.logDebug("Likely encountered a framebuffer update with LastRect")

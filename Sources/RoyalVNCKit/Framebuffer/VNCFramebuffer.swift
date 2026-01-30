@@ -84,6 +84,9 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 	let destinationProperties: Properties
 
 	let needsColorConversion: Bool
+    
+    private var isBatchingUpdates = false
+    private var didUpdateDuringBatch = false
 
 	private(set) var colorMap: ColorMap?
 
@@ -390,10 +393,20 @@ extension VNCFramebuffer {
 	}
 
 	func didUpdate() {
+        guard !isBatchingUpdates else {
+            didUpdateDuringBatch = true
+            return
+        }
+        
 		notifyDelegateFramebufferDidUpdate()
 	}
 
 	func didUpdate(region: VNCRegion) {
+        guard !isBatchingUpdates else {
+            didUpdateDuringBatch = true
+            return
+        }
+        
 		notifyDelegateFramebufferDidUpdate(region: region)
 	}
 
@@ -438,6 +451,23 @@ extension VNCFramebuffer {
 		notifyDelegateSizeDidChange(newSize,
 									screens: newScreens)
 	}
+    
+    func beginBatchUpdates() {
+        isBatchingUpdates = true
+        didUpdateDuringBatch = false
+    }
+
+    func endBatchUpdates() {
+        guard isBatchingUpdates else {
+            return
+        }
+
+        isBatchingUpdates = false
+
+        if didUpdateDuringBatch {
+            notifyDelegateFramebufferDidUpdate()
+        }
+    }
 }
 
 // MARK: - Update Framebuffer
