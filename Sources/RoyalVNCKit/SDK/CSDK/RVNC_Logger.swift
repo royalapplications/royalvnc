@@ -18,8 +18,10 @@ final class VNCLogger_C: VNCLogger {
         self.logHandler = logHandler
     }
 
-    func logDebug(_ message: String) {
-        log(message,
+    func logDebug(_ message: @autoclosure () -> String) {
+        guard isDebugLoggingEnabled else { return }
+        
+        log(message(),
             level: RVNC_LOG_LEVEL_DEBUG)
     }
 

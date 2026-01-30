@@ -49,8 +49,11 @@ let package = Package(
     
     dependencies: [
         // TODO: Switch back to main repo once our FoundationEssentials changes are merged upstream
-        .package(url: "https://github.com/royalapplications/CryptoSwift.git", branch: "foundationessentials")
 //        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.9.0")
+        .package(url: "https://github.com/royalapplications/CryptoSwift.git", branch: "foundationessentials"),
+        
+        .package(url: "https://github.com/tayloraswift/swift-jpeg", from: "2.0.0"),
+        .package(url: "https://github.com/tayloraswift/swift-png", from: "4.4.0")
     ],
 
     targets: [
@@ -65,7 +68,9 @@ let package = Package(
                 "RoyalVNCKitC",
                 .byName(name: d3desTarget.name),
                 .byName(name: zTarget.name),
-                .byName(name: "CryptoSwift")
+                .byName(name: "CryptoSwift"),
+                .product(name: "JPEG", package: "swift-jpeg", condition: .when(platforms: [ .linux, .windows, .android ])),
+                .product(name: "PNG", package: "swift-png", condition: .when(platforms: [ .linux, .windows, .android ]))
             ],
 
             swiftSettings: [

@@ -6,7 +6,10 @@ import Foundation
 
 /// A customizable logger implementation conforming to `VNCLogger`.
 /// Allows clients to provide their own handlers for debug, info, warning, and error messages.
-public final class VNCCustomLogger: VNCLogger {
+#if canImport(ObjectiveC)
+@objc(VNCCustomLogger)
+#endif
+public final class VNCCustomLogger: NSObjectOrAnyObject, VNCLogger {
     /// A closure type that handles a log message.
     /// - Parameter message: The log message to handle.
     public typealias LogHandler = (_ message: String) -> Void
@@ -32,6 +35,9 @@ public final class VNCCustomLogger: VNCLogger {
     ///   - logInfoHandler: Handler for info messages.
     ///   - logWarningHandler: Handler for warning messages.
     ///   - logErrorHandler: Handler for error messages.
+#if canImport(ObjectiveC)
+    @objc(initWithLogDebugHandler:logInfoHandler:logWarningHandler:logErrorHandler:)
+#endif
     public init(logDebugHandler: @escaping LogHandler,
                 logInfoHandler: @escaping LogHandler,
                 logWarningHandler: @escaping LogHandler,
@@ -44,10 +50,10 @@ public final class VNCCustomLogger: VNCLogger {
 
     /// Logs a debug message if debug logging is enabled.
     /// - Parameter message: The debug message to log.
-    public func logDebug(_ message: String) {
+    public func logDebug(_ message: @autoclosure () -> String) {
         guard isDebugLoggingEnabled else { return }
 
-        logDebugHandler(message)
+        logDebugHandler(message())
     }
 
     /// Logs an informational message.

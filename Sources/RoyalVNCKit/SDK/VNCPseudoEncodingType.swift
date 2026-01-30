@@ -27,6 +27,18 @@ public enum VNCPseudoEncodingType: VNCEncodingType {
 	/// Highest compression level
 	case compressionLevel10 = -247
 
+	// JPEG quality levels for Tight encoding (0 = lowest quality, 9 = highest quality)
+	case jpegQualityLevel0 = -32
+	case jpegQualityLevel1 = -31
+	case jpegQualityLevel2 = -30
+	case jpegQualityLevel3 = -29
+	case jpegQualityLevel4 = -28
+	case jpegQualityLevel5 = -27
+	case jpegQualityLevel6 = -26
+	case jpegQualityLevel7 = -25
+	case jpegQualityLevel8 = -24
+	case jpegQualityLevel9 = -23
+
 	case extendedClipboard = 0xc0a1e5ce
 }
 
@@ -65,6 +77,26 @@ extension VNCPseudoEncodingType: CustomStringConvertible {
 				"Compression Level 9"
 			case .compressionLevel10:
 				"Compression Level 10"
+			case .jpegQualityLevel0:
+				"JPEG Quality Level 0"
+			case .jpegQualityLevel1:
+				"JPEG Quality Level 1"
+			case .jpegQualityLevel2:
+				"JPEG Quality Level 2"
+			case .jpegQualityLevel3:
+				"JPEG Quality Level 3"
+			case .jpegQualityLevel4:
+				"JPEG Quality Level 4"
+			case .jpegQualityLevel5:
+				"JPEG Quality Level 5"
+			case .jpegQualityLevel6:
+				"JPEG Quality Level 6"
+			case .jpegQualityLevel7:
+				"JPEG Quality Level 7"
+			case .jpegQualityLevel8:
+				"JPEG Quality Level 8"
+			case .jpegQualityLevel9:
+				"JPEG Quality Level 9"
 			case .extendedClipboard:
 				"Extended Clipboard"
 		}
