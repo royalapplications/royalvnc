@@ -96,7 +96,8 @@ public final class VNCConnection: NSObjectOrAnyObject {
 		let encs: Encodings = [
 			// Frame Encodings
 			VNCFrameEncodingType.copyRect.rawValue: VNCProtocol.CopyRectEncoding(),
-			VNCFrameEncodingType.zlib.rawValue: VNCProtocol.ZlibEncoding(zStream: sharedZStream),
+            VNCFrameEncodingType.tight.rawValue: VNCProtocol.TightEncoding(),
+            VNCFrameEncodingType.zlib.rawValue: VNCProtocol.ZlibEncoding(zStream: sharedZStream),
 			VNCFrameEncodingType.zrle.rawValue: VNCProtocol.ZRLEEncoding(zStream: sharedZStream),
 			VNCFrameEncodingType.hextile.rawValue: hextileEncoding,
 			VNCFrameEncodingType.coRRE.rawValue: VNCProtocol.RREEncoding(),
@@ -140,6 +141,12 @@ public final class VNCConnection: NSObjectOrAnyObject {
 		   customizedFrameEncodings.contains(VNCFrameEncodingType.zrle.rawValue),
 		   !VNCProtocol.ZRLEEncoding.supportsPixelFormat(pixelFormat) {
 			customizedFrameEncodings.removeAll(where: { $0 == VNCFrameEncodingType.zrle.rawValue })
+		}
+
+		if let pixelFormat = state.pixelFormat,
+		   customizedFrameEncodings.contains(VNCFrameEncodingType.tight.rawValue),
+		   !VNCProtocol.TightEncoding.supportsPixelFormat(pixelFormat) {
+			customizedFrameEncodings.removeAll(where: { $0 == VNCFrameEncodingType.tight.rawValue })
 		}
 
 		encs.append(contentsOf: customizedFrameEncodings)

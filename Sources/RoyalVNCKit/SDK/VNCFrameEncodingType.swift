@@ -15,6 +15,7 @@ public enum _ObjC_VNCFrameEncodingType: Int64 {
 	case coRRE = 4
 	case hextile = 5
 	case zlib = 6
+	case tight = 7
 	case zrle = 16
 }
 
@@ -25,6 +26,7 @@ public enum VNCFrameEncodingType: VNCEncodingType {
 	case coRRE = 4
 	case hextile = 5
 	case zlib = 6
+	case tight = 7
 	case zrle = 16
 }
 
@@ -43,6 +45,8 @@ extension VNCFrameEncodingType: CustomStringConvertible {
 				"Hextile"
 			case .zlib:
 				"Zlib"
+			case .tight:
+				"Tight"
 			case .zrle:
 				"ZRLE"
 		}
@@ -51,6 +55,7 @@ extension VNCFrameEncodingType: CustomStringConvertible {
 
 public extension VNCFrameEncodingType {
 	static let defaultFrameEncodings: [VNCFrameEncodingType] = [
+		.tight,
 		.zlib,
 		.zrle,
 		.hextile,
@@ -125,6 +130,8 @@ extension VNCFrameEncodingType {
 				.hextile
 			case .zlib:
 				.zlib
+			case .tight:
+				.tight
 			case .zrle:
 				.zrle
 		}
