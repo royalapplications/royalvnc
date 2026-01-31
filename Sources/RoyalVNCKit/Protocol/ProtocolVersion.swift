@@ -133,7 +133,8 @@ extension VNCProtocol.ProtocolVersion {
 	}
 
 	var is3Point8OrHigher: Bool {
-		let isIt = majorVersion >= 3 && minorVersion >= 8
+		let isIt = (majorVersion > 3) ||
+			(majorVersion == 3 && minorVersion >= 8)
 
 		return isIt
 	}
