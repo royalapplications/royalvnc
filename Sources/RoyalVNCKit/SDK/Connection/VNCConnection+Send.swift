@@ -22,9 +22,11 @@ extension VNCConnection {
 	}
 
 	func sendFramebufferUpdateRequest() async throws {
-		guard let framebuffer else { return }
-		guard !state.areContinuousUpdatesEnabled else { return }
-
+		guard let framebuffer,
+              !state.areContinuousUpdatesEnabled else {
+            return
+        }
+        
 		let incremental = state.incrementalUpdatesEnabled
 
 		let fullFramebufferRegion = VNCRegion(location: .zero,
@@ -40,14 +42,19 @@ extension VNCConnection {
 	}
 
 	func sendEnableContinuousUpdates() async throws {
-		guard let framebuffer else { return }
-		guard state.areContinuousUpdatesEnabled else { return }
+		guard let framebuffer,
+              state.areContinuousUpdatesSupported,
+              !state.areContinuousUpdatesEnabled else {
+            return
+        }
 
 		let fullFramebufferRegion = VNCRegion(location: .zero,
 											  size: framebuffer.size)
 
 		try await sendEnableContinuousUpdates(enable: true,
 											  region: fullFramebufferRegion)
+
+		state.areContinuousUpdatesEnabled = true
 	}
 }
 

@@ -127,17 +127,14 @@ private extension VNCConnection {
 		let first = !state.areContinuousUpdatesSupported
 
 		state.areContinuousUpdatesSupported = true
+		state.areContinuousUpdatesEnabled = false
 
 		if first {
-			state.areContinuousUpdatesEnabled = true
-
-			logger.logDebug("Enabling Continuous Updates")
+			logger.logDebug("Continuous Updates supported (server sent EndOfContinuousUpdates)")
 		} else {
-			state.areContinuousUpdatesEnabled = false
-
 			logger.logDebug("Disabling Continuous Updates")
-
-			try await sendFramebufferUpdateRequest()
 		}
+
+		try await sendFramebufferUpdateRequest()
 	}
 }
