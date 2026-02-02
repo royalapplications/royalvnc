@@ -18,6 +18,11 @@ public protocol VNCFramebufferView: AnyObject {
     @objc
 #endif
 	var connection: VNCConnection? { get }
+    
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    weak var delegate: VNCConnectionDelegate? { get }
 
 #if canImport(ObjectiveC)
     @objc
@@ -49,6 +54,7 @@ public protocol VNCFramebufferView: AnyObject {
 #endif
 	var accumulatedScrollDeltaY: CGFloat { get set }
 
+    // MARK: - Connection Delegate Handlers
 #if canImport(ObjectiveC)
     @objc
 #endif
@@ -62,5 +68,30 @@ public protocol VNCFramebufferView: AnyObject {
 #endif
 	func connection(_ connection: VNCConnection,
 					didUpdateCursor cursor: VNCCursor)
+    
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    func connection(_ connection: VNCConnection,
+                    stateDidChange connectionState: VNCConnection.ConnectionState)
+    
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    func connection(_ connection: VNCConnection,
+                    credentialFor authenticationType: VNCAuthenticationType,
+                    completion: @escaping ((any VNCCredential)?) -> Void)
+    
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    func connection(_ connection: VNCConnection,
+                    didCreateFramebuffer framebuffer: VNCFramebuffer)
+    
+#if canImport(ObjectiveC)
+    @objc
+#endif
+    func connection(_ connection: VNCConnection,
+                    didResizeFramebuffer framebuffer: VNCFramebuffer)
 }
 #endif

@@ -12,6 +12,9 @@ import Carbon
 public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
     @objc
 	public private(set) weak var connection: VNCConnection?
+    
+    @objc
+    public private(set) weak var delegate: VNCConnectionDelegate?
 
     @objc
 	public let settings: VNCConnection.Settings
@@ -99,15 +102,19 @@ public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
     @objc
 	public init(frame frameRect: CGRect,
 				framebuffer: VNCFramebuffer,
-				connection: VNCConnection) {
+				connection: VNCConnection,
+                connectionDelegate: VNCConnectionDelegate) {
 		self.framebufferSize = framebuffer.size.cgSize
 		self.framebuffer = framebuffer
 		self.connection = connection
-		self.settings = connection.settings
-		self.currentCursor = VNCCursor.empty.nsCursor
+        self.settings = connection.settings
+        self.currentCursor = VNCCursor.empty.nsCursor
+        self.delegate = connectionDelegate
+        
+        super.init(frame: frameRect)
 
-		super.init(frame: frameRect)
-
+        connection.delegate = self
+        
 		wantsLayer = true
 
 		guard let layer = layer else {
@@ -243,29 +250,6 @@ public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
 	public override func keyUp(with event: NSEvent) { handleKeyUp(with: event) }
 	public override func flagsChanged(with event: NSEvent) { handleFlagsChanged(with: event) }
 	public override func performKeyEquivalent(with event: NSEvent) -> Bool { return handlePerformKeyEquivalent(with: event) }
-}
-
-extension VNCCAFramebufferView {
-	public func connection(_ connection: VNCConnection,
-                           didUpdateFramebuffer framebuffer: VNCFramebuffer,
-                           x: UInt16, y: UInt16,
-                           width: UInt16, height: UInt16) {
-		// NOTE: If we ever take the updatedRegion into consideration, we will likely need to flip the coordinates on macOS
-
-		guard !settings.useDisplayLink,
-			  displayLink == nil else {
-			return
-		}
-
-		updateImage(framebuffer.cgImage)
-	}
-
-	public func connection(_ connection: VNCConnection,
-						   didUpdateCursor cursor: VNCCursor) {
-		DispatchQueue.main.async { [weak self] in
-			self?.currentCursor = cursor.nsCursor
-		}
-	}
 }
 
 // MARK: - Positions
@@ -580,5 +564,100 @@ extension VNCCAFramebufferView: DisplayLinkDelegate {
 	func displayLinkDidUpdate(_ displayLink: DisplayLink) {
 		updateImage(framebuffer?.cgImage)
 	}
+}
+
+extension VNCCAFramebufferView: VNCConnectionDelegate {
+    // Handle directly
+    public func connection(
+        _ connection: VNCConnection,
+        didUpdateFramebuffer framebuffer: VNCFramebuffer,
+        x: UInt16,
+        y: UInt16,
+        width: UInt16,
+        height: UInt16
+    ) {
+        // NOTE: If we ever take the updatedRegion into consideration, we will likely need to flip the coordinates on macOS
+
+        guard !settings.useDisplayLink,
+              displayLink == nil else {
+            return
+        }
+
+        updateImage(framebuffer.cgImage)
+    }
+
+    // Handle directly
+    public func connection(
+        _ connection: VNCConnection,
+        didUpdateCursor cursor: VNCCursor
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            self?.currentCursor = cursor.nsCursor
+        }
+    }
+    
+    // Passthrough
+    public func connection(
+        _ connection: VNCConnection,
+        stateDidChange connectionState: VNCConnection.ConnectionState
+    ) {
+        guard let delegate else {
+            return
+        }
+        
+        delegate.connection(
+            connection,
+            stateDidChange: connectionState
+        )
+    }
+    
+    // Passthrough
+    public func connection(
+        _ connection: VNCConnection,
+        credentialFor authenticationType: VNCAuthenticationType,
+        completion: @escaping ((any VNCCredential)?) -> Void
+    ) {
+        guard let delegate else {
+            completion(nil)
+            
+            return
+        }
+        
+        delegate.connection(
+            connection,
+            credentialFor: authenticationType,
+            completion: completion
+        )
+    }
+    
+    // Passthrough
+    public func connection(
+        _ connection: VNCConnection,
+        didCreateFramebuffer framebuffer: VNCFramebuffer
+    ) {
+        guard let delegate else {
+            return
+        }
+        
+        delegate.connection(
+            connection,
+            didCreateFramebuffer: framebuffer
+        )
+    }
+    
+    // Passthrough
+    public func connection(
+        _ connection: VNCConnection,
+        didResizeFramebuffer framebuffer: VNCFramebuffer
+    ) {
+        guard let delegate else {
+            return
+        }
+        
+        delegate.connection(
+            connection,
+            didResizeFramebuffer: framebuffer
+        )
+    }
 }
 #endif
