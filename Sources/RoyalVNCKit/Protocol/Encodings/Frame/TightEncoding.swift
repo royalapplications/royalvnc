@@ -53,6 +53,8 @@ extension VNCProtocol.TightEncoding {
                          framebuffer: VNCFramebuffer,
                          connection: NetworkConnectionReading,
                          logger: VNCLogger) async throws {
+        logger.logDebug("Beginning to read Tight Encoding")
+        
 		let width = Int(rectangle.width)
 		let height = Int(rectangle.height)
 
@@ -70,12 +72,17 @@ extension VNCProtocol.TightEncoding {
 
 		let bytesPerPixel = framebuffer.sourceProperties.bytesPerPixel
 		let tPixelSize = Self.tightPixelSize(pixelFormat: pixelFormat)
-
+        
+        logger.logDebug("Reading Tight Encoding compression-control byte")
+        
 		let control = try await connection.readUInt8()
 
-		resetZStreamsIfNeeded(control: control)
+		resetZStreamsIfNeeded(control: control,
+                              logger: logger)
 
 		let subencoding = control & 0xF0
+        
+        logger.logDebug("Read Tight Sub-Encoding: \(subencoding)")
 
 		if subencoding == TightSubencoding.png.rawValue {
 			throw VNCError.protocol(.notImplemented(feature: "Tight PNG subencoding"))
@@ -88,9 +95,13 @@ extension VNCProtocol.TightEncoding {
 		}
 
 		if subencoding == TightSubencoding.fill.rawValue {
+            logger.logDebug("Reading Tight Fill Sub-Encoding pixel data of size \(tPixelSize)")
+            
 			var pixelData = try await connection.read(length: tPixelSize)
 
 			if tPixelSize != bytesPerPixel {
+                logger.logDebug("Converting Tight TPixel Data")
+                
                 pixelData = try Self.convertTPixelData(
                     pixelData,
                     pixelFormat: pixelFormat,
@@ -111,11 +122,19 @@ extension VNCProtocol.TightEncoding {
 			guard Self.supportsPixelFormat(pixelFormat) else {
 				throw VNCError.protocol(.notImplemented(feature: "Tight JPEG decoding for current pixel format"))
 			}
+            
+            logger.logDebug("Reading Tight JPEG Sub-Encoding length")
 
-			let jpegLength = try await readCompactLength(connection: connection)
+			let jpegLength = try await readCompactLength(connection: connection,
+                                                         logger: logger)
+            
+            logger.logDebug("Reading Tight JPEG Sub-Encoding data")
             
             let jpegData = try await readBuffered(connection: connection,
-                                                  length: jpegLength)
+                                                  length: jpegLength,
+                                                  logger: logger)
+            
+            logger.logDebug("Decoding Tight JPEG Sub-Encoding image data")
 
             var decoded = try Self.decodeImageData(
                 jpegData,
@@ -137,13 +156,20 @@ extension VNCProtocol.TightEncoding {
 		let streamID = Int((control >> 4) & 0x03)
 		let explicitFilter = (control & 0x40) != 0
         
-		let filterID = explicitFilter
-			? try await connection.readUInt8()
-			: TightFilter.copy.rawValue
+        let filterID: UInt8
+        
+        if explicitFilter {
+            logger.logDebug("Reading explicit Tight Filter ID")
+            filterID = try await connection.readUInt8()
+        } else {
+            filterID = TightFilter.copy.rawValue
+        }
 
 		switch filterID {
 			case TightFilter.copy.rawValue:
 				let expectedSize = width * height * tPixelSize
+            
+                logger.logDebug("Reading Tight Copy Data of size \(expectedSize)")
                 
                 var rawData = try await readTightData(
                     connection: connection,
@@ -154,6 +180,8 @@ extension VNCProtocol.TightEncoding {
                 )
 
 				if tPixelSize != bytesPerPixel {
+                    logger.logDebug("Converting Tight TPixel Data of size \(tPixelSize)")
+                    
                     rawData = try Self.convertTPixelData(
                         rawData,
                         pixelFormat: pixelFormat,
@@ -166,10 +194,16 @@ extension VNCProtocol.TightEncoding {
                                    data: &rawData)
 
 			case TightFilter.palette.rawValue:
+                logger.logDebug("Reading Tight Palette size")
+            
 				let paletteSize = Int(try await connection.readUInt8()) + 1
 				let paletteBytes = paletteSize * tPixelSize
+            
+                logger.logDebug("Reading Tight Raw Palette Data of size \(paletteBytes)")
 
 				let rawPaletteData = try await connection.read(length: paletteBytes)
+            
+                logger.logDebug("Converting Tight Palette Data")
                 
                 let paletteData = try Self.convertPaletteData(
                     rawPaletteData,
@@ -186,6 +220,8 @@ extension VNCProtocol.TightEncoding {
 				} else {
 					indexDataSize = width * height
 				}
+            
+                logger.logDebug("Reading Tight Palette Data")
 
                 let indices = try await readTightData(
                     connection: connection,
@@ -194,6 +230,8 @@ extension VNCProtocol.TightEncoding {
                     control: control,
                     logger: logger
                 )
+            
+                logger.logDebug("Expanding Tight Palette")
 
                 var decoded = try Self.expandPalette(
                     indices: indices,
@@ -211,8 +249,10 @@ extension VNCProtocol.TightEncoding {
 				guard tPixelSize == 3 else {
 					throw VNCError.protocol(.notImplemented(feature: "Tight Gradient Filter for current pixel format"))
 				}
-
-				let expectedSize = width * height * tPixelSize
+            
+                let expectedSize = width * height * tPixelSize
+            
+                logger.logDebug("Reading Tight Gradient data of size \(expectedSize)")
                 
                 let filteredData = try await readTightData(
                     connection: connection,
@@ -221,6 +261,8 @@ extension VNCProtocol.TightEncoding {
                     control: control,
                     logger: logger
                 )
+            
+                logger.logDebug("Decoding Tight Gradient data")
 
                 var decoded = try Self.decodeGradient(
                     filteredData,
@@ -259,11 +301,14 @@ private extension VNCProtocol.TightEncoding {
 		case gradient = 2
 	}
 
-	func resetZStreamsIfNeeded(control: UInt8) {
+    func resetZStreamsIfNeeded(control: UInt8,
+                               logger: VNCLogger) {
 		for idx in 0..<4 {
 			let mask = UInt8(1 << idx)
             
 			if (control & mask) != 0 {
+                logger.logDebug("Resetting Tight Encoding zStream at index \(idx)")
+                
 				do {
 					try zStreams[idx].reset()
 				} catch {
@@ -273,11 +318,14 @@ private extension VNCProtocol.TightEncoding {
 		}
 	}
 
-	func readCompactLength(connection: NetworkConnectionReading) async throws -> Int {
+	func readCompactLength(connection: NetworkConnectionReading,
+                           logger: VNCLogger) async throws -> Int {
 		var length = 0
 		var shift = 0
 
 		for _ in 0..<3 {
+            logger.logDebug("Reading Tight Compact Length")
+            
 			let byte = try await connection.readUInt8()
 			length |= Int(byte & 0x7F) << shift
 
@@ -292,12 +340,15 @@ private extension VNCProtocol.TightEncoding {
 	}
 
 	func readBuffered(connection: NetworkConnectionReading,
-					  length: Int) async throws -> Data {
+					  length: Int,
+                      logger: VNCLogger) async throws -> Data {
 		guard length > 0 else {
 			return .init()
 		}
 
 		let chunkSize = 1024 * 16
+        
+        logger.logDebug("Reading Tight Buffered Data (Chunk Size: \(chunkSize))")
         
         let data = try await connection.readBuffered(
             length: length,
@@ -326,13 +377,15 @@ private extension VNCProtocol.TightEncoding {
 		if expectedSize < 12 {
             let data = try await readBuffered(
                 connection: connection,
-                length: expectedSize
+                length: expectedSize,
+                logger: logger
             )
 
 			return data
 		}
 
-		let compressedLength = try await readCompactLength(connection: connection)
+		let compressedLength = try await readCompactLength(connection: connection,
+                                                           logger: logger)
 
 		guard compressedLength > 0 else {
 			logger.logDebug("Tight: Compressed length is 0 (control=0x\(String(format: "%02X", control)), expectedSize=\(expectedSize))")
@@ -342,7 +395,8 @@ private extension VNCProtocol.TightEncoding {
 
         let compressedData = try await readBuffered(
             connection: connection,
-            length: compressedLength
+            length: compressedLength,
+            logger: logger
         )
 
 		do {
