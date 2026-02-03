@@ -77,6 +77,16 @@ extension VNCProtocol.TightEncoding {
 
 		let subencoding = control & 0xF0
 
+		if subencoding == TightSubencoding.png.rawValue {
+			throw VNCError.protocol(.notImplemented(feature: "Tight PNG subencoding"))
+		}
+
+		if (control & 0x80) != 0,
+		   subencoding != TightSubencoding.fill.rawValue,
+		   subencoding != TightSubencoding.jpeg.rawValue {
+			throw VNCError.protocol(.notImplemented(feature: "Tight subencoding 0x\(String(format: "%02X", subencoding))"))
+		}
+
 		if subencoding == TightSubencoding.fill.rawValue {
 			var pixelData = try await connection.read(length: tPixelSize)
 
@@ -124,33 +134,6 @@ extension VNCProtocol.TightEncoding {
 			return
 		}
 
-		if subencoding == TightSubencoding.png.rawValue {
-			guard Self.supportsPixelFormat(pixelFormat) else {
-				throw VNCError.protocol(.notImplemented(feature: "Tight PNG decoding for current pixel format"))
-			}
-
-			let pngLength = try await readCompactLength(connection: connection)
-            
-            let pngData = try await readBuffered(connection: connection,
-                                                 length: pngLength)
-
-            var decoded = try Self.decodeImageData(
-                pngData,
-                imageType: .png,
-                width: width,
-                height: height,
-                pixelFormat: pixelFormat,
-                bytesPerPixel: bytesPerPixel
-            )
-
-			framebuffer.update(region: rectangle.region,
-                               data: &decoded)
-
-			framebuffer.didUpdate(region: rectangle.region)
-            
-			return
-		}
-
 		let streamID = Int((control >> 4) & 0x03)
 		let explicitFilter = (control & 0x40) != 0
         
@@ -166,6 +149,7 @@ extension VNCProtocol.TightEncoding {
                     connection: connection,
                     expectedSize: expectedSize,
                     streamID: streamID,
+                    control: control,
                     logger: logger
                 )
 
@@ -207,6 +191,7 @@ extension VNCProtocol.TightEncoding {
                     connection: connection,
                     expectedSize: indexDataSize,
                     streamID: streamID,
+                    control: control,
                     logger: logger
                 )
 
@@ -233,6 +218,7 @@ extension VNCProtocol.TightEncoding {
                     connection: connection,
                     expectedSize: expectedSize,
                     streamID: streamID,
+                    control: control,
                     logger: logger
                 )
 
@@ -330,6 +316,7 @@ private extension VNCProtocol.TightEncoding {
         connection: NetworkConnectionReading,
         expectedSize: Int,
         streamID: Int,
+        control: UInt8,
         logger: VNCLogger
     ) async throws -> Data {
 		guard expectedSize > 0 else {
@@ -348,7 +335,7 @@ private extension VNCProtocol.TightEncoding {
 		let compressedLength = try await readCompactLength(connection: connection)
 
 		guard compressedLength > 0 else {
-			logger.logDebug("Tight: Compressed length is 0") // TODO: Ended up here after some time, coming from a palette decode. Why?
+			logger.logDebug("Tight: Compressed length is 0 (control=0x\(String(format: "%02X", control)), expectedSize=\(expectedSize))")
             
 			throw VNCError.protocol(.invalidData)
 		}
