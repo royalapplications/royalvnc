@@ -128,7 +128,7 @@ extension VNCProtocol.TightEncoding {
 			let jpegLength = try await readCompactLength(connection: connection,
                                                          logger: logger)
             
-            logger.logDebug("Reading Tight JPEG Sub-Encoding data")
+            logger.logDebug("Reading Tight JPEG Sub-Encoding data (JPEG Length: \(jpegLength))")
             
             let jpegData = try await readBuffered(connection: connection,
                                                   length: jpegLength,
@@ -348,7 +348,7 @@ private extension VNCProtocol.TightEncoding {
 
 		let chunkSize = 1024 * 16
         
-        logger.logDebug("Reading Tight Buffered Data (Chunk Size: \(chunkSize))")
+        logger.logDebug("Reading Tight Buffered Data (Length: \(length), Chunk Size: \(chunkSize))")
         
         let data = try await connection.readBuffered(
             length: length,
