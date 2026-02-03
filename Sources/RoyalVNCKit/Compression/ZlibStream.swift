@@ -32,6 +32,10 @@ final class ZlibStream {
 }
 
 extension ZlibStream {
+	func reset() throws {
+		try stream.inflateReset()
+	}
+
     func decompressedData(compressedData: Data) throws -> Data {
 		let stream = self.stream
 		let flush = ZlibFlush.noFlush

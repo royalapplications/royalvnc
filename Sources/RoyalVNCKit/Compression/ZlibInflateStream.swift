@@ -163,6 +163,19 @@ extension ZlibInflateStream {
 		}
 	}
 
+	/// Resets the inflate state without freeing or reallocating internal buffers.
+	/// Any unprocessed input and pending output are discarded.
+	func inflateReset() throws {
+		let streamPtr = self.streamPtr
+
+		let status = Z.inflateReset(streamPtr)
+
+		guard ZlibError.isSuccess(status) else {
+			throw Self.error(streamPtr: streamPtr,
+							 status: status)
+		}
+	}
+
 	/*
 		inflate decompresses as much data as possible, and stops when the input
 	  buffer becomes empty or the output buffer becomes full.  It may introduce

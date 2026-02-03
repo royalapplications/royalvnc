@@ -151,7 +151,7 @@ extension VNCProtocol.TightEncoding {
 			return
 		}
 
-		let streamId = Int((control >> 4) & 0x03)
+		let streamID = Int((control >> 4) & 0x03)
 		let explicitFilter = (control & 0x40) != 0
         
 		let filterID = explicitFilter
@@ -165,7 +165,7 @@ extension VNCProtocol.TightEncoding {
                 var rawData = try await readTightData(
                     connection: connection,
                     expectedSize: expectedSize,
-                    streamId: streamId,
+                    streamID: streamID,
                     logger: logger
                 )
 
@@ -206,7 +206,7 @@ extension VNCProtocol.TightEncoding {
                 let indices = try await readTightData(
                     connection: connection,
                     expectedSize: indexDataSize,
-                    streamId: streamId,
+                    streamID: streamID,
                     logger: logger
                 )
 
@@ -232,7 +232,7 @@ extension VNCProtocol.TightEncoding {
                 let filteredData = try await readTightData(
                     connection: connection,
                     expectedSize: expectedSize,
-                    streamId: streamId,
+                    streamID: streamID,
                     logger: logger
                 )
 
@@ -278,7 +278,11 @@ private extension VNCProtocol.TightEncoding {
 			let mask = UInt8(1 << idx)
             
 			if (control & mask) != 0 {
-				zStreams[idx] = ZlibStream()
+				do {
+					try zStreams[idx].reset()
+				} catch {
+					zStreams[idx] = ZlibStream()
+				}
 			}
 		}
 	}
@@ -325,7 +329,7 @@ private extension VNCProtocol.TightEncoding {
     func readTightData(
         connection: NetworkConnectionReading,
         expectedSize: Int,
-        streamId: Int,
+        streamID: Int,
         logger: VNCLogger
     ) async throws -> Data {
 		guard expectedSize > 0 else {
@@ -344,7 +348,7 @@ private extension VNCProtocol.TightEncoding {
 		let compressedLength = try await readCompactLength(connection: connection)
 
 		guard compressedLength > 0 else {
-			logger.logDebug("Tight: Compressed length is 0")
+			logger.logDebug("Tight: Compressed length is 0") // TODO: Ended up here after some time, coming from a palette decode. Why?
             
 			throw VNCError.protocol(.invalidData)
 		}
@@ -355,7 +359,7 @@ private extension VNCProtocol.TightEncoding {
         )
 
 		do {
-            return try zStreams[streamId].decompressedData(
+            return try zStreams[streamID].decompressedData(
                 compressedData: compressedData,
                 uncompressedSize: .init(expectedSize)
             )
