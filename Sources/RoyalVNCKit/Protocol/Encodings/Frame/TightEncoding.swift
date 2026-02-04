@@ -60,7 +60,7 @@ extension VNCProtocol.TightEncoding {
 
 		guard width > 0,
 			  height > 0 else {
-//			logger.logDebug("Nothing to Tight decode, skipping")
+			logger.logDebug("Nothing to Tight decode, skipping")
 			return
 		}
 
@@ -307,7 +307,7 @@ private extension VNCProtocol.TightEncoding {
 			let mask = UInt8(1 << idx)
             
 			if (control & mask) != 0 {
-//                logger.logDebug("Resetting Tight Encoding zStream at index \(idx)")
+                logger.logDebug("Resetting Tight Encoding zStream at index \(idx)")
                 
 				do {
 					try zStreams[idx].reset()
