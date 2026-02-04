@@ -49,6 +49,10 @@ extension VNCProtocol.ZRLEEncoding {
 		}
 
 		let currentBytesPerPixel = framebuffer.sourceProperties.bytesPerPixel
+        
+        guard currentBytesPerPixel == 4 else {
+            throw VNCError.protocol(.zrleUnsupportedBitsPerPixel(bitsPerPixel: framebuffer.sourceProperties.bitsPerPixel))
+        }
 
 		if currentBytesPerPixel != self.bytesPerPixel {
 			self.bytesPerPixel = currentBytesPerPixel
@@ -142,6 +146,10 @@ extension VNCProtocol.ZRLEEncoding {
 
             tileY += tileSize
 		}
+        
+        guard stream.offset == decompressedData.count else {
+            throw VNCError.protocol(.invalidData)
+        }
 
 		framebuffer.didUpdate(region: rectangle.region)
 	}
@@ -260,6 +268,10 @@ private extension VNCProtocol.ZRLEEncoding {
 
 				let length = try readRLELength(stream: stream,
 											   logger: logger)
+                
+                guard idx + length <= tileSize else {
+                    throw VNCError.protocol(.invalidData)
+                }
 
 				for _ in 0..<length {
 					let sourceStartIdx = idx * 4
@@ -303,7 +315,7 @@ private extension VNCProtocol.ZRLEEncoding {
 											   logger: logger)
 				}
 
-				if indexInPalette > paletteSize {
+				if indexInPalette >= paletteSize {
 					throw VNCError.protocol(.zrlePaletteIndexOverflow(paletteIndex: indexInPalette, paletteSize: paletteSize))
 				}
 
