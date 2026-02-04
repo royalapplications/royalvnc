@@ -218,6 +218,12 @@ extension NetworkConnectionReading {
 
         return trimmedStringValue
     }
+    
+    func read(length: Int) async throws -> Data {
+        try await readBuffered(length: length,
+                               minimumChunkSize: 1,
+                               maximumChunkSize: length)
+    }
 
     func readBuffered(length: Int) async throws -> Data {
         try await readBuffered(length: length,
@@ -228,27 +234,28 @@ extension NetworkConnectionReading {
     func readBuffered(length: Int,
                       minimumChunkSize: Int,
                       maximumChunkSize: Int) async throws -> Data {
+        guard length > 0 else {
+            return .init()
+        }
+        
         var data = Data(capacity: length)
-
         var remainingBytesToRead = length
 
         while remainingBytesToRead > 0 {
-            let bytesToRead = maximumChunkSize > remainingBytesToRead
-                ? remainingBytesToRead
-                : maximumChunkSize
+            let bytesToRead = min(maximumChunkSize, remainingBytesToRead)
 
             let chunk = try await read(minimumLength: minimumChunkSize,
                                        maximumLength: bytesToRead)
 
             let receivedBytes = chunk.count
-
+            
+            // Safety check: prevent infinite loop
+            guard receivedBytes > 0 else {
+                throw VNCError.protocol(.invalidData)
+            }
+            
             data.append(chunk)
-
             remainingBytesToRead -= receivedBytes
-        }
-
-        guard !data.isEmpty else {
-            throw VNCError.protocol(.noData)
         }
 
         guard data.count == length else {
@@ -256,11 +263,6 @@ extension NetworkConnectionReading {
         }
 
         return data
-    }
-
-    func read(length: Int) async throws -> Data {
-        try await read(minimumLength: length,
-                       maximumLength: length)
     }
 }
 
