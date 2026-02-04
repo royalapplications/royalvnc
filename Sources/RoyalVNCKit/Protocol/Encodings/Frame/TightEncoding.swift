@@ -91,7 +91,7 @@ extension VNCProtocol.TightEncoding {
 		if (control & 0x80) != 0,
 		   subencoding != TightSubencoding.fill.rawValue,
 		   subencoding != TightSubencoding.jpeg.rawValue {
-			throw VNCError.protocol(.notImplemented(feature: "Tight subencoding 0x\(String(format: "%02X", subencoding))"))
+			throw VNCError.protocol(.notImplemented(feature: "Tight subencoding \(subencoding)"))
 		}
 
 		if subencoding == TightSubencoding.fill.rawValue {
