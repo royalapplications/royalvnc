@@ -19,6 +19,18 @@ static class Program
             return 1;
         }
 
+        VncFrameEncodingType[]? frameEncodings = null;
+
+        // Optional(!)
+        // frameEncodings = [
+        //     VncFrameEncodingType.Tight,
+        //     VncFrameEncodingType.Zlib,
+        //     VncFrameEncodingType.Zrle,
+        //     VncFrameEncodingType.Hextile,
+        //     VncFrameEncodingType.CoRre,
+        //     VncFrameEncodingType.Rre
+        // ];
+
         var settings = new DemoSettings
         {
             Hostname = hostname,
@@ -30,6 +42,7 @@ static class Program
             InputMode = InputMode.None,
             IsClipboardRedirectionEnabled = false,
             ColorDepth = ColorDepth.Bits24,
+            FrameEncodings = frameEncodings
         };
 
         using var vncSettings = new VncSettings(settings);
@@ -138,5 +151,6 @@ static class Program
         public bool IsScalingEnabled { get; init; }
         public bool IsShared { get; init; }
         public bool UseDisplayLink { get; init; }
+        public VncFrameEncodingType[]? FrameEncodings { get; init; }
     }
 }

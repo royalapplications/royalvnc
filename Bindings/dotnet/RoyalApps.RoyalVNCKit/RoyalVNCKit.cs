@@ -74,6 +74,38 @@ static unsafe partial class RoyalVNCKit
 
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void* rvnc_frame_encodings_create();
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_append_tight(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_append_zlib(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_append_zrle(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_append_hextile(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_append_corre(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_append_rre(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    internal static partial void rvnc_frame_encodings_destroy(void* frameEncodings);
+
+    [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     internal static partial void* rvnc_settings_create(
         byte isDebugLoggingEnabled,
         string hostname,
@@ -83,7 +115,8 @@ static unsafe partial class RoyalVNCKit
         byte useDisplayLink,
         InputMode inputMode,
         byte isClipboardRedirectionEnabled,
-        ColorDepth colorDepth
+        ColorDepth colorDepth,
+        void* frameEncodings
     );
 
     [LibraryImport(libRoyalVNCKit, StringMarshalling = Utf8Marshalling)]
