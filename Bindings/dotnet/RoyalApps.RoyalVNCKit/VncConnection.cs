@@ -63,6 +63,13 @@ public sealed unsafe class VncConnection: IDisposable
         Debug.Assert(settings is not null);
         var context = new VncContext();
         var logger = new VncLogger(context);
+
+        // TODO: While a logger is created and assigned to the connection, there doesn't appear to be a way to attach the AddLogEntry as an API consumer.
+        // logger.AddLogEntry += (_, _, message) =>
+        // {
+        //     Console.WriteLine(message);
+        // };
+
         context.Logger = logger;
         return rvnc_connection_create(settings.Instance, logger.Instance, framebufferAllocator, context.Instance);
     }
