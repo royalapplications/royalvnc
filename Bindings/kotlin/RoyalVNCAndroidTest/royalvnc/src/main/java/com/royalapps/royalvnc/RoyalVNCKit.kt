@@ -145,6 +145,7 @@ object RoyalVNCKit {
 
 
     // Logger
+
     interface rvnc_logger_delegate_log : Callback {
         fun log(
             logger: Pointer, /* rvnc_logger_t */
@@ -163,7 +164,9 @@ object RoyalVNCKit {
         logger: Pointer /* rvnc_logger_t */
     )
 
+
     // Authentication Type
+
     external fun rvnc_authentication_type_requires_username(
         authenticationType: Int /* VncAuthenticationType */
     ): Boolean
@@ -195,7 +198,42 @@ object RoyalVNCKit {
     )
 
 
+    // Frame Encodings
+
+    external fun rvnc_frame_encodings_create(
+    ): Pointer /* rvnc_frame_encodings_t */
+
+    external fun rvnc_frame_encodings_append_tight(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+    external fun rvnc_frame_encodings_append_zlib(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+    external fun rvnc_frame_encodings_append_zrle(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+    external fun rvnc_frame_encodings_append_hextile(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+    external fun rvnc_frame_encodings_append_corre(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+    external fun rvnc_frame_encodings_append_rre(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+    external fun rvnc_frame_encodings_destroy(
+        frameEncodings: Pointer /* rvnc_frame_encodings_t */
+    )
+
+
     // Settings
+
     external fun rvnc_settings_create(
         isDebugLoggingEnabled: Boolean,
         hostname: String,
@@ -205,7 +243,8 @@ object RoyalVNCKit {
         useDisplayLink: Boolean,
         inputMode: Int /* VncInputMode */,
         isClipboardRedirectionEnabled: Boolean,
-        colorDepth: Int /* VncColorDepth */
+        colorDepth: Int /* VncColorDepth */,
+        frameEncodings: Pointer? /* rvnc_settings_t */
     ): Pointer /* rvnc_settings_t */
 
     external fun rvnc_settings_destroy(

@@ -15,8 +15,15 @@ data class VncSettings(
             useDisplayLink: Boolean,
             inputMode: VncInputMode,
             isClipboardRedirectionEnabled: Boolean,
-            colorDepth: VncColorDepth
+            colorDepth: VncColorDepth,
+            frameEncodings: Array<VncFrameEncodingType>?
         ): VncSettings {
+            val frameEncodingsC: VncFrameEncodings? = if (frameEncodings != null) {
+                VncFrameEncodings(frameEncodings)
+            } else {
+                null
+            }
+
             val ptr = RoyalVNCKit.rvnc_settings_create(
                 isDebugLoggingEnabled,
                 hostname,
@@ -26,10 +33,13 @@ data class VncSettings(
                 useDisplayLink,
                 inputMode.rawValue,
                 isClipboardRedirectionEnabled,
-                colorDepth.rawValue
+                colorDepth.rawValue,
+                frameEncodingsC?.ptr
             )
 
             val settings = VncSettings(ptr)
+
+            frameEncodingsC?.close()
 
             return settings
         }

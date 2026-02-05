@@ -131,6 +131,18 @@ class MainActivity :
             return
         }
 
+        val frameEncodings: Array<VncFrameEncodingType>? = null
+
+        // Optional(!)
+//        frameEncodings = arrayOf(
+//            VncFrameEncodingType.TIGHT,
+//            VncFrameEncodingType.ZLIB,
+//            VncFrameEncodingType.ZRLE,
+//            VncFrameEncodingType.HEXTILE,
+//            VncFrameEncodingType.CORRE,
+//            VncFrameEncodingType.RRE
+//        )
+
         val settings = VncSettings(
             true,
             hostname,
@@ -140,7 +152,8 @@ class MainActivity :
             false,
             VncInputMode.FORWARDKEYBOARDSHORTCUTSEVENIFINUSELOCALLY,
             false,
-            VncColorDepth.BIT24
+            VncColorDepth.BIT24,
+            frameEncodings
         )
 
         val connection = VncConnection(
