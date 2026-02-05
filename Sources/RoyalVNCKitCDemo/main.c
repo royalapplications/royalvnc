@@ -384,6 +384,18 @@ int main(int argc, char *argv[]) {
 //    rvnc_framebuffer_allocator_t framebufferAllocator = rvnc_framebuffer_allocator_create(framebufferAllocator_allocate,
 //                                                                                          framebufferAllocator_deallocate);
     rvnc_framebuffer_allocator_t framebufferAllocator = NULL;
+    
+    // Create frame encodings (optional!)
+//    rvnc_frame_encodings_t frameEncodings = rvnc_frame_encodings_create();
+//    
+//    rvnc_frame_encodings_append_tight(frameEncodings);
+//    rvnc_frame_encodings_append_zlib(frameEncodings);
+//    rvnc_frame_encodings_append_zrle(frameEncodings);
+//    rvnc_frame_encodings_append_hextile(frameEncodings);
+//    rvnc_frame_encodings_append_corre(frameEncodings);
+//    rvnc_frame_encodings_append_rre(frameEncodings);
+    
+    rvnc_frame_encodings_t frameEncodings = NULL;
 
     // Create settings
     rvnc_settings_t settings = rvnc_settings_create(enableDebugLogging,
@@ -394,7 +406,8 @@ int main(int argc, char *argv[]) {
                                                     useDisplayLink,
                                                     inputMode,
                                                     isClipboardRedirectionEnabled,
-                                                    colorDepth);
+                                                    colorDepth,
+                                                    frameEncodings); // optional!
 
     // Create connection
     rvnc_connection_t connection = rvnc_connection_create(settings,
@@ -432,11 +445,31 @@ int main(int argc, char *argv[]) {
 
     // Clean up
     rvnc_connection_destroy(connection);
+    connection = NULL;
+    
     rvnc_connection_delegate_destroy(connectionDelegate);
+    connectionDelegate = NULL;
+    
     rvnc_settings_destroy(settings);
-    rvnc_framebuffer_allocator_destroy(framebufferAllocator);
-    rvnc_logger_destroy(logger);
+    settings = NULL;
+    
+    if (framebufferAllocator) {
+        rvnc_framebuffer_allocator_destroy(framebufferAllocator);
+        framebufferAllocator = NULL;
+    }
+    
+    if (frameEncodings) {
+        rvnc_frame_encodings_destroy(frameEncodings);
+        frameEncodings = NULL;
+    }
+    
+    if (logger) {
+        rvnc_logger_destroy(logger);
+        logger = NULL;
+    }
+    
     free(context);
+    context = NULL;
 
     return EXIT_SUCCESS;
 }

@@ -67,11 +67,20 @@ public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
                                  _ useDisplayLink: Bool,
                                  _ inputMode: RVNC_INPUTMODE,
                                  _ isClipboardRedirectionEnabled: Bool,
-                                 _ colorDepth: RVNC_COLORDEPTH) -> rvnc_settings_t {
+                                 _ colorDepth: RVNC_COLORDEPTH,
+                                 _ frameEncodings: rvnc_frame_encodings_t?) -> rvnc_settings_t {
     let hostnameStr = String(cString: hostname)
 
     let inputModeSwift = inputMode.swiftInputMode
     let colorDepthSwift = colorDepth.swiftColorDepth
+    let frameEncodingsSwift: [VNCFrameEncodingType]
+    
+    if let frameEncodings {
+        frameEncodingsSwift = VNCFrameEncodings_C.fromPointer(frameEncodings)
+            .frameEncodings
+    } else {
+        frameEncodingsSwift = .default
+    }
 
     let settings = VNCConnection.Settings(isDebugLoggingEnabled: isDebugLoggingEnabled,
                                           hostname: hostnameStr,
@@ -82,7 +91,7 @@ public func rvnc_settings_create(_ isDebugLoggingEnabled: Bool,
                                           inputMode: inputModeSwift,
                                           isClipboardRedirectionEnabled: isClipboardRedirectionEnabled,
                                           colorDepth: colorDepthSwift,
-                                          frameEncodings: .default)
+                                          frameEncodings: frameEncodingsSwift)
 
     return settings.retainedPointer()
 }
