@@ -7,6 +7,9 @@ import Foundation
 
 import AppKit
 import Carbon
+import QuartzCore
+import IOSurface
+import Metal
 
 @objc(VNCCAFramebufferView)
 public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
@@ -98,6 +101,25 @@ public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
 	private var displayLink: DisplayLink?
 	private var trackingArea: NSTrackingArea?
 	private var previousHotKeyMode: UnsafeMutableRawPointer?
+    
+    private static let enableMetalRendering = true
+    
+    private let renderQueue = DispatchQueue(label: "com.royalvnc.framebufferview.metal",
+                                            qos: .userInteractive)
+    
+    private let renderSemaphore = DispatchSemaphore(value: 1)
+
+    private var isMetalEnabled = false
+    private var isMetalActive = false
+    private let pixelFormat = MTLPixelFormat.bgra8Unorm
+    
+    private var metalDevice: MTLDevice?
+    private var commandQueue: MTLCommandQueue?
+    private var metalLayer: CAMetalLayer?
+
+    private var ioSurfaceTexture: MTLTexture?
+    private var currentIOSurface: IOSurface?
+    private var currentIOSurfaceSize: CGSize = .zero
 
     @objc
 	public init(frame frameRect: CGRect,
@@ -117,23 +139,52 @@ public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
         
 		wantsLayer = true
 
-		guard let layer = layer else {
-			fatalError("CAFramebufferView failed to get layer")
+		guard let layer else {
+			fatalError("Framebuffer view failed to get layer")
 		}
 
-		// Set some properties that might(!) boost performance a bit
-		layer.drawsAsynchronously = true
-		layer.isOpaque = true
-		layer.masksToBounds = false
-		layer.allowsEdgeAntialiasing = false
-		layer.backgroundColor = .clear
+        // Set some properties that might(!) boost performance a bit
+        layer.drawsAsynchronously = true
+        layer.isOpaque = true
+        layer.masksToBounds = false
+        layer.allowsEdgeAntialiasing = false
+        layer.backgroundColor = .clear
 
-		layer.contentsScale = 1
-		layer.contentsGravity = .center
-		layer.contentsFormat = .RGBA8Uint
+        if Self.enableMetalRendering,
+           let device = MTLCreateSystemDefaultDevice(),
+           let commandQueue = device.makeCommandQueue() {
+            self.isMetalEnabled = true
+            self.metalDevice = device
+            self.commandQueue = commandQueue
 
-		layer.minificationFilter = .trilinear
-		layer.magnificationFilter = .trilinear
+            let metalLayer = CAMetalLayer()
+            metalLayer.device = device
+            metalLayer.pixelFormat = pixelFormat
+            metalLayer.framebufferOnly = false
+            metalLayer.isOpaque = true
+            metalLayer.backgroundColor = .clear
+            metalLayer.contentsScale = 1
+            metalLayer.presentsWithTransaction = false
+            metalLayer.allowsNextDrawableTimeout = false
+
+            layer.addSublayer(metalLayer)
+            
+            self.metalLayer = metalLayer
+
+            let shouldUseMetal = canUseMetal(for: framebuffer)
+            setMetalLayerActive(shouldUseMetal)
+
+            if !shouldUseMetal {
+                configureFallbackLayer(layer)
+            }
+        } else {
+            self.isMetalEnabled = false
+            self.isMetalActive = false
+            self.metalDevice = nil
+            self.commandQueue = nil
+
+            configureFallbackLayer(layer)
+        }
 
 		frameSizeDidChange(frameRect.size)
 	}
@@ -513,33 +564,8 @@ extension VNCCAFramebufferView {
 	}
 }
 
+// MARK: - Hot Keys
 private extension VNCCAFramebufferView {
-    func updateImage(_ image: CGImage?) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self,
-                  let layer else {
-                return
-            }
-
-            layer.contents = image
-        }
-    }
-
-    func frameSizeDidChange(_ size: CGSize) {
-        guard settings.isScalingEnabled,
-              let layer = layer else {
-            return
-        }
-
-        if frameSizeExceedsFramebufferSize(size) {
-            // Don't allow upscaling
-            layer.contentsGravity = .center
-        } else {
-            // Allow downscaling
-            layer.contentsGravity = .resizeAspect
-        }
-    }
-
     func registerHotKeys() {
         guard settings.inputMode == .forwardAllKeyboardShortcutsAndHotKeys else {
             return
@@ -560,9 +586,244 @@ private extension VNCCAFramebufferView {
     }
 }
 
+// MARK: - Rendering
+private extension VNCCAFramebufferView {
+    func configureFallbackLayer(_ layer: CALayer) {
+        layer.contentsScale = 1
+        layer.contentsGravity = .center
+        layer.contentsFormat = .RGBA8Uint
+        layer.minificationFilter = .trilinear
+        layer.magnificationFilter = .trilinear
+    }
+
+    func canUseMetal(for framebuffer: VNCFramebuffer?) -> Bool {
+        guard isMetalEnabled,
+              let framebuffer,
+              let surface = framebuffer.ioSurface else {
+            return false
+        }
+
+        let isAligned = self.isSurfaceAligned(surface)
+        
+        return isAligned
+    }
+    
+    func isSurfaceAligned(_ surface: IOSurface) -> Bool {
+        let bytesPerRow = surface.bytesPerRow
+        let isAligned = bytesPerRow % 16 == 0
+        
+        return isAligned
+    }
+
+    func setMetalLayerActive(_ isActive: Bool) {
+        isMetalActive = isActive
+        metalLayer?.isHidden = !isActive
+    }
+
+    func updateImage(_ image: CGImage?) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self,
+                  let layer else {
+                return
+            }
+
+            layer.contents = image
+        }
+    }
+
+    func requestRender() {
+        guard self.isMetalActive else {
+            updateImage(self.framebuffer?.cgImage)
+            
+            return
+        }
+
+        guard self.commandQueue != nil,
+              self.metalLayer != nil else {
+            return
+        }
+        
+        let renderSemaphore = self.renderSemaphore
+
+        guard renderSemaphore.wait(timeout: .now()) == .success else {
+            return
+        }
+
+        let framebuffer = self.framebuffer
+        let framebufferSize = self.framebufferSize
+
+        self.renderQueue.async { [weak self] in
+            defer {
+                renderSemaphore.signal()
+            }
+            
+            guard let self else {
+                return
+            }
+
+            self.renderIOSurface(framebuffer: framebuffer,
+                                 framebufferSize: framebufferSize)
+        }
+    }
+
+    func renderIOSurface(framebuffer: VNCFramebuffer?,
+                         framebufferSize: CGSize) {
+        guard let metalLayer,
+              let commandQueue,
+              let framebuffer else {
+            return
+        }
+
+        let width = Int(framebufferSize.width)
+        let height = Int(framebufferSize.height)
+
+        guard width > 0,
+              height > 0 else {
+            return
+        }
+
+        guard let ioSurfaceTexture = ensureIOSurfaceTexture(surface: framebuffer.ioSurface,
+                                                            size: framebufferSize) else {
+            DispatchQueue.main.async { [weak self] in
+                guard let self else {
+                    return
+                }
+                
+                self.setMetalLayerActive(false)
+                
+                if let layer {
+                    self.configureFallbackLayer(layer)
+                    self.frameSizeDidChange(self.bounds.size)
+                }
+                
+                self.updateImage(framebuffer.cgImage)
+            }
+            
+            return
+        }
+
+        guard let drawable = metalLayer.nextDrawable() else {
+            return
+        }
+
+        guard let commandBuffer = commandQueue.makeCommandBuffer(),
+              let blitEncoder = commandBuffer.makeBlitCommandEncoder() else {
+            return
+        }
+        
+        let zeroOrigin = MTLOrigin(x: 0,
+                                   y: 0,
+                                   z: 0)
+        
+        let sourceSize = MTLSize(width: width,
+                                 height: height,
+                                 depth: 1)
+
+        blitEncoder.copy(from: ioSurfaceTexture,
+                         sourceSlice: 0,
+                         sourceLevel: 0,
+                         sourceOrigin: zeroOrigin,
+                         sourceSize: sourceSize,
+                         to: drawable.texture,
+                         destinationSlice: 0,
+                         destinationLevel: 0,
+                         destinationOrigin: zeroOrigin)
+
+        blitEncoder.endEncoding()
+        
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+    }
+
+    func ensureIOSurfaceTexture(surface: IOSurface?,
+                                size: CGSize) -> MTLTexture? {
+        guard let surface,
+              self.isSurfaceAligned(surface),
+              let metalDevice else {
+            return nil
+        }
+
+        if self.currentIOSurface !== surface ||
+            self.currentIOSurfaceSize != size ||
+            self.ioSurfaceTexture == nil {
+            let width = Int(size.width)
+            let height = Int(size.height)
+
+            guard width > 0,
+                  height > 0 else {
+                return nil
+            }
+
+            let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: pixelFormat,
+                                                                      width: width,
+                                                                      height: height,
+                                                                      mipmapped: false)
+            
+            descriptor.usage = [ .shaderRead ]
+            descriptor.storageMode = .shared
+
+            self.ioSurfaceTexture = metalDevice.makeTexture(descriptor: descriptor,
+                                                            iosurface: surface,
+                                                            plane: 0)
+            
+            self.currentIOSurface = surface
+            self.currentIOSurfaceSize = size
+        }
+
+        return self.ioSurfaceTexture
+    }
+
+    func frameSizeDidChange(_ size: CGSize) {
+        if isMetalActive {
+            updateMetalLayerLayout()
+        } else {
+            updateFallbackLayerLayout()
+        }
+    }
+    
+    func updateMetalLayerLayout() {
+        guard let metalLayer else {
+            return
+        }
+
+        let targetFrame: CGRect
+
+        if settings.isScalingEnabled {
+            targetFrame = self.contentRect
+        } else {
+            let origin = CGPoint(x: (bounds.size.width - framebufferSize.width) / 2.0,
+                                 y: (bounds.size.height - framebufferSize.height) / 2.0)
+            
+            targetFrame = CGRect(origin: origin,
+                                 size: framebufferSize)
+        }
+
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
+        metalLayer.frame = targetFrame
+        metalLayer.drawableSize = framebufferSize
+        
+        CATransaction.commit()
+    }
+
+    func updateFallbackLayerLayout() {
+        guard settings.isScalingEnabled,
+              let layer else {
+            return
+        }
+
+        if frameSizeExceedsFramebufferSize(bounds.size) {
+            layer.contentsGravity = .center
+        } else {
+            layer.contentsGravity = .resizeAspect
+        }
+    }
+}
+
 extension VNCCAFramebufferView: DisplayLinkDelegate {
 	func displayLinkDidUpdate(_ displayLink: DisplayLink) {
-		updateImage(framebuffer?.cgImage)
+		requestRender()
 	}
 }
 
@@ -583,7 +844,7 @@ extension VNCCAFramebufferView: VNCConnectionDelegate {
             return
         }
 
-        updateImage(framebuffer.cgImage)
+        requestRender()
     }
 
     // Handle directly
@@ -638,7 +899,7 @@ extension VNCCAFramebufferView: VNCConnectionDelegate {
         guard let delegate else {
             return
         }
-        
+
         delegate.connection(
             connection,
             didCreateFramebuffer: framebuffer
@@ -653,7 +914,7 @@ extension VNCCAFramebufferView: VNCConnectionDelegate {
         guard let delegate else {
             return
         }
-        
+
         delegate.connection(
             connection,
             didResizeFramebuffer: framebuffer
