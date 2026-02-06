@@ -22,6 +22,7 @@ extension VNCProtocol {
 #if canImport(CoreGraphics) && canImport(ImageIO)
         private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
         private static let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(.init(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue))
+        private static let directBitmapInfo = CGBitmapInfo.byteOrder32Little.union(.init(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue))
 #endif
         
         let encodingType = VNCFrameEncodingType.tight.rawValue
@@ -735,6 +736,51 @@ private extension VNCProtocol.TightEncoding {
         guard image.width == width,
               image.height == height else {
             throw VNCError.protocol(.invalidData)
+        }
+
+        let canUseDirectOutput = bytesPerPixel == 4 &&
+            !pixelFormat.bigEndian &&
+            pixelFormat.bitsPerPixel == 32 &&
+            pixelFormat.depth == 24 &&
+            pixelFormat.redMax == 255 &&
+            pixelFormat.greenMax == 255 &&
+            pixelFormat.blueMax == 255 &&
+            pixelFormat.redShift == 16 &&
+            pixelFormat.greenShift == 8 &&
+            pixelFormat.blueShift == 0
+
+        if canUseDirectOutput {
+            let bytesPerRow = width * bytesPerPixel
+            var output = Data(count: bytesPerRow * height)
+
+            let drawResult = output.withUnsafeMutableBytes { ptr -> Bool in
+                guard let baseAddress = ptr.baseAddress else {
+                    return false
+                }
+
+                guard let context = CGContext(
+                    data: baseAddress,
+                    width: width,
+                    height: height,
+                    bitsPerComponent: 8,
+                    bytesPerRow: bytesPerRow,
+                    space: Self.rgbColorSpace,
+                    bitmapInfo: Self.directBitmapInfo.rawValue
+                ) else {
+                    return false
+                }
+
+                context.draw(image,
+                             in: CGRect(x: 0, y: 0, width: width, height: height))
+
+                return true
+            }
+
+            guard drawResult else {
+                throw VNCError.protocol(.invalidData)
+            }
+
+            return output
         }
 
         let bytesPerRow = width * 4
