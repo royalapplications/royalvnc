@@ -56,6 +56,16 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
     
     /// The total number of bytes in the framebuffer's pixel memory.
     public let surfaceByteCount: Int
+    
+#if canImport(IOSurface)
+    public var ioSurface: IOSurface? {
+        if let ioSurfaceAllocator = allocator as? VNCFramebufferIOSurfaceAllocator {
+            return ioSurfaceAllocator.surface
+        }
+        
+        return nil
+    }
+#endif
 
     /// The list of logical screens represented in this framebuffer.
 #if canImport(ObjectiveC)
