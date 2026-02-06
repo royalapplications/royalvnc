@@ -6,7 +6,7 @@ import Foundation
 
 /// A framebuffer allocator that uses standard memory allocation (malloc) for buffer management.
 /// Provides cross-platform locking mechanisms for synchronization.
-public class VNCFramebufferMallocAllocator: VNCFramebufferAllocator {
+public final class VNCFramebufferMallocAllocator: VNCFramebufferAllocator {
 #if canImport(Glibc) || canImport(Android) || canImport(WinSDK)
     private let bufferLock = Spinlock()
 #else

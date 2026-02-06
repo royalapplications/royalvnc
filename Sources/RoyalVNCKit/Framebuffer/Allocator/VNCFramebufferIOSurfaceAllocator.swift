@@ -5,7 +5,7 @@ import CoreVideo
 
 /// A framebuffer allocator implementation that uses `IOSurface` for memory allocation and synchronization.
 /// Suitable for high-performance graphics sharing on platforms that support `IOSurface` like macOS and iOS.
-public class VNCFramebufferIOSurfaceAllocator: VNCFramebufferAllocator {
+public final class VNCFramebufferIOSurfaceAllocator: VNCFramebufferAllocator {
     /// The width of the framebuffer in pixels.
     public let width: Int
     
