@@ -56,16 +56,6 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
     
     /// The total number of bytes in the framebuffer's pixel memory.
     public let surfaceByteCount: Int
-    
-#if canImport(IOSurface)
-    public var ioSurface: IOSurface? {
-        if let ioSurfaceAllocator = allocator as? VNCFramebufferIOSurfaceAllocator {
-            return ioSurfaceAllocator.surface
-        }
-        
-        return nil
-    }
-#endif
 
     /// The list of logical screens represented in this framebuffer.
 #if canImport(ObjectiveC)
@@ -95,13 +85,25 @@ public final class VNCFramebuffer: NSObjectOrAnyObject {
 
 	let needsColorConversion: Bool
     
+#if canImport(IOSurface) && canImport(CoreVideo)
+    var ioSurface: IOSurface? {
+        guard let surfaceAllocator = allocator as? VNCFramebufferIOSurfaceAllocator else {
+            return nil
+        }
+        
+        let surface = surfaceAllocator.surface
+        
+        return surface
+    }
+#endif
+    
+    private(set) var colorMap: ColorMap?
+    
+    // MARK: - Private Properties
     private var isBatchingUpdates = false
     private var regionsUpdatedInBatch = [VNCRegion]()
-
-	private(set) var colorMap: ColorMap?
-
+    
 #if canImport(CoreGraphics)
-	// MARK: - Private Properties
 	private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
 #endif
 
