@@ -5,16 +5,18 @@
     - If you don't want to customize the order and enabled state of `frameEncodings`, use `[VNCFrameEncodingType].default`.
     - For debugging purposes you may set `isDebugLoggingEnabled` to `true`. Note that this will impact performance noticeably and should only be enabled for debugging purposes.
 ```swift
-let settings = VNCConnection.Settings(isDebugLoggingEnabled: true,
-                                      hostname: "targethost",
-                                      port: 5900,
-                                      isShared: true,
-                                      isScalingEnabled: true,
-                                      useDisplayLink: true,
-                                      inputMode: .forwardKeyboardShortcutsEvenIfInUseLocally,
-                                      isClipboardRedirectionEnabled: true,
-                                      colorDepth: .depth24Bit,
-                                      frameEncodings: .default)
+let settings = VNCConnection.Settings(
+    isDebugLoggingEnabled: true,
+    hostname: "targethost",
+    port: 5900,
+    isShared: true,
+    isScalingEnabled: true,
+    useDisplayLink: true,
+    inputMode: .forwardKeyboardShortcutsEvenIfInUseLocally,
+    isClipboardRedirectionEnabled: true,
+    colorDepth: .depth24Bit,
+    frameEncodings: .default
+)
 ```
 - Create an instance of `VNCConnection` by providing the settings you created in the previous step in the initializer. Make sure to keep a strong reference to the connection!
 ```swift
@@ -149,4 +151,4 @@ func connection(_ connection: VNCConnection,
 }
 ```
 - RoyalVNCKit also provides some ready-to-use views that handle this for you (and more, including input handling). For instance, `VNCCAFramebufferView` is an `NSView` subclass for macOS.
-    - Just initialize the view with a frame, framebuffer and connection, add it to your view hierarchy and then forward some of the connection's delegate methods to it, namely `connection(_:didUpdateFramebuffer:x:y:width:height:)` and `connection(_:didUpdateCursor:)`.
+    - Just initialize the view with a frame, framebuffer and connection, add it to your view hierarchy. It will automatically re-assign your connection delegate, consume the methods it needs for updating the view (`connection(_:didUpdateFramebuffer:x:y:width:height:)` and `connection(_:didUpdateCursor:)`) and forwards the rest to your original connection delegate.
