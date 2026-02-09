@@ -49,6 +49,7 @@ public final class VNCConnection: NSObjectOrAnyObject {
 									  attributes: .concurrent)
 
 	private let sharedZStream: ZlibStream
+    private let sharedZRLEZStream: ZlibStream
 
 	// MARK: - Internal Properties
     let taskPriority = TaskPriority.high
@@ -101,7 +102,7 @@ public final class VNCConnection: NSObjectOrAnyObject {
 			VNCFrameEncodingType.copyRect.rawValue: VNCProtocol.CopyRectEncoding(),
             VNCFrameEncodingType.tight.rawValue: VNCProtocol.TightEncoding(),
             VNCFrameEncodingType.zlib.rawValue: VNCProtocol.ZlibEncoding(zStream: sharedZStream),
-			VNCFrameEncodingType.zrle.rawValue: VNCProtocol.ZRLEEncoding(zStream: sharedZStream),
+			VNCFrameEncodingType.zrle.rawValue: VNCProtocol.ZRLEEncoding(zStream: sharedZRLEZStream),
 			VNCFrameEncodingType.hextile.rawValue: hextileEncoding,
 			VNCFrameEncodingType.coRRE.rawValue: VNCProtocol.RREEncoding(),
 			VNCFrameEncodingType.rre.rawValue: VNCProtocol.RREEncoding(),
@@ -200,7 +201,9 @@ public final class VNCConnection: NSObjectOrAnyObject {
 
         self.logger = logger
         self.context = context
+        
         self.sharedZStream = .init()
+        self.sharedZRLEZStream = .init()
 
         let clipboard = VNCClipboard()
 
