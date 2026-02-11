@@ -14,10 +14,10 @@ data class VncAuthenticationRequest(
         }
 
     val requiresUsername: Boolean
-        get() = authenticationType.requiresUsername
+        get() = authenticationType.requiresUsername.toBool()
 
     val requiresPassword: Boolean
-        get() = authenticationType.requiresPassword
+        get() = authenticationType.requiresPassword.toBool()
 
     fun cancel() {
         RoyalVNCKit.rvnc_authentication_request_cancel(ptr)

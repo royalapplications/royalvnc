@@ -5,6 +5,11 @@ import com.sun.jna.ptr.*
 import java.nio.ByteBuffer
 import android.util.Log
 
+// Boolean Helpers
+
+fun Byte.toBool(): Boolean = this.toInt() != 0
+fun Boolean.toCByte(): Byte = if (this) 1 else 0
+
 // Enums
 
 enum class VncLogLevel(val rawValue: Int) {
@@ -89,10 +94,10 @@ enum class VncAuthenticationType(val rawValue: Int) {
         }
     }
 
-    val requiresUsername: Boolean
+    val requiresUsername: Byte
         get() = RoyalVNCKit.rvnc_authentication_type_requires_username(rawValue)
 
-    val requiresPassword: Boolean
+    val requiresPassword: Byte
         get() = RoyalVNCKit.rvnc_authentication_type_requires_password(rawValue)
 }
 
@@ -169,11 +174,11 @@ object RoyalVNCKit {
 
     external fun rvnc_authentication_type_requires_username(
         authenticationType: Int /* VncAuthenticationType */
-    ): Boolean
+    ): Byte
 
     external fun rvnc_authentication_type_requires_password(
         authenticationType: Int /* VncAuthenticationType */
-    ): Boolean
+    ): Byte
 
 
     // Authentication Request
@@ -235,14 +240,14 @@ object RoyalVNCKit {
     // Settings
 
     external fun rvnc_settings_create(
-        isDebugLoggingEnabled: Boolean,
+        isDebugLoggingEnabled: Byte,
         hostname: String,
         port: Short /* uint16_t */,
-        isShared: Boolean,
-        isScalingEnabled: Boolean,
-        useDisplayLink: Boolean,
+        isShared: Byte,
+        isScalingEnabled: Byte,
+        useDisplayLink: Byte,
         inputMode: Int /* VncInputMode */,
-        isClipboardRedirectionEnabled: Boolean,
+        isClipboardRedirectionEnabled: Byte,
         colorDepth: Int /* VncColorDepth */,
         frameEncodings: Pointer? /* rvnc_settings_t */
     ): Pointer /* rvnc_settings_t */
@@ -268,11 +273,11 @@ object RoyalVNCKit {
 
     external fun rvnc_connection_state_error_should_display_to_user_get(
         connectionState: Pointer /* rvnc_connection_state_t */
-    ): Boolean
+    ): Byte
 
     external fun rvnc_connection_state_error_is_authentication_error_get(
         connectionState: Pointer /* rvnc_connection_state_t */
-    ): Boolean
+    ): Byte
 
 
     // Framebuffer
@@ -314,7 +319,7 @@ object RoyalVNCKit {
 
     external fun rvnc_cursor_is_empty_get(
         cursor: Pointer /* rvnc_cursor_t */
-    ): Boolean
+    ): Byte
 
     external fun rvnc_cursor_size_width_get(
         cursor: Pointer /* rvnc_cursor_t */

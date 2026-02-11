@@ -12,7 +12,7 @@ data class VncCursor(
     private var _pixelData: Pointer? = null
 
     val empty: Boolean
-        get() = RoyalVNCKit.rvnc_cursor_is_empty_get(ptr)
+        get() = RoyalVNCKit.rvnc_cursor_is_empty_get(ptr).toBool()
 
     val width: Short
         get() = RoyalVNCKit.rvnc_cursor_size_width_get(ptr)

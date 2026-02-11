@@ -25,14 +25,14 @@ data class VncSettings(
             }
 
             val ptr = RoyalVNCKit.rvnc_settings_create(
-                isDebugLoggingEnabled,
+                isDebugLoggingEnabled.toCByte(),
                 hostname,
                 port,
-                isShared,
-                isScalingEnabled,
-                useDisplayLink,
+                isShared.toCByte(),
+                isScalingEnabled.toCByte(),
+                useDisplayLink.toCByte(),
                 inputMode.rawValue,
-                isClipboardRedirectionEnabled,
+                isClipboardRedirectionEnabled.toCByte(),
                 colorDepth.rawValue,
                 frameEncodingsC?.ptr
             )

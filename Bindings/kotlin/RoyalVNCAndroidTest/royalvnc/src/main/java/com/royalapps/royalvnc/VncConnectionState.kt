@@ -18,10 +18,10 @@ data class VncConnectionState(
         get() = RoyalVNCKit.rvnc_connection_state_error_description_get_copy(ptr)
 
     val shouldDisplayToUser: Boolean
-        get() = RoyalVNCKit.rvnc_connection_state_error_should_display_to_user_get(ptr)
+        get() = RoyalVNCKit.rvnc_connection_state_error_should_display_to_user_get(ptr).toBool()
 
     val isAuthenticationError: Boolean
-        get() = RoyalVNCKit.rvnc_connection_state_error_is_authentication_error_get(ptr)
+        get() = RoyalVNCKit.rvnc_connection_state_error_is_authentication_error_get(ptr).toBool()
 
     override fun close() {
         if (owned) {
