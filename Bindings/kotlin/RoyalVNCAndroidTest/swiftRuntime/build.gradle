@@ -5,7 +5,7 @@ plugins {
 
 group = 'com.royalapps'
 def mavenArtifactId = 'swiftruntime_android'
-version = System.getenv('SWIFT_RT_VERSION') ?: '6.2.1'
+version = System.getenv('SWIFT_RT_VERSION') ?: '6.2.3'
 
 android {
     namespace "${group}.${mavenArtifactId}"
