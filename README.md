@@ -3,7 +3,7 @@
 ![RoyalVNC](Design/Banner_Rendered/Banner.png)
 
 RoyalVNC is a modern, high performance implementation of the [VNC/RFB protocol](https://github.com/rfbproto/rfbproto/blob/master/rfbproto.rst) written in Swift.
-The SDK (RoyalVNCKit) is compatible with Swift, Objective-C, C and C# on macOS, iOS, iPadOS, Linux and Windows.
+The SDK (RoyalVNCKit) is compatible with Swift, Objective-C, C, C# and Kotlin on macOS, iOS, iPadOS, Android, Linux and Windows.
 It depends on [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift), [zlib](https://github.com/madler/zlib) and D3DES (see [Credits](#Credits)).
 
 ## Supported Features
