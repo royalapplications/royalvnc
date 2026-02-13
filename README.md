@@ -58,6 +58,5 @@ See [Usage](USAGE.md).
 ## Credits
 - [CryptoSwift](https://github.com/krzyzanowskim/CryptoSwift) ([The CryptoSwift license](https://github.com/krzyzanowskim/CryptoSwift/blob/main/LICENSE))
 - [zlib](https://github.com/madler/zlib) ([zlib license](https://github.com/madler/zlib/blob/develop/LICENSE))
-- [Swift JPEG](https://github.com/tayloraswift/swift-jpeg) ([Apache License 2.0](https://github.com/tayloraswift/swift-jpeg/blob/master/LICENSE))
-- [Swift PNG](https://github.com/tayloraswift/swift-png) ([Apache License 2.0](https://github.com/tayloraswift/swift-png/blob/master/LICENSE))
+- [stb](https://github.com/troughton/Cstb) ([public domain](https://github.com/troughton/Cstb/blob/main/LICENSE))
 - D3DES (Public Domain, Copyright Richard Outerbridge)

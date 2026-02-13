@@ -1,5 +1,5 @@
 {
-  "originHash" : "8d288fc7cc7c5e57c1507a673d4842508ce86ac59b7a945c2949a3317b0d6662",
+  "originHash" : "8efe29ad7697d4de2d1f0783edd95307f69136a76273b2837998801de5444e9a",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "swift-jpeg",
+      "identity" : "cstb",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tayloraswift/swift-jpeg",
+      "location" : "https://github.com/troughton/Cstb",
       "state" : {
-        "revision" : "03ef017433c9d268d2b40985f9ef4320007f95c0",
-        "version" : "2.0.0"
+        "revision" : "a47f4ecf3a139ac2f53ed27a984853c9f98097f1",
+        "version" : "1.0.6"
       }
     }
   ],

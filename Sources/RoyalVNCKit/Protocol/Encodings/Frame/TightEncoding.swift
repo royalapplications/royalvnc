@@ -9,8 +9,8 @@ import CoreGraphics
 import ImageIO
 #endif
 
-#if canImport(JPEG)
-@_implementationOnly import JPEG
+#if canImport(stb_image)
+internal import stb_image
 #endif
 
 extension VNCProtocol {
@@ -849,29 +849,63 @@ private extension VNCProtocol.TightEncoding {
 #else
         switch imageType {
         case .jpeg:
-#if canImport(JPEG)
-            var stream = TightImageDataStream(data)
-            let image: JPEG.Data.Rectangular<JPEG.Common> = try .decompress(stream: &stream)
-
-            guard image.size.x == width,
-                  image.size.y == height else {
+#if canImport(stb_image)
+            guard data.count <= Int(Int32.max) else {
                 throw VNCError.protocol(.invalidData)
             }
 
-            let pixels = image.unpack(as: JPEG.RGB.self)
+            let compressedSize = Int32(data.count)
+            let desiredChannels = Int32(3)
+
+            var decodedWidth = Int32(0)
+            var decodedHeight = Int32(0)
+
+            let decodedPixels: UnsafeMutablePointer<UInt8>? = data.withUnsafeBytes { rawBuffer in
+                guard let source = rawBuffer.bindMemory(to: UInt8.self).baseAddress else {
+                    return nil
+                }
+
+                return stbi_load_from_memory(
+                    source,
+                    compressedSize,
+                    &decodedWidth,
+                    &decodedHeight,
+                    nil,
+                    desiredChannels
+                )
+            }
+
+            guard let decodedPixels else {
+                throw VNCError.protocol(.invalidData)
+            }
+
+            defer {
+                stbi_image_free(decodedPixels)
+            }
+
+            guard Int(decodedWidth) == width,
+                  Int(decodedHeight) == height else {
+                throw VNCError.protocol(.invalidData)
+            }
+
             let pixelCount = width * height
 
-            guard pixels.count == pixelCount else {
+            guard pixelCount <= Int.max / Int(desiredChannels) else {
                 throw VNCError.protocol(.invalidData)
             }
 
-            return packRGBData(
-                pixels,
+            let decodedByteCount = pixelCount * Int(desiredChannels)
+            let rgbData = Data(bytes: decodedPixels,
+                               count: decodedByteCount)
+
+            return try convertTPixelData(
+                rgbData,
+                pixelFormat: pixelFormat,
                 bytesPerPixel: bytesPerPixel,
-                pixelFormat: pixelFormat
+                tPixelSize: Int(desiredChannels)
             )
 #else
-            throw VNCError.protocol(.notImplemented(feature: "Tight JPEG decoding requires swift-jpeg on non-Apple platforms"))
+            throw VNCError.protocol(.notImplemented(feature: "Tight JPEG decoding requires stb_image on non-Apple platforms"))
 #endif
 
         case .png:
@@ -880,71 +914,3 @@ private extension VNCProtocol.TightEncoding {
 #endif
     }
 }
-
-private extension VNCProtocol.TightEncoding {
-    struct TightImageDataStream {
-        private var bytes: [UInt8]
-        private var index: Int = 0
-
-        init(_ data: Data) {
-            self.bytes = Array(data)
-        }
-
-        mutating func read(count: Int) -> [UInt8]? {
-            guard count >= 0,
-                  index + count <= bytes.count else {
-                return nil
-            }
-
-            let slice = bytes[index..<index + count]
-            index += count
-            return Array(slice)
-        }
-    }
-}
-
-#if !(canImport(ImageIO) && canImport(CoreGraphics))
-#if canImport(JPEG)
-extension VNCProtocol.TightEncoding.TightImageDataStream: JPEG.Bytestream.Source {}
-#endif
-
-private extension VNCProtocol.TightEncoding {
-#if canImport(JPEG)
-    static func packRGBData(
-        _ pixels: [JPEG.RGB],
-        bytesPerPixel: Int,
-        pixelFormat: VNCProtocol.PixelFormat
-    ) -> Data {
-        let pixelCount = pixels.count
-        let bitsPerPixel = Int(pixelFormat.bitsPerPixel)
-        var output = Data(count: pixelCount * bytesPerPixel)
-
-        output.withUnsafeMutableBytes { outputPtr in
-            guard let outputBase = outputPtr.baseAddress else {
-                return
-            }
-
-            for idx in 0..<pixelCount {
-                let pixel = pixels[idx]
-
-                let pixelValue = packPixelValue(
-                    red: pixel.r,
-                    green: pixel.g,
-                    blue: pixel.b,
-                    pixelFormat: pixelFormat
-                )
-
-                storePixelValue(
-                    pixelValue,
-                    bitsPerPixel: bitsPerPixel,
-                    targetPtr: outputBase,
-                    offset: idx * bytesPerPixel
-                )
-            }
-        }
-
-        return output
-    }
-#endif
-}
-#endif
