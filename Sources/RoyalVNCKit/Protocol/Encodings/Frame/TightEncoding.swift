@@ -13,10 +13,6 @@ import ImageIO
 @_implementationOnly import JPEG
 #endif
 
-#if canImport(PNG)
-@_implementationOnly import PNG
-#endif
-
 extension VNCProtocol {
 	final class TightEncoding: VNCFrameEncoding {
 #if canImport(CoreGraphics) && canImport(ImageIO)
@@ -879,30 +875,7 @@ private extension VNCProtocol.TightEncoding {
 #endif
 
         case .png:
-#if canImport(PNG)
-            var stream = TightImageDataStream(data)
-            let image: PNG.Image = try .decompress(stream: &stream)
-
-            guard image.size.x == width,
-                  image.size.y == height else {
-                throw VNCError.protocol(.invalidData)
-            }
-
-            let pixels = image.unpack(as: PNG.RGBA<UInt8>.self)
-            let pixelCount = width * height
-
-            guard pixels.count == pixelCount else {
-                throw VNCError.protocol(.invalidData)
-            }
-
-            return packRGBAData(
-                pixels,
-                bytesPerPixel: bytesPerPixel,
-                pixelFormat: pixelFormat
-            )
-#else
-            throw VNCError.protocol(.notImplemented(feature: "Tight PNG decoding requires swift-png on non-Apple platforms"))
-#endif
+            throw VNCError.protocol(.notImplemented(feature: "Tight PNG decoding is not implemented on non-Apple platforms"))
         }
 #endif
     }
@@ -935,52 +908,10 @@ private extension VNCProtocol.TightEncoding {
 extension VNCProtocol.TightEncoding.TightImageDataStream: JPEG.Bytestream.Source {}
 #endif
 
-#if canImport(PNG)
-extension VNCProtocol.TightEncoding.TightImageDataStream: PNG.BytestreamSource {}
-#endif
-
 private extension VNCProtocol.TightEncoding {
 #if canImport(JPEG)
     static func packRGBData(
         _ pixels: [JPEG.RGB],
-        bytesPerPixel: Int,
-        pixelFormat: VNCProtocol.PixelFormat
-    ) -> Data {
-        let pixelCount = pixels.count
-        let bitsPerPixel = Int(pixelFormat.bitsPerPixel)
-        var output = Data(count: pixelCount * bytesPerPixel)
-
-        output.withUnsafeMutableBytes { outputPtr in
-            guard let outputBase = outputPtr.baseAddress else {
-                return
-            }
-
-            for idx in 0..<pixelCount {
-                let pixel = pixels[idx]
-
-                let pixelValue = packPixelValue(
-                    red: pixel.r,
-                    green: pixel.g,
-                    blue: pixel.b,
-                    pixelFormat: pixelFormat
-                )
-
-                storePixelValue(
-                    pixelValue,
-                    bitsPerPixel: bitsPerPixel,
-                    targetPtr: outputBase,
-                    offset: idx * bytesPerPixel
-                )
-            }
-        }
-
-        return output
-    }
-#endif
-
-#if canImport(PNG)
-    static func packRGBAData(
-        _ pixels: [PNG.RGBA<UInt8>],
         bytesPerPixel: Int,
         pixelFormat: VNCProtocol.PixelFormat
     ) -> Data {
