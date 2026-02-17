@@ -7,6 +7,11 @@ import Foundation
 #if canImport(CoreGraphics) && canImport(ImageIO)
 import CoreGraphics
 import ImageIO
+
+#if canImport(UniformTypeIdentifiers)
+import UniformTypeIdentifiers
+#endif
+
 #endif
 
 #if canImport(stb_image)
@@ -19,6 +24,36 @@ extension VNCProtocol {
         private static let rgbColorSpace = CGColorSpaceCreateDeviceRGB()
         private static let bitmapInfo = CGBitmapInfo.byteOrder32Big.union(.init(rawValue: CGImageAlphaInfo.noneSkipLast.rawValue))
         private static let directBitmapInfo = CGBitmapInfo.byteOrder32Little.union(.init(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue))
+
+        private static let imageCreateOptions: CFDictionary = [
+            kCGImageSourceShouldCache: kCFBooleanFalse as Any,
+            kCGImageSourceShouldCacheImmediately: kCFBooleanFalse as Any,
+            kCGImageSourceShouldAllowFloat: kCFBooleanFalse as Any
+        ] as CFDictionary
+
+        private static let jpegImageSourceCreateOptions: CFDictionary = [
+            kCGImageSourceTypeIdentifierHint: jpegTypeIdentifierHint
+        ] as CFDictionary
+
+        private static let pngImageSourceCreateOptions: CFDictionary = [
+            kCGImageSourceTypeIdentifierHint: pngTypeIdentifierHint
+        ] as CFDictionary
+
+        private static var jpegTypeIdentifierHint: CFString {
+#if canImport(UniformTypeIdentifiers)
+            UTType.jpeg.identifier as CFString
+#else
+            "public.jpeg" as CFString
+#endif
+        }
+
+        private static var pngTypeIdentifierHint: CFString {
+#if canImport(UniformTypeIdentifiers)
+            UTType.png.identifier as CFString
+#else
+            "public.png" as CFString
+#endif
+        }
 #endif
         
         let encodingType = VNCFrameEncodingType.tight.rawValue
@@ -723,9 +758,18 @@ private extension VNCProtocol.TightEncoding {
     ) throws -> Data {
 #if canImport(ImageIO) && canImport(CoreGraphics)
         let cfData = data as CFData
+        
+        let imageSourceCreateOptions: CFDictionary
+        
+        switch imageType {
+            case .jpeg:
+                imageSourceCreateOptions = jpegImageSourceCreateOptions
+            case .png:
+                imageSourceCreateOptions = pngImageSourceCreateOptions
+        }
 
-        guard let imageSource = CGImageSourceCreateWithData(cfData, nil),
-              let image = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
+        guard let imageSource = CGImageSourceCreateWithData(cfData, imageSourceCreateOptions),
+              let image = CGImageSourceCreateImageAtIndex(imageSource, 0, Self.imageCreateOptions) else {
             throw VNCError.protocol(.invalidData)
         }
 
