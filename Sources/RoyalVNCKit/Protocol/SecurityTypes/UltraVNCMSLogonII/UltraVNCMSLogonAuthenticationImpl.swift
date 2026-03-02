@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import d3des
+internal import d3des
 
 extension VNCProtocol.UltraVNCMSLogonIIAuthentication {
 	struct Authentication {

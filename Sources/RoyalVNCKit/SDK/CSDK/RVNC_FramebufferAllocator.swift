@@ -4,7 +4,11 @@ import FoundationEssentials
 import Foundation
 #endif
 
+#if canImport(Darwin)
 @_implementationOnly import RoyalVNCKitC
+#else
+import RoyalVNCKitC
+#endif
 
 class VNCFramebufferAllocator_C: VNCFramebufferAllocator {
 #if canImport(Glibc) || canImport(Android) || canImport(WinSDK)

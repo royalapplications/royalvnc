@@ -4,7 +4,11 @@ import FoundationEssentials
 import Foundation
 #endif
 
+#if canImport(Darwin)
 @_implementationOnly import RoyalVNCKitC
+#else
+import RoyalVNCKitC
+#endif
 
 extension VNCConnectionDelegate_C {
     func retainedPointer() -> rvnc_connection_delegate_t {
