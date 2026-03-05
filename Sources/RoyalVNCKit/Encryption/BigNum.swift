@@ -5,7 +5,7 @@ import Foundation
 #endif
 
 // MARK: - CryptoSwift Implementation
-@_implementationOnly import CryptoSwift
+internal import CryptoSwift
 
 final class BigNum {
     private var bigInt: BigUInteger

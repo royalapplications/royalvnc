@@ -73,10 +73,10 @@ let package = Package(
 
             swiftSettings: [
                 .swiftLanguageMode(swiftLanguageMode),
-                
+
                 .unsafeFlags([
                     "-enable-library-evolution"
-                ])
+                ], .when(platforms: [.macOS, .iOS, .tvOS, .watchOS, .visionOS, .macCatalyst]))
             ]
         ),
 

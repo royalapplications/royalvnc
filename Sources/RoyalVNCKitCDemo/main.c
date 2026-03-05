@@ -8,10 +8,9 @@
 #include <windows.h>
 
 // resolve:
-// Sources\RoyalVNCKitCDemo\main.c:301:9: error: call to undeclared function 'usleep'; ISO C99 and later do not support implicit function declarations
-// Sources\RoyalVNCKitCDemo\main.c:301:9: note: did you mean '_sleep'?
-// note: convert from microseconds to milliseconds and call the builtin `_sleep` function
-#define usleep(us) _sleep((us)/1000)
+// Sources\RoyalVNCKitCDemo\main.c:443:9: warning: '_sleep' is deprecated: This function or variable has been superceded by newer library or operating system functionality. Consider using Sleep instead.
+// note: convert from microseconds to milliseconds and call the builtin `Sleep` function
+#define usleep(us) Sleep((us)/1000)
 #endif // _WIN32
 
 #include <RoyalVNCKitC.h>

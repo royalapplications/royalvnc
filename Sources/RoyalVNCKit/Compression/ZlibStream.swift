@@ -4,7 +4,7 @@ import FoundationEssentials
 import Foundation
 #endif
 
-@_implementationOnly import Z
+internal import Z
 
 final class ZlibStream {
 	private let stream: ZlibInflateStream
