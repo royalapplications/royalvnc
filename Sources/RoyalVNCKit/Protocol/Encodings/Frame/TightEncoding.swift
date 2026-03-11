@@ -15,7 +15,7 @@ import UniformTypeIdentifiers
 #endif
 
 #if canImport(stb_image)
-@_implementationOnly import stb_image
+internal import stb_image
 #endif
 
 extension VNCProtocol {
