@@ -221,7 +221,7 @@ public extension VNCFramebuffer {
         
         if let ioSurfaceAllocator = self.allocator as? VNCFramebufferIOSurfaceAllocator,
            let surface = ioSurfaceAllocator.surface {
-            image = .init(ioSurface: surface,
+            image = .init(ioSurface: surface as! IOSurfaceRef,
                           options: ciImageOptions)
         } else {
             let data = Data(bytes: surfaceAddress,
