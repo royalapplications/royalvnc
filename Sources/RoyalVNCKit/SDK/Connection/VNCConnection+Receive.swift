@@ -3,6 +3,7 @@ import FoundationEssentials
 #else
 import Foundation
 #endif
+import Dispatch
 
 // MARK: - Server to Client Messages
 extension VNCConnection {
@@ -103,13 +104,9 @@ private extension VNCConnection {
 		let serverCutText = try await VNCProtocol.ServerCutText.receive(connection: connection,
 																		logger: logger)
 
-		let text = serverCutText.text
-
-		logger.logDebug("Received Clipboard Text from Server")
-
-		guard settings.isClipboardRedirectionEnabled else { return }
-
-		clipboard.text = text
+        DispatchQueue.main.async { [weak self] in
+            self?.handleClipboardMessage(serverCutText)
+        }
 	}
 
 	func handleBellMessage() async throws {

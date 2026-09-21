@@ -43,6 +43,8 @@ final class VNCClipboardMonitor {
 }
 
 extension VNCClipboardMonitor {
+    func requestCurrentChange() { lastChangeCount = clipboard.changeCount - 1 }
+    func acknowledgeCurrentChange() { lastChangeCount = clipboard.changeCount }
 	func startMonitoring() {
 		stopMonitoring()
 
