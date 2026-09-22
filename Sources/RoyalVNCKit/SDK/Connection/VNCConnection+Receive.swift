@@ -101,7 +101,13 @@ private extension VNCConnection {
 		logger.logDebug("Receiving Clipboard Text from Server")
 
 		let serverCutText = try await VNCProtocol.ServerCutText.receive(connection: connection,
-																		logger: logger)
+													logger: logger)
+
+		if serverCutText.extended?.serverCapabilities != nil {
+			logger.logDebug("Responding to Extended Clipboard capabilities")
+			enqueueExtendedClipboardCapabilities()
+			return
+		}
 
 		let text = serverCutText.text
 

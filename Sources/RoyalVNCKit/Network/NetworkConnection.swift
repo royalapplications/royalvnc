@@ -97,7 +97,10 @@ extension NetworkConnectionReading {
 
     func readUInt8() async throws -> UInt8 {
         let data = try await read(minimumLength: 1, maximumLength: 1)
-        let value = data[0]
+
+        guard let value = data.first else {
+            throw VNCError.protocol(.invalidData)
+        }
 
         return value
     }

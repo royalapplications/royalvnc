@@ -135,6 +135,10 @@ extension VNCProtocol.ServerCutText {
 		static func receive(connection: NetworkConnectionReading,
 							logger: VNCLogger,
 							length: Int32) async throws -> Self {
+			guard length >= MemoryLayout<UInt32>.size else {
+				throw VNCError.protocol(.invalidData)
+			}
+
 			let flagsRawValue = try await connection.readUInt32()
 
 			let formats: Format = .init(rawValue: flagsRawValue)
@@ -183,19 +187,11 @@ extension VNCProtocol.ServerCutText {
 				serverCapabilities = .init(format: serverFormatCapabilities,
 										   action: serverActionCapabilities)
 
+				guard length == MemoryLayout<UInt32>.size + bytesToSkip else {
+					throw VNCError.protocol(.invalidData)
+				}
+
 				try await connection.readPadding(length: bytesToSkip)
-
-				// Caps handling done, send caps with the clients capabilities set as a response
-				// TODO:
-				/* let clientActionCapabilities: Action = [
-					Action.caps,
-					Action.request,
-					Action.peek,
-					Action.notify,
-					Action.provide
-				] */
-
-				// TODO: Send (for reference, extendedClipboardCaps in novnc: https://github.com/novnc/noVNC/blob/9761278df8f663f64f13b18e901a80bda799d893/core/rfb.js#L2997)
 			} else if actions == Action.request {
 				logger.logDebug("ExtendedServerCutText Request")
 

@@ -91,6 +91,11 @@ let package = Package(
         .executableTarget(
             name: "RoyalVNCKitCDemo",
             dependencies: [ "RoyalVNCKit" ]
+        ),
+
+        .testTarget(
+            name: "RoyalVNCKitTests",
+            dependencies: [ "RoyalVNCKit" ]
         )
     ]
 )

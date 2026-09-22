@@ -1,12 +1,15 @@
 name: CI
 
 on:
-  push: # trigger on commits to the `main` branch (no PRs)
+  push:
     branches:
       - main
     paths-ignore:
       - '.github/workflows/x-*.yml'
-  workflow_dispatch: # and manually-triggered runs
+  pull_request:
+    paths-ignore:
+      - '.github/workflows/x-*.yml'
+  workflow_dispatch:
 
 permissions:
   # only allowed to read source code (ref. https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs)
@@ -112,6 +115,9 @@ jobs:
 
         swift build --configuration release --arch arm64
         swift build --configuration release --arch x86_64
+
+        swift test --arch arm64
+        swift test --arch x86_64
 
         mkdir -p .build/universal-apple-macosx/release
 
