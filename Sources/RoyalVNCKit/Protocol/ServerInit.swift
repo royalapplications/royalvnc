@@ -12,28 +12,27 @@ extension VNCProtocol {
 		let pixelFormat: PixelFormat
 
 		let name: String
+		let tightCapabilities: TightInteractionCapabilities?
 	}
 }
 
 extension VNCProtocol.ServerInit {
 	static func receive(connection: NetworkConnectionReading,
 						isTightSecurityEnabled: Bool) async throws -> Self {
-		guard !isTightSecurityEnabled else {
-			// TODO: When Tight Security is enabled there are addtional fields
-			// See https://github.com/rfbproto/rfbproto/blob/master/rfbproto.rst#serverinit
-			throw VNCError.protocol(.notImplemented(feature: "Tight Security"))
-		}
-
 		let frameBufferWidth = try await connection.readUInt16()
 		let frameBufferHeight = try await connection.readUInt16()
 
 		let pixelFormat = try await VNCProtocol.PixelFormat.receive(connection: connection)
 
 		let name = try await connection.readString(encoding: .utf8)
+		let tightCapabilities = isTightSecurityEnabled
+			? try await TightInteractionCapabilities.receive(connection: connection)
+			: nil
 
 		return .init(framebufferWidth: frameBufferWidth,
 					 framebufferHeight: frameBufferHeight,
 					 pixelFormat: pixelFormat,
-					 name: name)
+					 name: name,
+					 tightCapabilities: tightCapabilities)
 	}
 }

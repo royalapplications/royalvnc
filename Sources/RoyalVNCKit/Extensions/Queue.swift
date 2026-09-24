@@ -1,33 +1,35 @@
-#if canImport(FoundationEssentials)
-import FoundationEssentials
-#else
 import Foundation
-#endif
 
-struct Queue<T> {
+final class Queue<T>: @unchecked Sendable {
 	private var list = [T]()
+	private let lock = NSLock()
 
-	mutating func enqueue(_ element: T) {
+	func enqueue(_ element: T) {
+		lock.lock(); defer { lock.unlock() }
 		list.append(element)
 	}
 
-	mutating func dequeue() -> T? {
-		guard !isEmpty else { return nil }
+	func dequeue() -> T? {
+		lock.lock(); defer { lock.unlock() }
+		guard !list.isEmpty else { return nil }
 
 		return list.removeFirst()
 	}
 
-	mutating func clear() {
+	func clear() {
+		lock.lock(); defer { lock.unlock() }
 		list.removeAll()
 	}
 
 	func peek() -> T? {
-		guard !isEmpty else { return nil }
+		lock.lock(); defer { lock.unlock() }
+		guard !list.isEmpty else { return nil }
 
 		return list[0]
 	}
 
 	var isEmpty: Bool {
-		list.isEmpty
+		lock.lock(); defer { lock.unlock() }
+		return list.isEmpty
 	}
 }

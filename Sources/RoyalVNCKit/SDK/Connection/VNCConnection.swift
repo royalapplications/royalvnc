@@ -27,6 +27,21 @@ public final class VNCConnection: NSObjectOrAnyObject {
 #endif
 	public weak var delegate: VNCConnectionDelegate?
 
+    public weak var clipboardDelegate: VNCClipboardDelegate?
+    /// Receives TightVNC file-transfer results on the main queue.
+    public var fileTransferHandler: ((VNCFileTransferEvent) -> Void)?
+    /// Allows Tight security negotiation for servers that advertise TightVNC
+    /// file transfer. Disabled by default to preserve existing security choice.
+    public var prefersTightSecurityForFileTransfer = false
+    // Clipboard state is accessed only on the main queue.
+    var serverClipboardCapabilities: ExtendedClipboard?
+    var pendingClipboardText: String?
+    var pendingClipboardImage: Data?
+    /// True only when Tight ServerInit advertises both required file-transfer directions.
+    public internal(set) var supportsTightFileTransfer = false
+    public internal(set) var supportsTightFileDownload = false
+    public internal(set) var supportsTightFileUpload = false
+
 #if canImport(ObjectiveC)
 	@objc
 #endif
@@ -70,13 +85,16 @@ public final class VNCConnection: NSObjectOrAnyObject {
 
     var mouseButtonState: VNCProtocol.MousePointerButton = [ ]
 
-    lazy var connection: some NetworkConnection = {
+    lazy var connection: any NetworkConnection = {
         let connectionSettings = NetworkConnectionSettings(connectionTimeout: 15,
                                                            host: settings.hostname,
                                                            port: settings.port)
 
-        // NOTE: To test SocketNetworkConnection on Darwin (macOS, iOS, etc.), comment out the the #if
-#if canImport(Network)
+        // VeNCrypt upgrades the established RFB byte stream to TLS. CFStream
+        // is the Apple transport that supports that operation in-place.
+#if canImport(CFNetwork)
+        let connection = CFStreamNetworkConnection(settings: connectionSettings)
+#elseif canImport(Network)
         let connection = NWConnection(settings: connectionSettings)
 #else
 		let connection = SocketNetworkConnection(settings: connectionSettings)
@@ -169,8 +187,7 @@ public final class VNCConnection: NSObjectOrAnyObject {
 			VNCPseudoEncodingType.desktopSize.rawValue,
 			VNCPseudoEncodingType.desktopName.rawValue,
 			VNCPseudoEncodingType.cursor.rawValue,
-			// TODO: Implement
-//			VNCPseudoEncodingType.extendedClipboard.rawValue,
+			VNCPseudoEncodingType.extendedClipboard.rawValue,
             
             // TODO: Make configurable
 			VNCPseudoEncodingType.compressionLevel6.rawValue
@@ -280,6 +297,10 @@ public final class VNCConnection: NSObjectOrAnyObject {
 // MARK: - Internal Connection State API
 extension VNCConnection {
 	func beginConnecting() {
+		supportsTightFileTransfer = false
+		supportsTightFileDownload = false
+		supportsTightFileUpload = false
+		state.isTightSecurityEnabled = false
 		updateConnectionState(.connecting)
 
 		connection.start(queue: queue)

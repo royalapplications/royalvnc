@@ -3,6 +3,7 @@ import FoundationEssentials
 #else
 import Foundation
 #endif
+import Dispatch
 
 // MARK: - Server to Client Messages
 extension VNCConnection {
@@ -39,6 +40,7 @@ private extension VNCConnection {
 	}
 
 	func didReceive(messageType: UInt8) async throws {
+		logger.logDebug("Received server message type \(messageType)")
 		switch messageType {
 			case VNCProtocol.FramebufferUpdate.messageType:
 				try await handleFramebufferUpdateMessage()
@@ -54,6 +56,15 @@ private extension VNCConnection {
 
 			case VNCProtocol.EndOfContinuousUpdates.messageType:
 				try await handleEndOfContinuousUpdatesMessage()
+
+            case 130:
+                try await handleTightFileListMessage()
+
+            case 131:
+                try await handleTightFileDownloadMessage()
+
+            case 132, 133:
+                try await handleTightFileFailureMessage(messageType: messageType)
 
 			default:
 				throw VNCError.protocol(.unsupportedServerToClientMessage(messageType: messageType))
@@ -101,15 +112,11 @@ private extension VNCConnection {
 		logger.logDebug("Receiving Clipboard Text from Server")
 
 		let serverCutText = try await VNCProtocol.ServerCutText.receive(connection: connection,
-																		logger: logger)
+													logger: logger)
 
-		let text = serverCutText.text
-
-		logger.logDebug("Received Clipboard Text from Server")
-
-		guard settings.isClipboardRedirectionEnabled else { return }
-
-		clipboard.text = text
+		DispatchQueue.main.async { [weak self] in
+			self?.handleClipboardMessage(serverCutText)
+		}
 	}
 
 	func handleBellMessage() async throws {
@@ -137,4 +144,70 @@ private extension VNCConnection {
 
 		try await sendFramebufferUpdateRequest()
 	}
+
+    func handleTightFileListMessage() async throws {
+        guard supportsTightFileDownload else { throw VNCError.protocol(.unsupportedServerToClientMessage(messageType: 130)) }
+        let header = try await connection.read(length: 7)
+        guard header.count == 7 else { throw VNCError.protocol(.invalidData) }
+        let count = Int(header.withUnsafeBytes {
+            UInt16(bigEndian: $0.loadUnaligned(fromByteOffset: 1, as: UInt16.self))
+        })
+        let compressedLength = Int(header.withUnsafeBytes {
+            UInt16(bigEndian: $0.loadUnaligned(fromByteOffset: 5, as: UInt16.self))
+        })
+        guard count <= TightFileTransfer.maximumListingBytes / 8,
+              compressedLength <= TightFileTransfer.maximumListingBytes else {
+            throw VNCError.protocol(.invalidData)
+        }
+        let tail = try await connection.read(length: count * 8 + compressedLength)
+        guard tail.count == count * 8 + compressedLength else { throw VNCError.protocol(.invalidData) }
+        var body = header
+        body.append(tail)
+        let entries = try TightFileTransfer.decodeFileList(body).map(VNCRemoteFile.init)
+        deliverFileTransferEvent(.fileList(entries))
+    }
+
+    func handleTightFileDownloadMessage() async throws {
+        guard supportsTightFileDownload else { throw VNCError.protocol(.unsupportedServerToClientMessage(messageType: 131)) }
+        let header = try await connection.read(length: 5)
+        guard header.count == 5 else { throw VNCError.protocol(.invalidData) }
+        let realLength = Int(header.withUnsafeBytes {
+            UInt16(bigEndian: $0.loadUnaligned(fromByteOffset: 1, as: UInt16.self))
+        })
+        let compressedLength = Int(header.withUnsafeBytes {
+            UInt16(bigEndian: $0.loadUnaligned(fromByteOffset: 3, as: UInt16.self))
+        })
+        guard realLength <= TightFileTransfer.maximumChunkBytes,
+              compressedLength <= TightFileTransfer.maximumChunkBytes else {
+            throw VNCError.protocol(.invalidData)
+        }
+        let trailerLength = realLength == 0 && compressedLength == 0 ? 4 : 0
+        guard (realLength == 0) == (compressedLength == 0) else { throw VNCError.protocol(.invalidData) }
+        let tail = try await connection.read(length: compressedLength + trailerLength)
+        guard tail.count == compressedLength + trailerLength else { throw VNCError.protocol(.invalidData) }
+        var body = header
+        body.append(tail)
+        let chunk = try TightFileTransfer.decodeDownloadChunk(body)
+        if let modificationTime = chunk.modificationTime {
+            deliverFileTransferEvent(.downloadFinished(modificationTime: modificationTime))
+        } else {
+            deliverFileTransferEvent(.downloadData(chunk.data))
+        }
+    }
+
+    func handleTightFileFailureMessage(messageType: UInt8) async throws {
+        guard supportsTightFileTransfer else { throw VNCError.protocol(.unsupportedServerToClientMessage(messageType: messageType)) }
+        try await connection.readPadding()
+        let length = Int(try await connection.readUInt16())
+        guard length <= TightFileTransfer.maximumPathBytes else { throw VNCError.protocol(.invalidData) }
+        let data = try await connection.read(length: length)
+        guard data.count == length, let reason = String(data: data, encoding: .utf8) else {
+            throw VNCError.protocol(.invalidData)
+        }
+        deliverFileTransferEvent(.failed(reason))
+    }
+
+    func deliverFileTransferEvent(_ event: VNCFileTransferEvent) {
+        DispatchQueue.main.async { [weak self] in self?.fileTransferHandler?(event) }
+    }
 }

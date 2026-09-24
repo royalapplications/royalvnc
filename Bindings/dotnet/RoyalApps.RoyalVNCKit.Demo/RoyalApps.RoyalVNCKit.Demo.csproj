@@ -24,6 +24,9 @@
 
   <PropertyGroup Label="Linux" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
     <_NativeLibrary>$(_SwiftBuildDir)$(_NativeArch)-unknown-linux-gnu\$(_NativeCfg)\libRoyalVNCKit.so</_NativeLibrary>
+    <!-- SwiftPM's newer build system stores products in out/Products. Keep the
+         architecture-specific fallback for toolchains using the legacy layout. -->
+    <_NativeLibrary Condition="Exists('$(_SwiftBuildDir)out/Products/$(Configuration)/libRoyalVNCKit.so')">$(_SwiftBuildDir)out/Products/$(Configuration)/libRoyalVNCKit.so</_NativeLibrary>
   </PropertyGroup>
   <PropertyGroup Label="macOS" Condition="$([MSBuild]::IsOSPlatform('OSX'))">
     <_NativeLibrary>$(_SwiftBuildDir)universal-apple-macosx\$(_NativeCfg)\libRoyalVNCKit.dylib</_NativeLibrary>

@@ -161,8 +161,10 @@ public extension VNCKeyCode {
 
 		for scalar in character.unicodeScalars {
 			let unicodeValue = scalar.value
-
-			codes.append(.init(unicodeValue))
+			// X11 encodes Latin-1 directly. Other Unicode scalars use the
+			// Unicode keysym form described by the X Window System protocol.
+			let keysym = unicodeValue <= 0xFF ? unicodeValue : 0x01000000 + unicodeValue
+			codes.append(.init(keysym))
 		}
 
 		return codes
