@@ -25,8 +25,8 @@ extension VNCProtocol {
 			self.generator = generator
 			self.keySize = keySize
 
-			guard prime.count == keySize,
-				  peerKey.count == keySize else {
+			guard DiffieHellmanKeyAgreement.acceptsParameters(
+				prime: prime, generator: generator, peerKey: peerKey, keyLength: Int(keySize)) else {
 				return nil
 			}
 
@@ -40,6 +40,9 @@ extension VNCProtocol.ARDAuthentication {
 	static func receive(connection: NetworkConnectionReading) async throws -> Self {
 		let generator = try await connection.readBuffered(length: 2)
 		let keySize = try await connection.readUInt16()
+		guard (1...DiffieHellmanKeyAgreement.maximumKeySize).contains(Int(keySize)) else {
+			throw VNCError.protocol(.invalidData)
+		}
 		let prime = try await connection.readBuffered(length: .init(keySize))
 		let peerKey = try await connection.readBuffered(length: .init(keySize))
 

@@ -48,27 +48,17 @@ extension VNCProtocol.ARDAuthentication {
 
             guard randomCredsDataSuccess else { return nil }
 
-			let usernameLength = username.utf8.count
-			let passwordLength = password.utf8.count
-
-			let maxLength = 63
-
-			// Cap length at 63 as index is 0
-			let cappedUsername = usernameLength > maxLength
-				? String(username[username.startIndex..<username.index(username.startIndex, offsetBy: maxLength)])
-				: username
-
-			let cappedUsernameLength = cappedUsername.utf8.count
-
-			let cappedPassword = passwordLength > maxLength
-				? String(password[password.startIndex..<password.index(password.startIndex, offsetBy: maxLength)])
-				: password
-
-			let cappedPasswordLength = cappedPassword.utf8.count
+            // ARD has two 64-byte NUL-terminated UTF-8 fields. Reject oversized
+            // values rather than truncating by Swift character count, which can
+            // trap for multibyte text or overflow the fixed credential buffer.
+            let usernameLength = username.utf8.count
+            let passwordLength = password.utf8.count
+            guard usernameLength <= 63, passwordLength <= 63,
+                  !username.utf8.contains(0), !password.utf8.contains(0) else { return nil }
 
             // Convert username and password strings into C strings
-            let usernameC = cappedUsername.utf8CString
-            let passwordC = cappedPassword.utf8CString
+            let usernameC = username.utf8CString
+            let passwordC = password.utf8CString
 
 			// Merge username and password into single array
 			let fillCredsSuccess = creds.withUnsafeMutableBytes {
@@ -78,7 +68,7 @@ extension VNCProtocol.ARDAuthentication {
 					guard let usernameCBytes = usernameCBytesPtr.baseAddress else { return false }
 
 					credsBytes.copyMemory(from: usernameCBytes,
-										  byteCount: cappedUsernameLength)
+										  byteCount: usernameLength)
 
 					return true
 				}
@@ -91,7 +81,7 @@ extension VNCProtocol.ARDAuthentication {
 					let credsBytesStartingAtPassword = credsBytes.advanced(by: credArraySize / 2)
 
 					credsBytesStartingAtPassword.copyMemory(from: passwordCBytes,
-															byteCount: cappedPasswordLength)
+															byteCount: passwordLength)
 
 					return true
 				}
@@ -104,8 +94,8 @@ extension VNCProtocol.ARDAuthentication {
 			guard fillCredsSuccess else { return nil }
 
 			// Add null bytes to indicate end of c string
-			creds[cappedUsernameLength] = 0
-			creds[(credArraySize / 2) + cappedPasswordLength] = 0
+			creds[usernameLength] = 0
+			creds[(credArraySize / 2) + passwordLength] = 0
 
 			guard let cipherText = creds.aes128ECBEncrypted(withKey: secretHash) else {
 				return nil

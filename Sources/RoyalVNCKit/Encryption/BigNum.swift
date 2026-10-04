@@ -102,6 +102,13 @@ extension BigNum {
     func isLessThan(_ value: UInt64) -> Bool {
         bigInt < value
     }
+
+    var isOdd: Bool { bigInt & 1 == 1 }
+
+    func isValidDiffieHellmanPublicValue(modulus: BigNum) -> Bool {
+        guard modulus.bigInt >= 5 else { return false }
+        return bigInt > 1 && bigInt < modulus.bigInt - 1
+    }
 }
 
 

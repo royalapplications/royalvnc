@@ -6,6 +6,10 @@ import Foundation
 
 extension VNCProtocol.ARDAuthentication {
 	struct DiffieHellmanKeyAgreement {
+		// Bound work before allocating or exponentiating server-supplied values.
+		// This 4096-bit implementation resource limit is not an ARD protocol limit.
+		static let maximumKeySize = 512
+
 		let publicKey: Data
 		let privateKey: Data
 		let secretKey: Data
@@ -14,7 +18,8 @@ extension VNCProtocol.ARDAuthentication {
 			  generator: Data,
 			  peerKey: Data,
 			  keyLength: Int) {
-			guard keyLength > 0 else {
+			guard Self.acceptsParameters(prime: prime, generator: generator,
+									peerKey: peerKey, keyLength: keyLength) else {
 				return nil
 			}
 
@@ -28,7 +33,8 @@ extension VNCProtocol.ARDAuthentication {
 
 			guard let secretKey = Self.computeSharedKey(prime: prime,
 														peerKey: peerKey,
-														privateKey: keyPair.privateKey),
+														privateKey: keyPair.privateKey,
+													keyLength: keyLength),
 				  !secretKey.isEmpty else {
 				return nil
 			}
@@ -36,6 +42,21 @@ extension VNCProtocol.ARDAuthentication {
 			self.publicKey = keyPair.publicKey
 			self.privateKey = keyPair.privateKey
 			self.secretKey = secretKey
+		}
+
+		static func acceptsParameters(prime: Data, generator: Data, peerKey: Data,
+									  keyLength: Int) -> Bool {
+			guard (1...maximumKeySize).contains(keyLength),
+				  prime.count == keyLength, peerKey.count == keyLength,
+				  (1...2).contains(generator.count),
+				  let modulus = BigNum(data: prime), !modulus.isLessThan(5), modulus.isOdd,
+				  let base = BigNum(data: generator),
+				  let peer = BigNum(data: peerKey) else { return false }
+			// These range checks prevent zero-modulus traps, nonterminating
+			// private-key selection and trivial public values. They do not prove
+			// primality or authenticate the server.
+			return base.isValidDiffieHellmanPublicValue(modulus: modulus) &&
+				peer.isValidDiffieHellmanPublicValue(modulus: modulus)
 		}
 	}
 }
@@ -75,14 +96,10 @@ private extension VNCProtocol.ARDAuthentication.DiffieHellmanKeyAgreement {
 			return nil
 		}
 
-		// Check key lengths of generated private and public DH keys
-		guard bigPrivKey.bytesCount == keyLength,
-			  bigPubKey.bytesCount == keyLength else {
-			return nil
-		}
-
-		guard let privKey = bigPrivKey.bigEndianData(),
-			  let pubKey = bigPubKey.bigEndianData() else {
+		// ARD encodes DH values at the server's advertised width. A leading
+		// zero byte is valid and must remain part of the shared-secret hash.
+		guard let privKey = bigPrivKey.fixedWidthBigEndianData(length: keyLength),
+			  let pubKey = bigPubKey.fixedWidthBigEndianData(length: keyLength) else {
 			return nil
 		}
 
@@ -94,7 +111,8 @@ private extension VNCProtocol.ARDAuthentication.DiffieHellmanKeyAgreement {
 
 	static func computeSharedKey(prime: Data,
 								 peerKey: Data,
-								 privateKey: Data) -> Data? {
+								 privateKey: Data,
+								 keyLength: Int) -> Data? {
 		guard let bigPrime = BigNum(data: prime),
 			  let bigPrivKey = BigNum(data: privateKey),
 			  let bigPeerKey = BigNum(data: peerKey) else {
@@ -112,7 +130,7 @@ private extension VNCProtocol.ARDAuthentication.DiffieHellmanKeyAgreement {
 			return nil
 		}
 
-		guard let sharedKey = bigSharedKey.bigEndianData() else {
+		guard let sharedKey = bigSharedKey.fixedWidthBigEndianData(length: keyLength) else {
 			return nil
 		}
 
