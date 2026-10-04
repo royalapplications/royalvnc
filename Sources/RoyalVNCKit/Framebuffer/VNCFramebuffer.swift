@@ -248,11 +248,13 @@ public extension VNCFramebuffer {
 			return nil
 		}
 
+        // Render now: ciImage references reusable framebuffer storage, which may be
+        // updated before the returned CGImage is drawn by its consumer.
 		guard let finalImage = ciContext.createCGImage(ciImage,
                                                        from: ciImage.extent,
                                                        format: .BGRA8,
                                                        colorSpace: Self.rgbColorSpace,
-                                                       deferred: true) else {
+                                                       deferred: false) else {
 			return nil
 		}
 
