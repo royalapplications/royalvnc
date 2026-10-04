@@ -141,17 +141,32 @@ extension SocketNetworkConnection: NetworkConnectionWriting {
 
 		return try await withCheckedThrowingContinuation { continuation in
             queue.async {
-                let bytesToSend = [UInt8](data)
-                let bytesSent = socket.send(buffer: bytesToSend)
-
-                if bytesSent < 0 {
-                    continuation.resume(throwing: Errors.sendFailed)
-                } else {
+                do {
+                    try Self.writeAll(data: data) { socket.send(buffer: $0) }
                     continuation.resume()
+                } catch {
+                    continuation.resume(throwing: error)
                 }
             }
         }
 	}
+}
+
+// Keep each message on the serial connection queue until all bytes are sent.
+// A successful socket send may consume only a prefix of the supplied buffer.
+extension SocketNetworkConnection {
+    static func writeAll(data: Data, send: ([UInt8]) -> Int) throws {
+        let bytes = [UInt8](data)
+        var offset = 0
+        while offset < bytes.count {
+            let remaining = Array(bytes[offset...])
+            let sent = send(remaining)
+            guard sent > 0, sent <= remaining.count else {
+                throw Errors.sendFailed
+            }
+            offset += sent
+        }
+    }
 }
 
 // MARK: - Errors

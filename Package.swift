@@ -83,6 +83,12 @@ let package = Package(
         d3desTarget,
         zTarget,
 
+        .testTarget(
+            name: "RoyalVNCKitTests",
+            dependencies: [ "RoyalVNCKit" ],
+            swiftSettings: [ .swiftLanguageMode(swiftLanguageMode) ]
+        ),
+
         .executableTarget(
             name: "RoyalVNCKitDemo",
             dependencies: [ "RoyalVNCKit" ]
