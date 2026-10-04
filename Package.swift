@@ -80,6 +80,9 @@ let package = Package(
             ]
         ),
 
+        .testTarget(name: "RoyalVNCKitTests", dependencies: ["RoyalVNCKit"],
+                    swiftSettings: [.swiftLanguageMode(swiftLanguageMode)]),
+
         d3desTarget,
         zTarget,
 

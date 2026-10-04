@@ -1,8 +1,4 @@
-#if canImport(FoundationEssentials)
-import FoundationEssentials
-#else
 import Foundation
-#endif
 
 import Dispatch
 
@@ -19,13 +15,19 @@ final class VNCClipboardMonitor {
 
 	weak var delegate: VNCClipboardMonitorDelegate?
 
-	private(set) var isMonitoring = false
+    private let lifecycleLock = NSLock()
+    private var monitoring = false
+    var isMonitoring: Bool {
+        lifecycleLock.lock(); defer { lifecycleLock.unlock() }
+        return monitoring
+    }
 
 #if !canImport(FoundationEssentials)
 	private var timer: Timer?
 #endif
 
 	private var lastChangeCount = 0
+    private var monitoringGeneration = UUID()
 
 	init(clipboard: VNCClipboard,
 		 monitoringInterval: TimeInterval,
@@ -43,50 +45,71 @@ final class VNCClipboardMonitor {
 }
 
 extension VNCClipboardMonitor {
-	func startMonitoring() {
-		stopMonitoring()
-
-		// -1 to send clipboard to trigger notification immediately if something's on the pasteboard
-		lastChangeCount = clipboard.changeCount - 1
+    func startMonitoring() {
+        // Publish cancellation and the new generation atomically. Callers may
+        // arrive from a transport task while the main queue installs a timer.
+        lifecycleLock.lock()
+        let generation = UUID()
+        monitoringGeneration = generation
+        monitoring = false
+#if !canImport(FoundationEssentials)
+        let previousTimer = timer
+        timer = nil
+#endif
+        lifecycleLock.unlock()
 
 #if !canImport(FoundationEssentials)
-		guard timer == nil else { // Already have a timer
-			return
-		}
-
-		DispatchQueue.main.async { [weak self] in
-			guard let self else { return }
-
+        Self.invalidateOnMain(previousTimer)
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.lifecycleLock.lock()
+            defer { self.lifecycleLock.unlock() }
+            guard self.monitoringGeneration == generation else { return }
+            self.lastChangeCount = self.clipboard.changeCount - 1
             let timer = Timer.scheduledTimer(withTimeInterval: self.monitoringInterval,
-                                             repeats: true,
-                                             block: timerDidFire(_:))
-
-			timer.tolerance = self.tolerance
-
+                                             repeats: true) { [weak self] timer in
+                self?.timerDidFire(timer)
+            }
+            timer.tolerance = self.tolerance
             self.timer = timer
-            self.isMonitoring = true
-		}
+            self.monitoring = true
+        }
 #endif
-	}
+    }
 
-	func stopMonitoring() {
+    func stopMonitoring() {
+        lifecycleLock.lock()
+        monitoringGeneration = UUID()
+        monitoring = false
 #if !canImport(FoundationEssentials)
-		timer?.invalidate()
-		timer = nil
+        let previousTimer = timer
+        timer = nil
 #endif
+        lifecycleLock.unlock()
+#if !canImport(FoundationEssentials)
+        Self.invalidateOnMain(previousTimer)
+#endif
+    }
 
-		lastChangeCount = 0
-		isMonitoring = false
-	}
 }
 
 #if !canImport(FoundationEssentials)
 private extension VNCClipboardMonitor {
-	func timerDidFire(_ timer: Timer) {
-		guard let delegate,
-			  timer == self.timer else {
-			return
-		}
+    static func invalidateOnMain(_ timer: Timer?) {
+        guard let timer else { return }
+        if Thread.isMainThread {
+            timer.invalidate()
+        } else {
+            // Capture only the timer: this is also called during deinit.
+            DispatchQueue.main.async(execute: DispatchWorkItem { timer.invalidate() })
+        }
+    }
+
+    func timerDidFire(_ timer: Timer) {
+        lifecycleLock.lock()
+        let isCurrent = timer === self.timer
+        lifecycleLock.unlock()
+        guard isCurrent, let delegate else { return }
 
 		guard delegate.clipboardMonitorShouldMonitor(self) else { // Should not monitor
 			return
