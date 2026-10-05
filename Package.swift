@@ -80,6 +80,11 @@ let package = Package(
             ]
         ),
 
+        .testTarget(
+            name: "RoyalVNCKitTests",
+            dependencies: [ "RoyalVNCKit" ]
+        ),
+
         d3desTarget,
         zTarget,
 

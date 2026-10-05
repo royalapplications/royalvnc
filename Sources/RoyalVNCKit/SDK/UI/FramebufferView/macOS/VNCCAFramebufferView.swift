@@ -189,6 +189,37 @@ public final class VNCCAFramebufferView: NSView, VNCFramebufferView {
 		frameSizeDidChange(frameRect.size)
 	}
 
+    /// AppKit cannot cache a CAMetalLayer's drawable via the ordinary view
+    /// display path. Render the current framebuffer image instead, including
+    /// the same scale and letterboxing as the embedded desktop.
+    public override func cacheDisplay(in rect: NSRect, to bitmapImageRep: NSBitmapImageRep) {
+        guard rect.width.isFinite, rect.height.isFinite,
+              rect.width > 0, rect.height > 0,
+              let context = NSGraphicsContext(bitmapImageRep: bitmapImageRep)?.cgContext else { return }
+        context.saveGState()
+        defer { context.restoreGState() }
+        // NSGraphicsContext may already apply the bitmap's point-to-pixel
+        // scale. Replace it rather than multiplying Retina scaling twice.
+        context.concatenate(context.ctm.inverted())
+        context.scaleBy(x: CGFloat(bitmapImageRep.pixelsWide) / rect.width,
+                        y: CGFloat(bitmapImageRep.pixelsHigh) / rect.height)
+        context.translateBy(x: -rect.minX, y: -rect.minY)
+        context.clip(to: rect)
+        context.setFillColor(CGColor(gray: 0, alpha: 1))
+        context.fill(rect)
+        guard let image = framebuffer?.cgImage else { return }
+        let imageRect: CGRect
+        if settings.isScalingEnabled {
+            imageRect = contentRect
+        } else {
+            imageRect = CGRect(x: (bounds.width - framebufferSize.width) / 2,
+                               y: (bounds.height - framebufferSize.height) / 2,
+                               width: framebufferSize.width, height: framebufferSize.height)
+        }
+        context.interpolationQuality = .high
+        context.draw(image, in: imageRect)
+    }
+
 	@available(*, unavailable)
 	required init?(coder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
